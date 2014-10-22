@@ -3,13 +3,11 @@ aka is your alias's best friend. Add, edit, remove and manage aliases from termi
 
 ![demo](gif/demo.gif)
 
-
-#### how to install
+#### how to download and install
 ```
 curl -o /usr/local https://raw.githubusercontent.com/ytbryan/aka/master/aka 
-#or
-sudo cp aka /usr/local/
 ```
+
 
 #### TODOS
 - move the script to rubygems
