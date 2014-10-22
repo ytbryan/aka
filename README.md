@@ -6,7 +6,9 @@ aka is your alias's best friend. Add, edit, remove and manage aliases from termi
 
 #### how to install
 ```
-sudo cp aka /usr/local/bin
+curl -o /usr/local https://raw.githubusercontent.com/ytbryan/aka/master/aka 
+#or
+sudo cp aka /usr/local/
 ```
 
 #### TODOS
