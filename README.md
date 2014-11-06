@@ -1,13 +1,12 @@
-#AKA
-aka is your alias's best friend. Add, edit, remove and manage aliases from terminal.
+![demo](images/aka.gif)
 
-![demo](gif/demo.gif)
+#AKA - Aliases' Best Friend
+Add, edit, remove and manage aliases from terminal.
 
 #### how to download and install
 ```
-curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka 
+curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
 ```
-
 
 #### TODOS
 - move the script to rubygems
