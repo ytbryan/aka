@@ -3,7 +3,7 @@
 require 'rubygems'
 require 'commander/import'
 
-program :version, '0.0.1'
+program :version, '0.0.6'
 program :description, 'aliases best friend'
 
 command :add do |c|
@@ -61,12 +61,36 @@ command :edit do |c|
   end
 end
 
+#aka b /path_to_ --to ip_address_ --of path_ofthe_file
+command :beam do |c|
+  c.syntax = 'aka beam [options]'
+  c.option '--from STRING', String, 'Some switch that does something'
+  c.option '--to STRING', String, 'Some switch that does something'
+  c.option '--of STRING', String, 'Some switch that does something'
+  c.action do |args, options|
+    # puts options.from.to_s
+    # puts options.to.to_s
+    # puts options.of.to_s
+    #check that the file is present
+
+    if options.from and options.to and options.of
+      if File.exists?(options.from.to_s)
+        answer = system("scp #{options.from} #{options.to} #{options.of}") if File.exists?(options.from.to_s)
+      else
+        puts "Cannot find #{options.from}"
+      end
+    end
+    # Do something or c.when_called Aka::Commands::Remote
+    # ask "What is your path?\n 1> .bash_profile\n 2> .bashrc\n 3> Others"
+    # ask "What is the foreign ip?"
+    # ask "Where to put this bashfile?"
+    # aka beam -i foreign_ip -p path_to_each -f foreign_path
+  end
+end
+
+
 command :remote do |c|
   c.syntax = 'aka remote [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
     # Do something or c.when_called Aka::Commands::Remote
   end
@@ -158,4 +182,19 @@ command :scan do |c|
   c.action do |args, options|
     # Do something or c.when_called Aka::Commands::Scan
   end
+end
+
+
+
+private
+
+def answer(thisThing)
+value = thisThing.to_s
+  puts "This is --from => #{value}"
+    # puts thisThing.to_s
+end
+
+
+def remote()
+
 end
