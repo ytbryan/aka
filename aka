@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
-require "highline/import"
-require "colorize"
+require 'highline/import'
+require 'colorize'
+# require 'net-scp'
 
   @last_update="Sept 22, 2014"
   @version = "1.0.0"
@@ -10,6 +11,15 @@ require "colorize"
   @dotaka = "~/.aka"
   @localbin = "/usr/local/bin"
   @pwd = ""
+
+
+  def remote
+    # Net::SCP.upload!("remote.host.com",
+    #                   "username",
+    #               "/local/path", "/remote/path",
+    #             :ssh => { :password => "password" })
+  end
+
 
   def save
     if system("sudo mkdir #{@dotaka}")
@@ -315,7 +325,10 @@ require "colorize"
         uninstall()
       when "-scan", "-sc"
         scan()
+      when "-remote"
+        remote()
       when "-set"
+
         set()
       else
         show(ARGV.first) #not a command.

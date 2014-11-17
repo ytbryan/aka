@@ -1,0 +1,288 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'commander/import'
+require 'highline/import'
+require 'net/scp'
+
+program :version, '0.1.1'
+program :description, 'aliases best friend'
+
+command :add do |c|
+  c.syntax = 'aka add [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Add
+  end
+end
+
+command :show do |c|
+  c.syntax = 'aka show [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Show
+  end
+end
+
+command :remove do |c|
+  c.syntax = 'aka remove [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Remove
+  end
+end
+
+command :find do |c|
+  c.syntax = 'aka find [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Find
+  end
+end
+
+command :edit do |c|
+  c.syntax = 'aka edit [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Edit
+  end
+end
+
+# command :remote do |c|
+#   c.syntax = 'aka remote [options]'
+#   c.summary = ''
+#   c.description = ''
+#   c.example 'description', 'command example'
+#   c.option '--ip String', String , 'Some switch that does something'
+#   c.option '--username String', String , 'Some switch that does something'
+#   c.option '--local String', String , 'Some switch that does something'
+#   c.option '--remote String', String , 'Some switch that does something'
+#   c.option '--pw String', String , 'Some switch that does something'
+#   c.option '--port Integer', Integer , 'Some switch that does something'
+#
+#   c.action do |args, options|
+#
+#     Net::SCP.upload!(options.ip.to_s,
+#                     options.username.to_s,
+#                     options.local.to_s,
+#                     options.remote.to_s,
+#                     :ssh => {
+#                        :port => 1229
+#                    })
+#   end
+# end
+
+command :group do |c|
+  c.syntax = 'aka group [options]'
+  c.summary = ''
+  c.action do |args, options|
+
+    # Do something or c.when_called Aka::Commands::Group
+  end
+end
+alias_command :g, :group
+
+command :commands do |c|
+  c.syntax = 'aka commands [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Commands
+  end
+end
+
+command :save do |c|
+  c.syntax = 'aka save [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Save
+  end
+end
+
+command :version do |c|
+  c.syntax = 'aka version [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Version
+  end
+end
+
+command :install do |c|
+  c.syntax = 'aka install [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Install
+  end
+end
+
+command :uninstall do |c|
+  c.syntax = 'aka uninstall [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Uninstall
+  end
+end
+
+command :open do |c|
+  c.syntax = 'aka open [options]'
+  c.summary = 'simply open the bashfile'
+  c.action do |args, options|
+    #write somewhere
+    write(args.first) if args.first
+  end
+end
+
+
+command :set do |c|
+  c.syntax = 'aka set [options]'
+  c.summary = 'set the path of your bash config file'
+  c.action do |args, options|
+    # FileUtils.mkdir("#{Dir.home}/.aka") if File.directory?("#{Dir.home}/.aka")
+    FileUtils.touch("#{Dir.home}/.aka/location") if File.exists?("#{Dir.home}/.aka/location")
+    File.write("#{Dir.home}/.aka/location", args.first) if File.exists?(args.first) #if the file exists
+  end
+end
+
+command :todos do |c|
+  c.syntax = 'aka todos [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Todos
+  end
+end
+
+command :scan do |c|
+  c.syntax = 'aka scan [options]'
+  c.summary = ''
+  c.description = ''
+  c.example 'description', 'command example'
+  c.option '--some-switch', 'Some switch that does something'
+  c.action do |args, options|
+    # Do something or c.when_called Aka::Commands::Scan
+  end
+end
+
+
+#aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
+command :beamback do |c|
+  c.syntax = 'aka beam [options]'
+  c.option '--from STRING', String, 'Some switch that does something'
+  c.option '--to STRING', String, 'Some switch that does something'
+  c.option '--of STRING', String, 'Some switch that does something'
+  c.action do |args, options|
+
+    if options.from and options.to and options.of
+      # if File.exists?(options.to.to_s)
+        arr = split_domain_user(options.to.to_s)
+        pw = ask "What's the password?"
+        result = Net::SCP.download!(arr[1], #remote
+                        arr.first,#username
+                        options.from.to_s, #remote_path
+                        options.of.to_s, #local_path
+                        :ssh => {:password => pw}) if pw
+
+      # else
+      #   puts "Cannot find #{options.from}"
+      # end
+    end
+
+  end
+end
+alias_command :bb, :beamback
+
+
+command :beam do |c|
+  c.syntax = 'aka beam [options]'
+  c.option '--from STRING', String, 'Some switch that does something'
+  c.option '--to STRING', String, 'Some switch that does something'
+  c.option '--of STRING', String, 'Some switch that does something'
+  c.action do |args, options|
+
+    if options.from and options.to and options.of
+      if File.exists?(options.from.to_s)
+
+        arr = split(options.to.to_s)
+        # puts arr
+        # puts options.from.to_s
+        # puts options.of.to_s
+
+        result = Net::SCP.upload!(arr[1], #remote
+                        arr.first, #username
+                        options.from.to_s, #local_path
+                        options.of.to_s, #remote_path
+                        :ssh => {:port => arr[2]})
+      else
+        puts "Cannot find #{options.from}"
+      end
+    end
+
+  end
+end
+alias_command :b, :beam
+
+private
+
+def present?(path)
+
+end
+
+def split_domain_user(fulldomain)
+  username = fulldomain.split("@").first
+  domain = fulldomain.split("@")[1]
+  return [username, domain]
+end
+
+def split(fulldomain)
+  username = fulldomain.split("@").first
+  domain = fulldomain.split("@")[1].split(":").first
+  port = fulldomain.split("@")[1].split(":")[1]
+  return [username, domain, port]
+end
+
+def makeGroup
+
+  #
+  alias_path = ".aka/alias.yml"
+  group_path = ".aka/group.yml"
+  FileUtils.touch(group_path) if File.exist?(group_path)
+  #write yaml file
+  File.open(group_path, 'w') do |f|
+    f.write("")
+  end
+  #write to group file
+  #backup group
+  #make .aka file
+
+end
