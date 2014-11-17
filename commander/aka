@@ -196,7 +196,8 @@ end
 
 
 #aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
-command :beamback do |c|
+# ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
+command :dl do |c|
   c.syntax = 'aka beam [options]'
   c.option '--from STRING', String, 'Some switch that does something'
   c.option '--to STRING', String, 'Some switch that does something'
@@ -204,24 +205,17 @@ command :beamback do |c|
   c.action do |args, options|
 
     if options.from and options.to and options.of
-      # if File.exists?(options.to.to_s)
-        arr = split_domain_user(options.to.to_s)
+        arr = split(options.to.to_s)
         pw = ask "What's the password?"
         result = Net::SCP.download!(arr[1], #remote
                         arr.first,#username
                         options.from.to_s, #remote_path
                         options.of.to_s, #local_path
-                        :ssh => {:password => pw}) if pw
-
-      # else
-      #   puts "Cannot find #{options.from}"
-      # end
+                        :ssh => {:password => pw,
+                          :port => arr[2]}) if pw
     end
-
   end
 end
-alias_command :bb, :beamback
-
 
 command :beam do |c|
   c.syntax = 'aka beam [options]'
