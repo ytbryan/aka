@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 require 'rubygems'
 require 'commander/import'
 require 'highline/import'
@@ -10,45 +9,31 @@ program :description, 'aliases\' best friend'
 
 command :add do |c|
   c.syntax = 'aka add [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Add
+    add(args.first) if args.first
   end
 end
+alias_command :a, :add
 
 command :show do |c|
   c.syntax = 'aka show [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Show
+    show(args.first) if args.first
   end
 end
+alias_command :s, :show
 
 command :remove do |c|
   c.syntax = 'aka remove [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Remove
+    remove(args.first) if args.first
   end
 end
 
 command :find do |c|
   c.syntax = 'aka find [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Find
+    find()
   end
 end
 
@@ -99,12 +84,8 @@ alias_command :g, :group
 
 command :commands do |c|
   c.syntax = 'aka commands [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Commands
+    commands()
   end
 end
 
@@ -172,17 +153,6 @@ command :set do |c|
   end
 end
 
-command :todos do |c|
-  c.syntax = 'aka todos [options]'
-  c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
-  c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Todos
-  end
-end
-
 command :scan do |c|
   c.syntax = 'aka scan [options]'
   c.summary = ''
@@ -190,7 +160,7 @@ command :scan do |c|
   c.example 'description', 'command example'
   c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
-    # Do something or c.when_called Aka::Commands::Scan
+    scan()
   end
 end
 
@@ -226,12 +196,7 @@ command :beam do |c|
 
     if options.from and options.to and options.of
       if File.exists?(options.from.to_s)
-
         arr = split(options.to.to_s)
-        # puts arr
-        # puts options.from.to_s
-        # puts options.of.to_s
-
         result = Net::SCP.upload!(arr[1], #remote
                         arr.first, #username
                         options.from.to_s, #local_path
@@ -361,7 +326,6 @@ def remove(input)
     puts "#{@pwd} cannot be found.".red
   end
 end
-
 
 def find()
   puts "Press q to cancel. or press ctrl+z to stop".red
