@@ -170,7 +170,7 @@ require 'colorize'
     puts "TODO: list top five aliases"
   end
 
-
+  #moved
   def history
     if content = File.open(bash_history_path).read
       puts ".bash_history is available"
@@ -190,6 +190,7 @@ require 'colorize'
     end
   end
 
+  #moved
   def add(input)
     if input and show_alias(input) == false
       array = input.split("=")
@@ -201,6 +202,7 @@ require 'colorize'
     end
   end
 
+  #moved
   def find()
     puts "Press q to cancel. or press ctrl+z to stop".red
     input = ask "Which alias to find: "
@@ -223,6 +225,7 @@ require 'colorize'
     end
   end
 
+  #moved
   def remove(input)
     if content=File.open(get_bash_profile_path).read
       content.gsub!(/\r\n?/, "\n")
@@ -242,6 +245,7 @@ require 'colorize'
     end
   end
 
+  #moved
   def show_alias(argument)
     if content = File.open(get_bash_profile_path).read
       content.gsub!(/\r\n?/, "\n")
@@ -262,6 +266,7 @@ require 'colorize'
     return false
   end
 
+  #moved
   def show(argument)
     if content = File.open(get_bash_profile_path).read
       content.gsub!(/\r\n?/, "\n")

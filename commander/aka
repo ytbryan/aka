@@ -5,8 +5,8 @@ require 'commander/import'
 require 'highline/import'
 require 'net/scp'
 
-program :version, '0.1.1'
-program :description, 'aliases best friend'
+program :version, '0.2.8'
+program :description, 'aliases\' best friend'
 
 command :add do |c|
   c.syntax = 'aka add [options]'
@@ -278,5 +278,179 @@ def makeGroup
   #write to group file
   #backup group
   #make .aka file
+end
 
+def add(input)
+  if input and show_alias(input) == false
+    array = input.split("=")
+    full_command = "\nalias #{array.first}='#{array[1]}'"
+    File.open(get_bash_profile_path, 'a') { |file| file.write(full_command) }
+    puts "Added: #{full_command} to #{get_bash_profile_path}" and reload()
+  else
+    puts "The alias is already present."
+  end
+end
+
+def write(str, path)
+  File.open(path, 'w') { |file|
+    file.write(str)
+  }
+end
+
+def get_bash_profile_path
+  return "#{Dir.home}/.bash_profile"
+end
+
+def show_alias(argument)
+  if content = File.open(get_bash_profile_path).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 and value.first == "alias"
+        answer = value[1].split("=")
+        if found?(answer.first, argument.split("=").first, line)
+          return true
+        end
+      end
+    }
+  else
+    puts "#{@pwd} cannot be found.".red
+    return false
+  end
+  return false
+end
+
+def show(argument)
+  if content = File.open(get_bash_profile_path).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 and value.first == "alias"
+        answer = value[1].split("=")
+        if found?(answer.first, argument, line)
+          return true
+        end
+      end
+    }
+  else
+    puts "#{@pwd} cannot be found.".red
+    return false
+  end
+  puts "No alias is found.".red
+  return false
+end
+
+
+def remove(input)
+  if content=File.open(get_bash_profile_path).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array= content.split("\n")
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 and value.first == "alias"
+        answer = value[1].split("=")
+        if answer.first == input
+          content_array.delete_at(index) and write_new_file(content_array)
+          puts "Removed: #{line} from #{Dir.home}/.bash_profile".red
+        end
+      end
+    }
+  else
+    puts "#{@pwd} cannot be found.".red
+  end
+end
+
+
+def find()
+  puts "Press q to cancel. or press ctrl+z to stop".red
+  input = ask "Which alias to find: "
+  if input == "q"
+    puts "Exit." and exit()
+  end
+
+  if content=File.open(get_bash_profile_path).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 and value.first == "alias"
+        array = value[1].split("=")
+        if array.first == input
+          content_array.delete_at(index) and write_new_file(content_array)
+        end
+      end
+    }
+  end
+end
+
+#moved
+def history
+  if content = File.open(bash_history_path).read
+    puts ".bash_history is available"
+    count=0
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+    content_array.each_with_index { |line, index|
+      array = line.split(" ")
+      if array.first == "alias"
+        count += 1
+      end
+      puts "#{index+1} #{line}"
+    }
+    puts "There are #{count} histories"
+  else
+    puts ".bash_history is not available".red
+  end
+end
+
+#moved
+def uninstall
+  input = ""
+  while input == ""
+    input = ask "Remove aka? (y/N)".red
+    if input == "N"
+      puts "cancel."
+    elsif input == "y"
+      system("sudo rm #{@localbin}/aka")
+      puts "aka removed from #{@localbin}".red
+    end
+  end
+end
+
+def set()
+  puts "TODO: path"
+  system("touch ~/.aka/path")
+  if content = File.open(bash_history_path).read
+  end
+end
+
+def version
+  puts ""
+  puts "aka #{@version} - #{@last_update}"
+  puts "by #{@author} - #{@contact}"
+  puts ""
+end
+
+def footer
+  puts ""
+  puts "Check out 'aka -help' for more information about specific commands"
+  puts "For full documentation, see: http://github.com/ytbryan/aka#readme"
+  puts ""
+end
+
+def commands
+  puts ""
+  puts "Some useful aka commands include: "
+  puts ""
+  puts "-s, -save        save a copy of your dotfile"
+  puts "-h, -help        show a list of options and commands"
+  puts "-set             set the path to your dotfile"
+  puts "-rm, -remove     remove an alias"
+  puts "-v, -version     show version of aka"
+  puts "-c, -commands    list all the commands"
+  puts "-un, -uninstall  uninstall aka"
+  puts "-e, -edit        edit aliases"
+  # puts "-ex, -example    show some example"
 end
