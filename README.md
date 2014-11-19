@@ -1,6 +1,4 @@
-![demo](images/aka.gif)
-
-#AKA - Aliases' Best Friend
+## AKA - Aliases' Best Friend
 Add, edit, remove and manage aliases from terminal.
 
 #### how to download and install
