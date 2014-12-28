@@ -6,6 +6,12 @@ Add, edit, remove and manage aliases from terminal.
 curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
 ```
 
+#### install the dependencies for aka
+```
+aka install #this will bundle install the dependencies
+```
+
+
 #### TODOS
 - move the script to rubygems
 
