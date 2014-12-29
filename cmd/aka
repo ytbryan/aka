@@ -10,22 +10,22 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.15'
-program :last_update, '28 Dec 2014'
+program :version, '0.2.16'
+program :last_update, '29 Dec 2014'
 program :description, 'aliases\' best friend'
 
 command :add do |c|
   c.syntax = 'aka add [options]'
+  c.summary = 'add an alias'
   c.action do |args, options|
     add(args.first) if args.first
   end
 end
 alias_command :a, :add
 
-
-
 command :show do |c|
   c.syntax = 'aka show [options]'
+  c.summary = 'show an alias'
   c.action do |args, options|
     show(args.first) if args.first
   end
@@ -34,6 +34,7 @@ alias_command :s, :show
 
 command :remove do |c|
   c.syntax = 'aka remove [options]'
+  c.summary = 'remove an alias'
   c.action do |args, options|
     remove(args.first) if args.first
   end
@@ -41,6 +42,7 @@ end
 
 command :rm do |c|
   c.syntax = 'aka remove [options]'
+  c.summary = 'remove an alias'
   c.action do |args, options|
     remove(args.first) if args.first
   end
@@ -48,10 +50,13 @@ end
 
 command :find do |c|
   c.syntax = 'aka find [options]'
+  c.summary = 'find an alias'
   c.action do |args, options|
-    find()
+    find(args.first)
   end
 end
+alias_command :f, :find
+
 
 command :edit do |c|
   c.syntax = 'aka edit [options]'
@@ -337,7 +342,7 @@ command :dl do |c|
         value = line.split(" ")
         if value.length > 1 and value.first == "alias"
           answer = value[1].split("=")
-          if found?(answer.first, argument.split("=").first, line)
+          if found?(answer.first, argument.split("=").first, line) == true
             return true
           end
         end
@@ -390,26 +395,32 @@ command :dl do |c|
     end
   end
 
-  def find
-    puts "Press q to cancel. or press ctrl+z to stop".red
-    input = ask "Which alias to find: "
-    if input == "q"
-      puts "Exit." and exit()
+  def find input
+    if input == nil
+      puts "Press q to cancel. or press ctrl+z to stop".red
+      input = ask "Which alias to find: (q to quit)"
+      if input == "q"
+        puts "Exit." and exit()
+      end
     end
 
+    founded = false
     if content=File.open(get_bash_profile_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 and value.first == "alias"
-          array = value[1].split("=")
-          if array.first == input
-            content_array.delete_at(index) and write_new_file(content_array)
+          answer = value[1].split("=")
+          if found?(answer.first, input, line) == true
+            founded = true
           end
         end
       }
+
+      puts "nothing is found." if founded == false
     end
+
   end
 
   #moved
@@ -483,10 +494,10 @@ command :dl do |c|
   end
 
   def found? answer, argument, line
-    # def found?(answer,argument,line)
-    true and puts "Found -> " + line.red if answer == argument
-    # if answer == argument
-    #   puts "Found -> " + line.red
-    #   return true
-    # end
+    if answer == argument
+      puts "Found -> " + line.red
+      return true
+    else
+      return false
+    end
   end
