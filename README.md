@@ -1,5 +1,5 @@
 ## AKA - Aliases' Best Friend
-Add, edit, remove and manage aliases from terminal.
+Add, edit, remove and manage aliases from terminal. Making it slightly easier to manage your aliases.
 
 #### how to download and install
 ```
@@ -10,6 +10,13 @@ Add, edit, remove and manage aliases from terminal.
 ```
 aka install
 ```
+
+#### update your aka
+```
+aka update
+aka version
+```
+
 
 #### TODOS
 - move the script to rubygems

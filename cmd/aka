@@ -10,7 +10,7 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.20'
+program :version, '0.2.21'
 program :last_update, '30 Dec 2014' #not going to update
 program :description, 'aliases\' best friend'
 
