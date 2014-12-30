@@ -3,14 +3,13 @@ Add, edit, remove and manage aliases from terminal.
 
 #### how to download and install
 ```
-curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
+  curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
 ```
 
 #### bundle install dependencies of aka
 ```
 aka install
 ```
-
 
 #### TODOS
 - move the script to rubygems

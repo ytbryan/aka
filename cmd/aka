@@ -10,8 +10,8 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.16'
-program :last_update, '29 Dec 2014'
+program :version, '0.2.18'
+program :last_update, '30 Dec 2014' #not going to update
 program :description, 'aliases\' best friend'
 
 command :add do |c|
@@ -27,10 +27,21 @@ command :show do |c|
   c.syntax = 'aka show [options]'
   c.summary = 'show an alias'
   c.action do |args, options|
+    # puts args.first
     show(args.first) if args.first
   end
 end
 alias_command :s, :show
+
+command :find do |c|
+  c.syntax = 'aka find [options]'
+  c.summary = 'find an alias'
+  c.action do |args, options|
+    # puts args.first
+    find(args.first) if args.first
+  end
+end
+alias_command :f, :find
 
 command :remove do |c|
   c.syntax = 'aka remove [options]'
@@ -48,20 +59,19 @@ command :rm do |c|
   end
 end
 
-command :find do |c|
-  c.syntax = 'aka find [options]'
-  c.summary = 'find an alias'
+command :undo do |c|
+  c.syntax = 'aka undo [options]'
+  c.summary = 'undo a removal of alias'
   c.action do |args, options|
-    find(args.first)
+    puts "this undo"
   end
 end
-alias_command :f, :find
-
 
 command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.action do |args, options|
-
+    puts args.first
+    puts "first find it, then change it"
   end
 end
 
@@ -91,40 +101,50 @@ end
 
 command :group do |c|
   c.syntax = 'aka group [options]'
-  c.summary = ''
+  c.summary = 'create a new group for aliases'
   c.action do |args, options|
 
   end
 end
 alias_command :g, :group
 
-command :commands do |c|
+command :command do |c|
   c.syntax = 'aka commands [options]'
+  c.summary = 'show the list of commands'
   c.action do |args, options|
     commands()
   end
 end
 
-command :save do |c|
-  c.syntax = 'aka save [options]'
+command :cmd do |c|
+  c.syntax = 'aka commands [options]'
+  c.summary = 'show the list of commands'
   c.action do |args, options|
-
+    commands()
   end
 end
+
+# command :save do |c|
+#   c.syntax = 'aka save [options]'
+#   c.action do |args, options|
+#   end
+# end
 
 command :version do |c|
   c.syntax = 'aka version'
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
+  c.summary = 'show the version of this aka'
   c.action do |args, options|
     version()
+    puts ""
   end
 end
+alias_command :v, :version
 
 command :update do |c|
   c.syntax = 'aka update [options]'
   c.summary = 'update the old copy of aka to a newer one'
   c.action do |args, options|
+    puts "shows the version number"
     #check the github for newer copy.
     #if this is newer
     #update
@@ -132,6 +152,7 @@ command :update do |c|
     #print out a message
   end
 end
+
 alias_command :u, :update
 
 
