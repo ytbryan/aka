@@ -124,12 +124,6 @@ command :cmd do |c|
   end
 end
 
-# command :save do |c|
-#   c.syntax = 'aka save [options]'
-#   c.action do |args, options|
-#   end
-# end
-
 command :version do |c|
   c.syntax = 'aka version'
   c.summary = 'show the version of this aka'
@@ -144,7 +138,13 @@ command :update do |c|
   c.syntax = 'aka update [options]'
   c.summary = 'update the old copy of aka to a newer one'
   c.action do |args, options|
-    puts "shows the version number"
+    # puts "shows the version number"
+    # github_version = 1.1.1
+    # #get the last value and compare
+    #
+    # #if it is ask for update
+    # answer = ask "Do you want to update to #{github_version} (y/N)?"
+    update()
     #check the github for newer copy.
     #if this is newer
     #update
@@ -209,7 +209,6 @@ command :open do |c|
   c.syntax = 'aka open [options]'
   c.summary = 'simply open the bashfile'
   c.action do |args, options|
-    #write somewhere
     write(args.first) if args.first
   end
 end
@@ -228,9 +227,6 @@ end
 command :scan do |c|
   c.syntax = 'aka scan [options]'
   c.summary = ''
-  c.description = ''
-  c.example 'description', 'command example'
-  c.option '--some-switch', 'Some switch that does something'
   c.action do |args, options|
     scan()
   end
@@ -521,4 +517,11 @@ command :dl do |c|
     else
       return false
     end
+  end
+
+  def update
+    #update from github
+
+    puts "check ...."
+    system("sudo rm -rf /usr/local/bin/aka; curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/cmd/aka; chmod 755 /usr/local/bin/aka") #download the ruby file into _plugins
   end
