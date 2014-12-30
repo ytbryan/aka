@@ -10,7 +10,7 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.18'
+program :version, '0.2.20'
 program :last_update, '30 Dec 2014' #not going to update
 program :description, 'aliases\' best friend'
 
@@ -520,8 +520,5 @@ command :dl do |c|
   end
 
   def update
-    #update from github
-
-    puts "check ...."
     system("sudo rm -rf /usr/local/bin/aka; curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/cmd/aka; chmod 755 /usr/local/bin/aka") #download the ruby file into _plugins
   end
