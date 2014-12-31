@@ -10,8 +10,8 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.21'
-program :last_update, '30 Dec 2014' #not going to update
+program :version, '0.2.23'
+program :last_update, '31 Dec 2014' #not going to update
 program :description, 'aliases\' best friend'
 
 command :add do |c|
@@ -70,9 +70,16 @@ end
 command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.action do |args, options|
-    input = ask "enter a new command for #{}?\n"
-    puts args.first
-    puts "first find it, then change it"
+    #search the alias
+    if show_alias(args.first)
+      input = ask "Enter a new command for alias '#{args.first}'?\n"
+      puts "#{input} confirm?"
+    else
+      puts "alias '#{args.first}' cannot be found".red
+    end
+    #if present, pop the question
+
+    #if ok, change the alias
   end
 end
 

@@ -17,7 +17,6 @@ aka update
 aka version
 ```
 
-
 #### TODOS
 - move the script to rubygems
 
