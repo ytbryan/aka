@@ -10,7 +10,7 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.23'
+program :version, '0.2.24'
 program :last_update, '31 Dec 2014' #not going to update
 program :description, 'aliases\' best friend'
 
@@ -27,7 +27,6 @@ command :show do |c|
   c.syntax = 'aka show [options]'
   c.summary = 'show an alias'
   c.action do |args, options|
-    # puts args.first
     show(args.first) if args.first
   end
 end
@@ -37,7 +36,6 @@ command :find do |c|
   c.syntax = 'aka find [options]'
   c.summary = 'find an alias'
   c.action do |args, options|
-    # puts args.first
     find(args.first) if args.first
   end
 end
@@ -59,14 +57,6 @@ command :rm do |c|
   end
 end
 
-command :undo do |c|
-  c.syntax = 'aka undo [options]'
-  c.summary = 'undo a removal of alias'
-  c.action do |args, options|
-    puts "this undo"
-  end
-end
-
 command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.action do |args, options|
@@ -78,15 +68,12 @@ command :edit do |c|
       puts "alias '#{args.first}' cannot be found".red
     end
     #if present, pop the question
-
     #if ok, change the alias
   end
 end
 
 # command :remote do |c|
 #   c.syntax = 'aka remote [options]'
-#   c.summary = ''
-#   c.description = ''
 #   c.example 'description', 'command example'
 #   c.option '--ip String', String , 'Some switch that does something'
 #   c.option '--username String', String , 'Some switch that does something'
@@ -106,15 +93,6 @@ end
 #                    })
 #   end
 # end
-
-command :group do |c|
-  c.syntax = 'aka group [options]'
-  c.summary = 'create a new group for aliases'
-  c.action do |args, options|
-
-  end
-end
-alias_command :g, :group
 
 command :command do |c|
   c.syntax = 'aka commands [options]'
@@ -146,18 +124,7 @@ command :update do |c|
   c.syntax = 'aka update [options]'
   c.summary = 'update the old copy of aka to a newer one'
   c.action do |args, options|
-    # puts "shows the version number"
-    # github_version = 1.1.1
-    # #get the last value and compare
-    #
-    # #if it is ask for update
-    # answer = ask "Do you want to update to #{github_version} (y/N)?"
     update()
-    #check the github for newer copy.
-    #if this is newer
-    #update
-    #else
-    #print out a message
   end
 end
 
@@ -171,12 +138,7 @@ alias_command :u, :update
 command :build do |c|
   c.syntax = 'aka build [options]'
   c.action do |args, options|
-    #build by printing the version number
-
-    #test the code
-
-    #commit and save
-
+    build()
   end
 end
 alias_command :b, :build
@@ -232,15 +194,6 @@ command :set do |c|
   end
 end
 
-command :scan do |c|
-  c.syntax = 'aka scan [options]'
-  c.summary = ''
-  c.action do |args, options|
-    scan()
-  end
-end
-
-
 #aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
 # ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
 command :dl do |c|
@@ -286,6 +239,40 @@ command :dl do |c|
     end
   end
   alias_command :b, :beam
+
+  #############################
+  ## Experimental
+  #############################
+
+  # command :undo do |c|
+  #   c.syntax = 'aka undo [options]'
+  #   c.summary = 'undo a removal of alias'
+  #   c.action do |args, options|
+  #     puts "this undo"
+  #   end
+  # end
+
+  # command :scan do |c|
+  #   c.syntax = 'aka scan [options]'
+  #   c.summary = ''
+  #   c.action do |args, options|
+  #     scan()
+  #   end
+  # end
+
+  # command :group do |c|
+  #   c.syntax = 'aka group [options]'
+  #   c.summary = 'create a new group for aliases'
+  #   c.action do |args, options|
+  #
+  #   end
+  # end
+  # alias_command :g, :group
+
+
+  #############################
+  ## Methods
+  #############################
 
   private
 
@@ -529,4 +516,8 @@ command :dl do |c|
 
   def update
     system("sudo rm -rf /usr/local/bin/aka; curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/cmd/aka; chmod 755 /usr/local/bin/aka") #download the ruby file into _plugins
+  end
+
+  def build
+    write(program(:version), './VERSION')
   end
