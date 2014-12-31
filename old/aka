@@ -1,0 +1,342 @@
+#!/usr/bin/env ruby
+
+require 'highline/import'
+require 'colorize'
+# require 'net-scp'
+
+  @last_update="Sept 22, 2014"
+  @version = "1.0.0"
+  @author = "ytbryan"
+  @contact = "twitter.com/ytbryan"
+  @dotaka = "~/.aka"
+  @localbin = "/usr/local/bin"
+  @pwd = ""
+
+
+  def remote
+    # Net::SCP.upload!("remote.host.com",
+    #                   "username",
+    #               "/local/path", "/remote/path",
+    #             :ssh => { :password => "password" })
+  end
+
+
+  def save
+    if system("sudo mkdir #{@dotaka}")
+      puts "Directory created"
+    else
+      puts "Directory already created".red
+    end
+  end
+
+  def help
+    version()
+    commands()
+    footer()
+  end
+
+  def found?(answer,argument,line)
+    if answer == argument
+      puts "Found -> " + line.red
+      return true
+    end
+  end
+
+  def write_new_file(array)
+    File.open(get_bash_profile_path, 'w') { |file|
+      array.each do |line|
+        file.write(line + "\n")
+      end
+    }
+  end
+
+  def write(str, path)
+    File.open(path, 'w') { |file|
+        file.write(str)
+    }
+  end
+
+  def get_bash_profile_path
+    return "#{Dir.home}/.bash_profile"
+  end
+
+
+
+  def footer
+    puts ""
+    puts "Check out 'aka -help' for more information about specific commands"
+    puts "For full documentation, see: http://github.com/ytbryan/aka#readme"
+    puts ""
+  end
+
+  def commands
+    puts ""
+    puts "Some useful aka commands include: "
+    puts ""
+    puts "-s, -save        save a copy of your dotfile"
+    puts "-h, -help        show a list of options and commands"
+    puts "-set             set the path to your dotfile"
+    puts "-rm, -remove     remove an alias"
+    puts "-v, -version     show version of aka"
+    puts "-c, -commands    list all the commands"
+    puts "-un, -uninstall  uninstall aka"
+    puts "-e, -edit        edit aliases"
+    # puts "-ex, -example    show some example"
+  end
+
+  def version
+    puts ""
+    puts "aka #{@version} - #{@last_update}"
+    puts "by #{@author} - #{@contact}"
+    puts ""
+  end
+
+  def set()
+    puts "TODO: path"
+    system("touch ~/.aka/path")
+    if content = File.open(bash_history_path).read
+    end
+  end
+
+  def uninstall
+    input = ""
+    while input == ""
+      input = ask "Remove aka? (y/N)".red
+      if input == "N"
+        puts "cancel."
+      elsif input == "y"
+        system("sudo rm #{@localbin}/aka")
+        puts "aka removed from #{@localbin}".red
+      end
+    end
+  end
+
+  # def scan
+  #
+  #   if content=File.open(get_bash_profile_path).read
+  #     content.gsub!(/\r\n?/, "\n")
+  #     content_array = content.split("\n")
+  #     content_array.each_with_index { |line, index|
+  #       first_value = line.split(" ")
+  #       if first_value.length > 1 and first_value.first == "alias"
+  #         array = first_value[1].split("=")
+  #         content_array.each_with_index { |line_2, index_2|
+  #           second_value = line_2.split(" ")
+  #           if index_2 < index and second_value.length > 1 and second_value.first == "alias"
+  #               array_2 = second_value[1].split("=")
+  #               if index_2 != index and array_2.first == array.first
+  #                 input = ask "Delete line #{index_2+1}: (y/N) \n#{index+1}: #{line} \n #{index_2+1}: #{line_2} ".red
+  #                 # if input == "y"
+  #                 #   content_array.delete_at(index_2)
+  #                 #   puts "Removed!"
+  #                 # end
+  #               end
+  #           end
+  #         }
+  #       end
+  #     }
+  #   end
+  # end
+
+  def edit
+    puts "edit mode"
+    #find the name
+
+    #then ask "do you want to edit this?"
+
+    # take the new one and replace
+  end
+
+  def todos
+    puts ""
+    puts "A lists of todos:"
+    puts ""
+    puts "- Complete README"
+    puts "- push to github"
+
+  end
+
+  # def example #show example on how to use it
+  #   puts ""
+  #   puts "Try these commands: "
+  #   puts "aka clone=\"git clone\"" + "#then try using clone instead of git clone".blue
+  #   puts "aka pull=\"git pull\""
+  #   puts "aka -rm pull"
+  #   puts "aka -save"
+  #   puts "aka -scan #or aka -sc"
+  # end
+
+  def list
+    puts "TODO: list top five aliases"
+  end
+
+  #moved
+  def history
+    if content = File.open(bash_history_path).read
+      puts ".bash_history is available"
+      count=0
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      content_array.each_with_index { |line, index|
+        array = line.split(" ")
+        if array.first == "alias"
+          count += 1
+        end
+        puts "#{index+1} #{line}"
+      }
+      puts "There are #{count} histories"
+    else
+      puts ".bash_history is not available".red
+    end
+  end
+
+  #moved
+  def add(input)
+    if input and show_alias(input) == false
+      array = input.split("=")
+      full_command = "\nalias #{array.first}='#{array[1]}'"
+      File.open(get_bash_profile_path, 'a') { |file| file.write(full_command) }
+      puts "Added: #{full_command} to #{get_bash_profile_path}" and reload()
+    else
+      puts "The alias is already present."
+    end
+  end
+
+  #moved
+  def find()
+    puts "Press q to cancel. or press ctrl+z to stop".red
+    input = ask "Which alias to find: "
+    if input == "q"
+      puts "Exit." and exit()
+    end
+
+    if content=File.open(get_bash_profile_path).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "alias"
+            array = value[1].split("=")
+            if array.first == input
+              content_array.delete_at(index) and write_new_file(content_array)
+            end
+        end
+      }
+    end
+  end
+
+  #moved
+  def remove(input)
+    if content=File.open(get_bash_profile_path).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array= content.split("\n")
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "alias"
+            answer = value[1].split("=")
+            if answer.first == input
+              content_array.delete_at(index) and write_new_file(content_array)
+              puts "Removed: #{line} from #{Dir.home}/.bash_profile".red
+            end
+        end
+      }
+    else
+      puts "#{@pwd} cannot be found.".red
+    end
+  end
+
+  #moved
+  def show_alias(argument)
+    if content = File.open(get_bash_profile_path).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "alias"
+          answer = value[1].split("=")
+          if found?(answer.first, argument.split("=").first, line)
+             return true
+          end
+        end
+      }
+    else
+      puts "#{@pwd} cannot be found.".red
+      return false
+    end
+    return false
+  end
+
+  #moved
+  def show(argument)
+    if content = File.open(get_bash_profile_path).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "alias"
+          answer = value[1].split("=")
+          if found?(answer.first, argument, line)
+             return true
+          end
+        end
+      }
+    else
+      puts "#{@pwd} cannot be found.".red
+      return false
+    end
+    puts "No alias is found.".red
+    return false
+  end
+
+  ####################
+  ### MAIN
+  ####################
+  if ARGV.count == 0
+    help()
+  else
+    value = ARGV.first.split("=")
+    if value.count > 1 #a command.
+      add(ARGV.first)
+    else
+      case (ARGV.first)
+      when "-remove", "-rm"
+        if (ARGV.count > 1)
+          remove(ARGV[1])
+        else
+          puts "wrong syntax"
+        end
+
+      when "-edit", "-e"
+        edit()
+      when "-help", "-h"
+        help()
+      when "-version", "-v"
+        version()
+      when "-list", "-l"
+        list()
+      when "-commands", "-c"
+        commands()
+      when "-list", "-l"
+        list()
+      when "-save", "-s"
+        save()
+      when "-todos", "-td"
+        todos()
+      when "-upgrade", "-up"
+        upgrade()
+      when "-example", "-e"
+        example()
+      when "-uninstall", "-un"
+        uninstall()
+      when "-scan", "-sc"
+        scan()
+      when "-remote"
+        remote()
+      when "-set"
+
+        set()
+      else
+        show(ARGV.first) #not a command.
+      end
+    end
+  end

@@ -70,6 +70,7 @@ end
 command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.action do |args, options|
+    input = ask "enter a new command for #{}?\n"
     puts args.first
     puts "first find it, then change it"
   end
