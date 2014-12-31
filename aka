@@ -10,7 +10,7 @@ default_command :version
 # always_trace!
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.24'
+program :version, '0.2.25'
 program :last_update, '31 Dec 2014' #not going to update
 program :description, 'aliases\' best friend'
 
@@ -182,7 +182,7 @@ command :open do |c|
     write(args.first) if args.first
   end
 end
-
+alias_command :o, :open
 
 command :set do |c|
   c.syntax = 'aka set [options]'
@@ -520,4 +520,5 @@ command :dl do |c|
 
   def build
     write(program(:version), './VERSION')
+    puts "updated to #{program(:version)}"
   end

@@ -1,17 +1,17 @@
 ## AKA - Aliases' Best Friend
 Add, edit, remove and manage aliases from terminal. Making it slightly easier to manage your aliases.
 
-#### how to download and install
+#### Download and use
 ```
   curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
 ```
 
-#### bundle install dependencies of aka
+#### Bundle install dependencies of aka
 ```
 aka install
 ```
 
-#### update your aka
+#### Update aka
 ```
 aka update
 aka version
