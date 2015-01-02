@@ -6,16 +6,24 @@ require 'net/scp'
 require 'colorize'
 
 default_command :version #note that this is calling version(), not program(:version)
+
 # always_trace
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.29'
+program :version, '0.2.30'
 program :last_update, '01 Jan 2015' #not going to update
 program :description, 'add, edit, manage aliases from terminal.'
-program :location, ".bash_profile" #bash
-# program :location, ".zshrc" for z shell
+# program :location, ".bash_profile" #bash
+program :location, ".zshrc" #for z shell
 # program :location, ".bashrc" for bashrc
+
+command :switch do |c|
+  c.syntax = 'aka switch [options]'
+  c.summary = 'switch to zsh'
+  c.action do |args, options|
+  end
+end
 
 command :add do |c|
   c.syntax = 'aka add [options]'
@@ -103,7 +111,7 @@ command :count do |c|
   c.syntax = 'aka count [options]'
   c.summary = 'count number of alias'
   c.action do |args, options|
-    puts "#{count()} aliases."
+    puts "#{count()} aliases from #{Dir.home}/#{program(:location)}"
   end
 end
 
@@ -125,7 +133,7 @@ command :copy do |c|
   c.summary = 'copy a local copy of aka to /usr/local/bin'
   c.action do |args, options|
     result = system("sudo cp aka /usr/local/bin")
-    puts "New aka #{program(:version)} installed at #{Time.now.strftime("%I:%M%p") }.".red if result == true
+    puts "a new copy of aka #{program(:version)} is installed to /usr/local/bin \nat #{Time.now.strftime("%I:%M%p, %A, %d %b %Y") }.".red if result == true
     puts "" if result == true
   end
 end
@@ -512,4 +520,11 @@ end
       content_array= content.split("\n")
       return content_array.count
     end
+  end
+
+
+  def location
+    #read from file
+
+    #return the value
   end
