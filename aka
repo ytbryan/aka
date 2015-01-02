@@ -7,13 +7,13 @@ require 'colorize'
 
 default_command :version #note that this is calling version(), not program(:version)
 # always_trace
+program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.28'
+program :version, '0.2.29'
 program :last_update, '01 Jan 2015' #not going to update
 program :description, 'add, edit, manage aliases from terminal.'
 program :location, ".bash_profile" #bash
-program :help_formatter, :compact
 # program :location, ".zshrc" for z shell
 # program :location, ".bashrc" for bashrc
 
@@ -21,8 +21,8 @@ command :add do |c|
   c.syntax = 'aka add [options]'
   c.summary = 'add an alias'
   c.action do |args, options|
-    add(args.first) if args.first
-    reload_bash_file()
+    result = add(args.first) if args.first
+    reload_bash_file() if result == true
   end
 end
 
@@ -52,16 +52,6 @@ command :remove do |c|
 end
 alias_command :'rm', :remove
 
-
-# command :rm do |c|
-#   c.syntax = 'aka remove [options]'
-#   c.summary = 'remove an alias'
-#   c.action do |args, options|
-#     remove(args.first) if args.first
-#     reload_bash_file()
-#   end
-# end
-
 command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.summary = 'edit the alias'
@@ -90,15 +80,6 @@ command :command do |c|
   end
 end
 alias_command :'cmd', :command
-
-
-# command :cmd do |c|
-#   c.syntax = 'aka commands [options]'
-#   c.summary = 'show the list of commands'
-#   c.action do |args, options|
-#     commands()
-#   end
-# end
 
 command :version do |c|
   c.syntax = 'aka version'
@@ -143,9 +124,9 @@ command :copy do |c|
   c.syntax = 'aka copy [options]'
   c.summary = 'copy a local copy of aka to /usr/local/bin'
   c.action do |args, options|
-    system("sudo cp aka /usr/local/bin")
-    puts "New aka #{program(:version)} installed at #{Time.now.strftime("%I:%M%p") }.".red
-    puts ""
+    result = system("sudo cp aka /usr/local/bin")
+    puts "New aka #{program(:version)} installed at #{Time.now.strftime("%I:%M%p") }.".red if result == true
+    puts "" if result == true
   end
 end
 
@@ -170,7 +151,7 @@ command :open do |c|
   c.syntax = 'aka open [options]'
   c.summary = 'simply open the bashfile'
   c.action do |args, options|
-    system("open ~/#{program(:location)}")
+    system("at  #{Dir.home}/#{program(:location)}")
   end
 end
 
@@ -186,23 +167,6 @@ end
 
 #aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
 # ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
-  # command :dl do |c|
-  #   c.syntax = 'aka dl [options]'
-  #   c.summary = 'download a file from server'
-  #   c.action do |args, options|
-  #     if options.from and options.to and options.of
-  #       arr = split(options.to.to_s)
-  #       pw = ask "What's the password?"
-  #       result = Net::SCP.download!(arr[1], #remote
-  #       arr.first,#username
-  #       options.from.to_s, #remote_path
-  #       options.of.to_s, #local_path
-  #       :ssh => {:password => pw,
-  #         :port => arr[2]}) if pw
-  #     end
-  #   end
-  # end
-
   command :download do |c|
     c.syntax = 'aka download [options]'
     c.summary = 'download a file from server'
@@ -241,29 +205,6 @@ end
 
       end
     end
-
-
-
-  # command :beam do |c|
-  #   c.syntax = 'aka beam [options]'
-  #   c.summary = 'upload a file to server'
-  #   c.action do |args, options|
-  #     if options.from and options.to and options.of
-  #       if File.exists?(options.from.to_s)
-  #         arr = split(options.to.to_s)
-  #         result = Net::SCP.upload!(arr[1], #remote
-  #         arr.first, #username
-  #         options.from.to_s, #local_path
-  #         options.of.to_s, #remote_path
-  #         :ssh => {:port => arr[2]})
-  #       else
-  #         puts "Cannot find #{options.from}"
-  #       end
-  #     end
-  #
-  #   end
-  # end
-  # alias_command :b, :beam
 
   #############################
   ## Tests
@@ -354,8 +295,10 @@ end
       full_command = "\nalias #{array.first}='#{array[1]}'"
       File.open(get_bash_profile_path, 'a') { |file| file.write(full_command) }
       puts "Added: #{full_command} to #{get_bash_profile_path}"
+      return true
     else
       puts "The alias is already present."
+      return false
     end
   end
 
