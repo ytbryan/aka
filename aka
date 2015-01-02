@@ -4,7 +4,7 @@ require 'commander/import'
 require 'highline/import'
 require 'net/scp'
 require 'colorize'
-# require 'open3'
+require 'open3'
 
 default_command :version
 
@@ -17,11 +17,20 @@ program :description, 'aliases\' best friend'
 program :location, ".bash_profile" #bash
 # program :location, ".zshrc" for z shell
 
+command :shout do |c|
+  c.action do |args, options|
+    # shout()
+    sendSignal()
+  end
+end
+
+
 command :add do |c|
   c.syntax = 'aka add [options]'
   c.summary = 'add an alias'
   c.action do |args, options|
     add(args.first) if args.first
+    sendSignal()
   end
 end
 alias_command :a, :add
@@ -70,7 +79,7 @@ command :edit do |c|
       if answer == 'y'
         remove(b) #remove that alias
         edit(input, b) #edit that alias
-        
+
       end
     else
       puts "alias '#{args.first}' cannot be found".red
@@ -346,7 +355,7 @@ command :dl do |c|
   # end
 
   def add input
-    if input and show_alias(input) == false and not_empty_alias(input) == false
+    if input and show_alias(input).first == false and not_empty_alias(input) == false
       array = input.split("=")
       full_command = "\nalias #{array.first}='#{array[1]}'"
       File.open(get_bash_profile_path, 'a') { |file| file.write(full_command) }
@@ -560,4 +569,21 @@ command :dl do |c|
 
   def edit newcommand, this_alias
     return append("alias " + this_alias + "='" + newcommand + "'", get_bash_profile_path )
+  end
+
+
+  def shout
+    Open3.popen3("alias janicegrace='echo rocks'")
+    # IO.popen("alias janicegrace='echo rocks'")
+    # exec("alias janicegrace='echo rocks'")
+    # system("alias janicegrace='echo rocks'")
+    # puts "hellos"
+    # system("echo hi")
+    # value = system("source ~/.bash_profile")
+    # puts value
+  end
+
+
+  def sendSignal
+    system("kill -SIGUSR1 #{Process.ppid}")
   end
