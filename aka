@@ -11,7 +11,7 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.30'
+program :version, '0.2.31'
 program :last_update, '01 Jan 2015' #not going to update
 program :description, 'add, edit, manage aliases from terminal.'
 # program :location, ".bash_profile" #bash
