@@ -11,17 +11,51 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.31'
+program :version, '0.2.32'
 program :last_update, '01 Jan 2015' #not going to update
 program :description, 'add, edit, manage aliases from terminal.'
 # program :location, ".bash_profile" #bash
 program :location, ".zshrc" #for z shell
 # program :location, ".bashrc" for bashrc
+program :path_to_location, ".location"
+
+command :eh do |c|
+  c.syntax = 'aka switch [options]'
+  c.summary = 'switch to zsh'
+  c.action do |args, options|
+    # system("echo $SHELL") >> answer
+    # puts answer
+    # puts "hello"
+  end
+end
+
+command :start do |c|
+  c.syntax = 'aka switch [options]'
+  c.summary = 'switch to zsh'
+  c.action do |args, options|
+    question = "Which bash file are you using?
+                1. .zsh
+                2. .bash_profile
+                3. .bashrc".pretty
+    input = ask question
+  end
+end
+
+command :read do |c|
+  c.syntax = 'aka switch [options]'
+  c.summary = 'switch to zsh'
+  c.action do |args, options|
+    readFromLocation()
+  end
+end
+
 
 command :switch do |c|
   c.syntax = 'aka switch [options]'
   c.summary = 'switch to zsh'
   c.action do |args, options|
+    write_to_location("hello")
+    # readFromLocation()
   end
 end
 
@@ -133,7 +167,7 @@ command :copy do |c|
   c.summary = 'copy a local copy of aka to /usr/local/bin'
   c.action do |args, options|
     result = system("sudo cp aka /usr/local/bin")
-    puts "a new copy of aka #{program(:version)} is installed to /usr/local/bin \nat #{Time.now.strftime("%I:%M%p, %A, %d %b %Y") }.".red if result == true
+    puts "a new copy of aka #{program(:version)} is installed to /usr/local/bin \nat #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}.".red if result == true
     puts "" if result == true
   end
 end
@@ -489,7 +523,6 @@ end
     puts "-c, -commands    list all the commands"
     puts "-un, -uninstall  uninstall aka"
     puts "-e, -edit        edit aliases"
-    # puts "-ex, -example    show some example"
   end
 
   def found? answer, argument, line
@@ -507,7 +540,7 @@ end
 
   def build
     write(program(:version), './VERSION')
-    puts "VERSION #{program(:version)} created."
+    puts "VERSION #{program(:version)} created at #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}"
   end
 
   def edit newcommand, this_alias
@@ -522,9 +555,45 @@ end
     end
   end
 
+  def insert_trap
+    trap = "sigusr1() { source ~/.bash_profile;  echo 'reloaded  ~/.bash_profile'; }\ntrap sigusr1 SIGUSR1"
+    append(trap, "#{Dir.home}/#{program(:location)}")
+  end
 
-  def location
-    #read from file
+  def aka_directory_exist?
+    return File.directory?("#{Dir.home}/.aka")
+  end
 
-    #return the value
+  def write_to_location address
+    if aka_directory_exist?
+      write("#{Dir.home}/#{program(:location)}","#{Dir.home}/.aka/#{program(:path_to_location)}")
+    else
+      puts ".aka not found.".red
+    end
+  end
+
+  def readFromLocation
+    if content = File.open("#{Dir.home}/.aka/#{program(:path_to_location)}").read
+      puts "#{Dir.home}/.aka/#{program(:path_to_location)} is available."
+      puts content
+      # count=0
+      # content.gsub!(/\r\n?/, "\n")
+      # content_array = content.split("\n")
+      # content_array.each_with_index { |line, index|
+      #   array = line.split(" ")
+      #   if array.first == "alias"
+      #     count += 1
+      #   end
+      #   puts "#{index+1} #{line}"
+      # }
+      # puts "There are #{count} histories"
+    else
+      puts "#{Dir.home}/.aka/#{program(:path_to_location)} is unavailable.".read
+    end
+  end
+
+  class String
+    def pretty
+      return self.gsub("\s\t\r\f", ' ').squeeze(' ')
+    end
   end
