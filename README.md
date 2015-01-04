@@ -1,5 +1,25 @@
 ## aka - alias' best friend
-add, edit, remove and manage alias from terminal.
+add, edit, remove and manage alias from terminal. Grow and expand your aliases with ease.
+
+#### Overview
+
+| features          | alias           | aka |
+| :-------------: |:-------------:| :-----:|
+| add alias         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
+| remove alias      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
+| show alias |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
+| edit alias |  ![No](img/no.png)       |    ![Yes](img/yes.png)  |
+| persistency        |![No](img/no.png)                    |    ![Yes](img/yes.png) |
+| auto reload bash File      |![No](img/no.png)  |    ![Yes](img/yes.png)|
+| Interact with bash file | ![No](img/no.png)     |    ![Yes](img/yes.png) |
+| Count | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+| History | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+| Upload To Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+| Download From Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+<!-- | Count |  ![No](img/no.png)       |    ![Yes](img/yes.png) |
+| Count |  ![No](img/no.png)       |    ![Yes](img/yes.png) | -->
+
+---
 
 #### Download and use
 ```
