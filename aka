@@ -11,13 +11,14 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.35'
+program :version, '0.2.37'
 program :last_update, '05 Jan 2015' #not going to update
-program :description, 'add, edit, manage aliases from terminal.'
+program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
 program :location, ".bash_profile" #bash
-# program :location, ".zshrc" #for z shell
-# program :location, ".bashrc" for bashrc
+# program :location, ".zshrc" # for z shell
+# program :location, ".bashrc" # for bashrc
 program :path_to_location, ".location"
+program :path_to_aka, "~/.aka"
 
 command :eh do |c|
   c.syntax = 'aka switch [options]'

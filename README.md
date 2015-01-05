@@ -19,9 +19,11 @@ add, edit, remove and manage alias from terminal. Grow and expand your aliases w
 
 ---
 
-#### Download and use
+#### Installation
 ```
-curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
+git clone https://github.com/ytbryan/aka.git ~/.aka
+cd ~/.aka
+./aka copy
 ```
 
 #### 0. Sourcing of bash file
