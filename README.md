@@ -11,8 +11,8 @@ add, edit, remove and manage alias from terminal. Grow and expand your aliases w
 | edit alias |  -       |    ![Yes](img/yes.png)  |
 | count alias | -      |    ![Yes](img/yes.png) |
 | persistency        |-                    |    ![Yes](img/yes.png) |
-| auto reload bash file      |-  |    ![Yes](img/yes.png)|
-| interact with bash file | -     |    ![Yes](img/yes.png) |
+| auto reload startup file      |-  |    ![Yes](img/yes.png)|
+| interact with startup file | -     |    ![Yes](img/yes.png) |
 | history | -      |    ![Yes](img/yes.png) |
 | upload to server | -      |    ![Yes](img/yes.png) |
 | download from server | -     |    ![Yes](img/yes.png) |
@@ -26,8 +26,9 @@ cd ~/.aka
 ./aka copy
 ```
 
-#### 0. Sourcing of bash file
-Aka uses trap and signal to reload your bash file on the same shell. Conventional shell command called from ruby using `system()`, `exec`, `open3`, `open4`, does not execute on the same shell.
+#### 0. Sourcing of startup files (.bash_profile, .bashrc, .zshrc)
+- aka uses trap and signal to reload your startup files on the same shell.
+- calling shell command using ruby's `system()`, `exec`, `open3`, `open4`, does not execute on the same shell.
 
 #### 1. aka uses ruby.
 To install ruby, go to [rbenv](https://github.com/sstephenson/rbenv)
@@ -35,14 +36,18 @@ To install ruby, go to [rbenv](https://github.com/sstephenson/rbenv)
 
 #### 2. bundle install dependencies of aka
 ```
-aka install
+aka bundle
 ```
 
 #### 3. update aka
 ```
 aka update
-aka version
 ```
+#### 4. commands
+```
+aka -h
+```
+
 
 #### TODOS
 - move the script to rubygems

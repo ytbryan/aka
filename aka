@@ -11,7 +11,7 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.37'
+program :version, '0.2.39'
 program :last_update, '05 Jan 2015' #not going to update
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
 program :location, ".bash_profile" #bash
@@ -20,44 +20,44 @@ program :location, ".bash_profile" #bash
 program :path_to_location, ".location"
 program :path_to_aka, "~/.aka"
 
-command :eh do |c|
-  c.syntax = 'aka switch [options]'
-  c.summary = 'switch to zsh'
-  c.action do |args, options|
-    # system("echo $SHELL") >> answer
-    # puts answer
-    # puts "hello"
-  end
-end
-
-command :start do |c|
-  c.syntax = 'aka switch [options]'
-  c.summary = 'switch to zsh'
-  c.action do |args, options|
-    question = "Which bash file are you using?
-                1. .zsh
-                2. .bash_profile
-                3. .bashrc".pretty
-    input = ask question
-  end
-end
-
-command :read do |c|
-  c.syntax = 'aka switch [options]'
-  c.summary = 'switch to zsh'
-  c.action do |args, options|
-    readFromLocation()
-  end
-end
-
-command :switch do |c|
-  c.syntax = 'aka switch [options]'
-  c.summary = 'switch to zsh'
-  c.action do |args, options|
-    write_to_location("hello")
-    # readFromLocation()
-  end
-end
+# command :eh do |c|
+#   c.syntax = 'aka switch [options]'
+#   c.summary = 'switch to zsh'
+#   c.action do |args, options|
+#     # system("echo $SHELL") >> answer
+#     # puts answer
+#     # puts "hello"
+#   end
+# end
+#
+# command :start do |c|
+#   c.syntax = 'aka switch [options]'
+#   c.summary = 'switch to zsh'
+#   c.action do |args, options|
+#     question = "Which bash file are you using?
+#                 1. .zsh
+#                 2. .bash_profile
+#                 3. .bashrc".pretty
+#     input = ask question
+#   end
+# end
+#
+# command :read do |c|
+#   c.syntax = 'aka switch [options]'
+#   c.summary = 'switch to zsh'
+#   c.action do |args, options|
+#     readFromLocation()
+#   end
+# end
+#
+# command :switch do |c|
+#   c.syntax = 'aka switch [options]'
+#   c.summary = 'switch to zsh'
+#   c.action do |args, options|
+#     write_to_location("hello")
+#     # readFromLocation()
+#   end
+# end
 
 command :reload do |c|
   c.syntax = 'aka reload'
@@ -106,13 +106,13 @@ command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.summary = 'edit the alias'
   c.action do |args, options|
-    a, b = show_alias(args.first)
-    if a == true
+    truth, _alias = show_alias(args.first)
+    if truth == true
       input = ask "Enter a new command for alias '#{args.first}'?\n"
       answer = ask "#{input} confirm? (y/N)"
       if answer == 'y'
-        remove(b) #remove that alias
-        edit(input, b) #edit that alias
+        remove(_alias) #remove that alias
+        edit(input, _alias) #edit that alias
         reload_bash_file()
       end
     else
@@ -122,14 +122,14 @@ command :edit do |c|
 end
 
 
-command :command do |c|
-  c.syntax = 'aka commands [options]'
-  c.summary = 'show the list of commands'
-  c.action do |args, options|
-    commands()
-  end
-end
-alias_command :'cmd', :command
+# command :command do |c|
+#   c.syntax = 'aka commands [options]'
+#   c.summary = 'show the list of commands'
+#   c.action do |args, options|
+#     commands()
+#   end
+# end
+# alias_command :'cmd', :command
 
 command :version do |c|
   c.syntax = 'aka version'
