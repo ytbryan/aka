@@ -25,7 +25,7 @@ curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/
 ```
 
 #### 0. Sourcing of bash file
-aka uses trap and signal to reload your bash file. Conventional shell command called from ruby using `system()`, `exec`, `open3`, `open4`, does not execute on the same shell.
+Aka uses trap and signal to reload your bash file on the same shell. Conventional shell command called from ruby using `system()`, `exec`, `open3`, `open4`, does not execute on the same shell.
 
 #### 1. aka uses ruby.
 To install ruby, go to [rbenv](https://github.com/sstephenson/rbenv)
