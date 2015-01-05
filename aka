@@ -11,7 +11,7 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.32'
+program :version, '0.2.33'
 program :last_update, '01 Jan 2015' #not going to update
 program :description, 'add, edit, manage aliases from terminal.'
 # program :location, ".bash_profile" #bash
@@ -453,7 +453,11 @@ end
       }
       puts "nothing is found." if founded == false
     end
+  end
 
+  def record method, command
+    record = method + "," + command + "," + Time.now.to_s
+    append(record,".history")
   end
 
   #moved
@@ -591,6 +595,8 @@ end
       puts "#{Dir.home}/.aka/#{program(:path_to_location)} is unavailable.".read
     end
   end
+
+
 
   class String
     def pretty

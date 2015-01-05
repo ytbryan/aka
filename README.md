@@ -9,15 +9,13 @@ add, edit, remove and manage alias from terminal. Grow and expand your aliases w
 | remove alias      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
 | show alias |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
 | edit alias |  ![No](img/no.png)       |    ![Yes](img/yes.png)  |
+| count alias | ![No](img/no.png)      |    ![Yes](img/yes.png) |
 | persistency        |![No](img/no.png)                    |    ![Yes](img/yes.png) |
 | auto reload bash File      |![No](img/no.png)  |    ![Yes](img/yes.png)|
-| Interact with bash file | ![No](img/no.png)     |    ![Yes](img/yes.png) |
-| Count | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-| History | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-| Upload To Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-| Download From Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-<!-- | Count |  ![No](img/no.png)       |    ![Yes](img/yes.png) |
-| Count |  ![No](img/no.png)       |    ![Yes](img/yes.png) | -->
+| interact with bash file | ![No](img/no.png)     |    ![Yes](img/yes.png) |
+| history | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+| upload To Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+| download From Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
 
 ---
 
@@ -26,11 +24,12 @@ add, edit, remove and manage alias from terminal. Grow and expand your aliases w
 curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/aka
 ```
 
-#### 0. Sourcing of Bash File
+#### 0. Sourcing of bash file
 aka uses trap and signal to reload your bash file. Conventional shell command called from ruby using `system()`, `exec`, `open3`, `open4`, does not execute on the same shell.
 
 #### 1. aka uses ruby.
 To install ruby, go to [rbenv](https://github.com/sstephenson/rbenv)
+
 
 #### 2. bundle install dependencies of aka
 ```
