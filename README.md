@@ -8,14 +8,14 @@ add, edit, remove and manage alias from terminal. Grow and expand your aliases w
 | add alias         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
 | remove alias      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
 | show alias |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
-| edit alias |  ![No](img/no.png)       |    ![Yes](img/yes.png)  |
-| count alias | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-| persistency        |![No](img/no.png)                    |    ![Yes](img/yes.png) |
-| auto reload bash File      |![No](img/no.png)  |    ![Yes](img/yes.png)|
-| interact with bash file | ![No](img/no.png)     |    ![Yes](img/yes.png) |
-| history | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-| upload To Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
-| download From Server | ![No](img/no.png)      |    ![Yes](img/yes.png) |
+| edit alias |  -       |    ![Yes](img/yes.png)  |
+| count alias | -      |    ![Yes](img/yes.png) |
+| persistency        |-                    |    ![Yes](img/yes.png) |
+| auto reload bash file      |-  |    ![Yes](img/yes.png)|
+| interact with bash file | -     |    ![Yes](img/yes.png) |
+| history | -      |    ![Yes](img/yes.png) |
+| upload to server | -      |    ![Yes](img/yes.png) |
+| download from server | -     |    ![Yes](img/yes.png) |
 
 ---
 
@@ -45,8 +45,9 @@ aka version
 #### TODOS
 - move the script to rubygems
 
-#### Contact
-[@ytbryan](http://twitter.com/ytbryan)
+#### Contact and Contribute
+- Please contact me at [@ytbryan](http://twitter.com/ytbryan)
+- Please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
 
 #### License
 [MIT ](http://www.opensource.org/licenses/MIT)
