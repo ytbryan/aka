@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 require 'rubygems'
-require 'commander/import'
-require 'highline/import'
 require 'net/scp'
 require 'colorize'
+require "safe_yaml/load"
+require 'commander/import'
+require 'highline/import'
 
 default_command :version #note that this is calling version(), not program(:version)
 
@@ -11,57 +12,94 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.2.39'
-program :last_update, '05 Jan 2015' #not going to update
+program :version, '0.3.41'
+program :last_update, '12 Jan 2015' #not going to update
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
-program :location, ".bash_profile" #bash
-# program :location, ".zshrc" # for z shell
-# program :location, ".bashrc" # for bashrc
-program :path_to_location, ".location"
-program :path_to_aka, "~/.aka"
+program :path_to_aka, "#{Dir.home}/.aka"
+program :path_to_location, "#{Dir.home}/.aka/.location"
+program :path_to_global, "#{Dir.home}/.aka/.global"
+program :path_to_groups, "#{Dir.home}/.aka/groups"
 
-# command :eh do |c|
-#   c.syntax = 'aka switch [options]'
-#   c.summary = 'switch to zsh'
-#   c.action do |args, options|
-#     # system("echo $SHELL") >> answer
-#     # puts answer
-#     # puts "hello"
-#   end
-# end
-#
-# command :start do |c|
-#   c.syntax = 'aka switch [options]'
-#   c.summary = 'switch to zsh'
-#   c.action do |args, options|
-#     question = "Which bash file are you using?
-#                 1. .zsh
-#                 2. .bash_profile
-#                 3. .bashrc".pretty
-#     input = ask question
-#   end
-# end
-#
-# command :read do |c|
-#   c.syntax = 'aka switch [options]'
-#   c.summary = 'switch to zsh'
-#   c.action do |args, options|
-#     readFromLocation()
-#   end
-# end
-#
-# command :switch do |c|
-#   c.syntax = 'aka switch [options]'
-#   c.summary = 'switch to zsh'
-#   c.action do |args, options|
-#     write_to_location("hello")
-#     # readFromLocation()
-#   end
-# end
+command :global do |c|
+  c.syntax = 'aka global [options]'
+  c.summary = 'set the global aliases'
+  c.action do |args, options|
+    # write("hello", "#{program(:path_to_global)}")
+    value = read("#{program(:path_to_global)}")
+    if value == ""
+      puts "No global aliases found. To set the alias group -> aka global [name]".red
+    else
+      puts value
+    end
+  end
+end
+
+command :size do |c|
+  c.syntax = 'aka size [options]'
+  c.summary = 'set the global aliases'
+  c.action do |args, options|
+    value =  read("#{program(:path_to_global)}")
+    array = value.split("\n")
+    array.each_with_index do |file, index|
+      puts "file->#{file}"
+    end
+  end
+end
+
+command :append do |c|
+  c.syntax = 'aka global [options]'
+  c.summary = 'set the global aliases'
+  c.action do |args, options|
+    append_with_newline(args.first, "#{program(:path_to_global)}")
+  end
+end
+
+command :local do |c|
+  c.syntax = 'aka local [options]'
+  c.summary = 'set the local group'
+  c.action do |args, options|
+    # write("hello", ".group")
+    value = read(".group")
+    if value == ""
+      puts "No local group alias found. To set the alias group -> aka local [name]".red
+    else
+      puts value
+    end
+  end
+end
+
+command :showgroups do |c|
+  c.syntax = 'aka local [options]'
+  c.action do |args, options|
+    show_groups()
+  end
+end
+
+def show_groups
+  directory = "#{program(:path_to_aka)}/groups/"
+  filetype = "*.yml"
+  Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
+    filename =  fullname.slice(directory.size,fullname.size)
+    name = filename.split(".").first #remove .yml
+    puts "#{index+1}.#{name}"
+  end
+end
+
+command :auto do |c|
+  c.syntax = 'aka auto [options]'
+  c.summary = 'auto reload the dot file'
+  c.action do |args, options|
+    insert_trap()
+  end
+end
+
+###########################
+### CORE
+###########################
 
 command :reload do |c|
   c.syntax = 'aka reload'
-  c.summary = 'reload bash file'
+  c.summary = 'reload dot file'
   c.action do |args, options|
     reload_bash_file()
   end
@@ -121,19 +159,9 @@ command :edit do |c|
   end
 end
 
-
-# command :command do |c|
-#   c.syntax = 'aka commands [options]'
-#   c.summary = 'show the list of commands'
-#   c.action do |args, options|
-#     commands()
-#   end
-# end
-# alias_command :'cmd', :command
-
 command :version do |c|
   c.syntax = 'aka version'
-  c.summary = 'show the version of this aka'
+  c.summary = 'show aka version'
   c.action do |args, options|
     version()
     puts ""
@@ -141,19 +169,16 @@ command :version do |c|
 end
 alias_command :v, :version
 
-command :update do |c|
-  c.syntax = 'aka update [options]'
-  c.summary = 'update the old copy of aka to a newer one'
-  c.action do |args, options|
-    update()
-  end
-end
-
 command :count do |c|
   c.syntax = 'aka count [options]'
   c.summary = 'count number of alias'
   c.action do |args, options|
-    puts "#{count()} aliases from #{Dir.home}/#{program(:location)}"
+    puts "#{count()} aliases from #{return_location_path()}"
+    #last three aliases used
+
+    #last three added aliases
+
+    #last three aliases removed
   end
 end
 
@@ -163,7 +188,7 @@ end
 
 command :build do |c|
   c.syntax = 'aka build [options]'
-  c.summary = 'build the VERSION files and run tests'
+  c.summary = 'build the VERSION file and run tests'
   c.action do |args, options|
     build()
   end
@@ -174,14 +199,14 @@ command :copy do |c|
   c.summary = 'copy a local copy of aka to /usr/local/bin'
   c.action do |args, options|
     result = system("sudo cp aka /usr/local/bin")
-    puts "a new copy of aka #{program(:version)} is installed to /usr/local/bin \nat #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}.".red if result == true
+    puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == true
     puts "" if result == true
   end
 end
 
 command :bundle do |c|
   c.syntax = 'aka bundle [options]'
-  c.summary = 'bundle install the gemfile in .aka'
+  c.summary = 'bundle install dependencies'
   c.action do |args, options|
     system("cd ~/.aka")
     system("bundle install")
@@ -192,25 +217,34 @@ command :uninstall do |c|
   c.syntax = 'aka uninstall [options]'
   c.summary = 'uninstall aka'
   c.action do |args, options|
-    system("sudo rm -rf ~/.aka; sudo rm -rf /usr/local/bin/aka;")
+    input = ask "Confirm that you want to uninstall aka? (y/N)"
+    system("sudo rm -rf ~/.aka; sudo rm -rf /usr/local/bin/aka;") if input == "y"
   end
 end
 
 command :open do |c|
   c.syntax = 'aka open [options]'
-  c.summary = 'simply open the bashfile'
+  c.summary = 'simply open the dot file'
   c.action do |args, options|
-    system("at  #{Dir.home}/#{program(:location)}")
+    system("at  #{return_location_path()}")
   end
 end
 
 command :set do |c|
   c.syntax = 'aka set [options]'
-  c.summary = 'set the path of your bash config file'
+  c.summary = 'set the path to your dot file'
   c.action do |args, options|
     # FileUtils.mkdir("#{Dir.home}/.aka") if File.directory?("#{Dir.home}/.aka")
-    FileUtils.touch("#{Dir.home}/.aka/location") if File.exists?("#{Dir.home}/.aka/location")
-    File.write("#{Dir.home}/.aka/location", args.first) if File.exists?(args.first) #if the file exists
+    FileUtils.touch("#{program(:path_to_location)}") if File.exists?("#{program(:path_to_location)}")
+    File.write("#{program(:path_to_location)}", args.first) if File.exists?(args.first) #if the file exists
+  end
+end
+
+command :update do |c|
+  c.syntax = 'aka update [options]'
+  c.summary = 'update the old copy of aka to a newer one'
+  c.action do |args, options|
+    update()
   end
 end
 
@@ -218,7 +252,7 @@ end
 # ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
   command :download do |c|
     c.syntax = 'aka download [options]'
-    c.summary = 'download a file from server'
+    c.summary = 'download a dot file from server'
     c.action do |args, options|
       if options.from and options.to and options.of
         arr = split(options.to.to_s)
@@ -236,7 +270,7 @@ end
 
     command :upload do |c|
       c.syntax = 'aka upload [options]'
-      c.summary = 'upload a file to server'
+      c.summary = 'upload a dot file to server'
       c.action do |args, options|
         if options.from and options.to and options.of
           if File.exists?(options.from.to_s)
@@ -264,35 +298,15 @@ end
     end
   end
 
-  #############################
-  ## Experimental
-  #############################
-
-  # command :undo do |c|
-  #   c.syntax = 'aka undo [options]'
-  #   c.summary = 'undo a removal of alias'
-  #   c.action do |args, options|
-  #     puts "this undo"
-  #   end
-  # end
-
-  # command :scan do |c|
-  #   c.syntax = 'aka scan [options]'
-  #   c.summary = ''
-  #   c.action do |args, options|
-  #     scan()
-  #   end
-  # end
-
-  # command :group do |c|
-  #   c.syntax = 'aka group [options]'
-  #   c.summary = 'create a new group for aliases'
-  #   c.action do |args, options|
-  #
-  #   end
-  # end
-  # alias_command :g, :group
-
+  command :group do |c|
+    c.syntax = 'aka group [options]'
+    c.summary = 'create a new group for aliases'
+    c.action do |args, options|
+      #look at groups/ and print out all the files
+      puts "group is not found at #{Dir.pwd}.\nTo set a group name, type aka group [name]".red
+    end
+  end
+  alias_command :g, :group
 
   #############################
   ## Methods
@@ -300,7 +314,7 @@ end
 
   private
 
-  def write_new_file array
+  def write_with_newline array
     File.open(get_bash_profile_path, 'w') { |file|
       array.each do |line|
         file.write(line + "\n")
@@ -315,6 +329,11 @@ end
   def append str, path
     File.open(path, 'a') { |file| file.write(str) }
   end
+
+  def append_with_newline str, path
+    File.open(path, 'a') { |file| file.write(str + "\n") }
+  end
+
 
   def reload_bash_file()
     system("kill -SIGUSR1 #{Process.ppid}")
@@ -366,7 +385,8 @@ end
   end
 
   def get_bash_profile_path
-    return "#{Dir.home}/#{program(:location)}"
+    # return "#{Dir.home}/#{program(:location)}"
+    return "#{return_location_path()}"
   end
 
   def show_alias argument
@@ -410,7 +430,6 @@ end
     return false
   end
 
-
   def remove input
     if content=File.open(get_bash_profile_path).read
       content.gsub!(/\r\n?/, "\n")
@@ -420,7 +439,7 @@ end
         if value.length > 1 and value.first == "alias"
           answer = value[1].split("=")
           if answer.first == input
-            content_array.delete_at(index) and write_new_file(content_array)
+            content_array.delete_at(index) and write_with_newline(content_array)
             puts "Removed: #{line} from #{Dir.home}/.bash_profile".red
           end
         end
@@ -481,27 +500,6 @@ end
     end
   end
 
-  #moved
-  # def uninstall
-  #   input = ""
-  #   while input == ""
-  #     input = ask "Remove aka? (y/N)".red
-  #     if input == "N"
-  #       puts "cancel."
-  #     elsif input == "y"
-  #       system("sudo rm #{@localbin}/aka")
-  #       puts "aka removed from #{@localbin}".red
-  #     end
-  #   end
-  # end
-
-  # def set
-  #   puts "TODO: path"
-  #   system("touch ~/.aka/path")
-  #   if content = File.open(bash_history_path).read
-  #   end
-  # end
-
   def version
     puts ""
     puts "aka #{program(:version)} - #{program(:last_update)}"
@@ -553,48 +551,68 @@ end
   end
 
   def count
+    alias_count = 0
     if content=File.open(get_bash_profile_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
-      return content_array.count
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "alias"
+          answer = value[1].split("=")
+          alias_count += 1
+        end
+      }
+      return alias_count
     end
   end
 
   def insert_trap
-    trap = "sigusr1() { source ~/.bash_profile;  echo 'reloaded  ~/.bash_profile'; }\ntrap sigusr1 SIGUSR1"
-    append(trap, "#{Dir.home}/#{program(:location)}")
+    input = ask "Make your your dot file auto reload #{return_location_path()}? (y/N)"
+    if input == 'y'
+      trap = "sigusr1() { source ~/.bash_profile;  echo 'reloaded dot file'; }\ntrap sigusr1 SIGUSR1"
+      append(trap, "#{return_location_path()}")
+    end
   end
 
-  def aka_directory_exist?
-    return File.directory?("#{Dir.home}/.aka")
-  end
-
-  def write_to_location address
-    if aka_directory_exist?
-      write("#{Dir.home}/#{program(:location)}","#{Dir.home}/.aka/#{program(:path_to_location)}")
+  def write_to_location location, address
+    if aka_directory_exists?
+      # write("#{Dir.home}/#{program(:location)}","#{Dir.home}/.aka/#{program(:path_to_location)}")
+      write(location, address)
     else
       puts ".aka not found.".red
     end
   end
 
-  def readFromLocation
-    if content = File.open("#{Dir.home}/.aka/#{program(:path_to_location)}").read
-      puts "#{Dir.home}/.aka/#{program(:path_to_location)} is available."
-      puts content
-      # count=0
-      # content.gsub!(/\r\n?/, "\n")
-      # content_array = content.split("\n")
-      # content_array.each_with_index { |line, index|
-      #   array = line.split(" ")
-      #   if array.first == "alias"
-      #     count += 1
-      #   end
-      #   puts "#{index+1} #{line}"
-      # }
-      # puts "There are #{count} histories"
-    else
-      puts "#{Dir.home}/.aka/#{program(:path_to_location)} is unavailable.".read
+  def read location
+    answer = dot_location_exists?(location)
+    if answer == true and content = File.open(location).read
+      return content
     end
+    return ""
+  end
+
+  def readFromLocation
+    answer = dot_location_exists?("#{program(:path_to_location)}")
+    if answer == true and content = File.open("#{program(:path_to_location)}").read
+      # puts "#{program(:path_to_location)} is available."
+      # puts "->#{content}"
+      return content
+    end
+    return ""
+  end
+
+  #find out if file in .location exist
+  def dot_location_exists? address
+    return File.exist? address
+  end
+
+  #if .aka exist?
+  def aka_directory_exists?
+    return File.directory?("#{Dir.home}/.aka")
+  end
+
+  def return_location_path
+    return readFromLocation()
   end
 
   class String
@@ -602,3 +620,248 @@ end
       return self.gsub("\s\t\r\f", ' ').squeeze(' ')
     end
   end
+
+  #moved
+  # def uninstall
+  #   input = ""
+  #   while input == ""
+  #     input = ask "Remove aka? (y/N)".red
+  #     if input == "N"
+  #       puts "cancel."
+  #     elsif input == "y"
+  #       system("sudo rm #{@localbin}/aka")
+  #       puts "aka removed from #{@localbin}".red
+  #     end
+  #   end
+  # end
+
+  # def set
+  #   puts "TODO: path"
+  #   system("touch ~/.aka/path")
+  #   if content = File.open(bash_history_path).read
+  #   end
+  # end
+
+  # def readBash
+  #   str = "", count = 0
+  #   if profile = File.exist?("#{Dir.home}/.bash_profile")
+  #     count+= 1
+  #     str = "#{count}. #{Dir.home}/.bash_profile\n"
+  #   end
+  #
+  #   if  zsh = File.exist?("#{Dir.home}/.zshrc")
+  #     count+= 1
+  #     str = str + "#{count}. #{Dir.home}/.zshrc\n"
+  #   end
+  #
+  #   if bashrc = File.exist?("#{Dir.home}/.bashrc")
+  #     count+= 1
+  #     str = str + "#{count}. #{Dir.home}/.bashrc\n"
+  #   end
+  #
+  #   if count == 0
+  #     puts "No .bash_profile or .zshrc or .bashrc detected. Try to create a dot file first."
+  #   elsif count == 1
+  #     puts "one only"
+  #     set_the_dot_file()
+  #   elsif profile and zsh and bashrc
+  #     puts "three"
+  #     input = ask "which dot file do you want to use? \n#{str}"
+  #   else
+  #     puts "two"
+  #     input = ask "Which dot file do you want to use? \n#{str}"
+  #   end
+  # end
+
+  # #write to .location
+  # def single_dot_file_found_write_to_location #always ensure this is safe
+  #   puts "enter here"
+  #   if profile = File.exist?("#{Dir.home}/.bash_profile")
+  #     write_to_location("#{Dir.home}/.bash_profile","#{program(:path_to_location)}" )
+  #   elsif zsh = File.exist?("#{Dir.home}/.zshrc")
+  #     write_to_location("#{Dir.home}/.zshrc","#{program(:path_to_location)}" )
+  #   elsif bashrc = File.exist?("#{Dir.home}/.bashrc")
+  #     write_to_location("#{Dir.home}/.bashrc","#{program(:path_to_location)}" )
+  #   end
+  # end
+
+
+  # command :janice do |c|
+  #   c.syntax = 'aka update [options]'
+  #   c.summary = 'update the old copy of aka to a newer one'
+  #   c.action do |args, options|
+  #     # puts "#{program(:test)}"
+  #     puts args
+  #     puts Dir.pwd
+  #     # str = args.join("\ ") + "/"
+  #     # FileUtils.touch("#{Dir.home}/") if File.exists?("#{Dir.home}/
+  #     # FileUtils.mkdir_p str
+  #   end
+  # end
+
+  # command :eh3 do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
+  #     if content = File.open(get_bash_profile_path).read
+  #       content.gsub!(/\r\n?/, "\n")
+  #       content_array = content.split("\n")
+  #       content_array.each_with_index { |line, index|
+  #         value = line.split(" ")
+  #         puts line
+  #         # if value.length > 1 and value.first == "alias"
+  #         #   answer = value[1].split("=")
+  #         #   puts answer.first
+  #         # end
+  #       }
+  #     end
+  #   end
+  # end
+
+  # command :eh2 do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
+  #     if content = File.open(get_bash_profile_path).read
+  #       content.gsub!(/\r\n?/, "\n")
+  #       content_array = content.split("\n")
+  #       content_array.each_with_index { |line, index|
+  #         value = line.split(" ")
+  #         if value.length > 1 and value.first == "alias"
+  #           answer = value[1].split("=")
+  #           alias_name = answer.first
+  #           # puts answer.first
+  #           out_file = File.new("aliases/#{answer.first}.yml", "w")
+  #         end
+  #       }
+  #     end
+  #     # group = YAML.load_file("group.yml")
+  #     # puts group["woodcutter"]
+  #     # system("echo $SHELL") >> answer
+  #     # puts answer
+  #     # puts "hello"
+  #   end
+  # end
+
+  # command :xxx do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     readBash()
+  #     # add = YAML.load_file("aliases/add.yml")
+  #     # add['add']['comment'] = "something esle"
+  #     # add['add'][1] = "group"
+  #     # add['add'][2] = "tada"
+  #     # File.open('aliases/add.yml', 'w') {|f| f.write add.to_yaml } #Store
+  #   end
+  # end
+
+  # command :sss do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     add = YAML.load_file("aliases/add.yml")
+  #     add['add']['comment'] = "something esle"
+  #     add['add'][1] = "group"
+  #     add['add'][2] = "tada"
+  #     File.open('aliases/add.yml', 'w') {|f| f.write add.to_yaml } #Store
+  #   end
+  # end
+
+  # command :read do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     add = YAML.load_file("aliases/add.yml")
+  #     add['add']['comment'] = "something esle"
+  #     add['add'][1] = "group"
+  #     add['add'][2] = "tada"
+  #     File.open('aliases/add.yml', 'w') {|f| f.write add.to_yaml } #Store
+  #   end
+  # end
+
+  # command :start do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     question = "Which bash file are you using?
+  #                 1. .zsh
+  #                 2. .bash_profile
+  #                 3. .bashrc".pretty
+  #     input = ask question
+  #   end
+  # end
+
+  # command :switch do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     write_to_location("hello")
+  #     # readFromLocation()
+  #   end
+  # end
+
+  # command :eh do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
+  #     if content = File.open(get_bash_profile_path).read
+  #       content.gsub!(/\r\n?/, "\n")
+  #       content_array = content.split("\n")
+  #       content_array.each_with_index { |line, index|
+  #         value = line.split(" ")
+  #         if value.length > 1 and value.first == "alias"
+  #           answer = value[1].split("=")
+  #           alias_name = answer.first
+  #           out_file = File.new("aliases/#{answer.first}.yml", "w")
+  #         end
+  #       }
+  #     end
+  #     # group = YAML.load_file("group.yml")
+  #     # puts group["woodcutter"]
+  #     # system("echo $SHELL") >> answer
+  #     # puts answer
+  #     # puts "hello"
+  #   end
+  # end
+  #
+  # command :read do |c|
+  #   c.syntax = 'aka switch [options]'
+  #   c.summary = 'switch to zsh'
+  #   c.action do |args, options|
+  #     value =  readFromLocation()
+  #     answer = dot_location_exists(value)
+  #     if value != "" and answer == true
+  #       puts value
+  #     else
+  #       if value != ""
+  #         puts "#{value} is found in .location but the actual file is missing. Recreate it first. Or change it using aka set [option]\n Read aka -h for help".red if value != ""
+  #       else
+  #         puts "Try to set the location of dot file. \naka set .bash_profile #.bashrc #.zshrc".red
+  #       end
+  #     end
+  #   end
+  # end
+
+  #############################
+  ## Experimental
+  #############################
+
+  # command :undo do |c|
+  #   c.syntax = 'aka undo [options]'
+  #   c.summary = 'undo a removal of alias'
+  #   c.action do |args, options|
+  #     puts "this undo"
+  #   end
+  # end
+
+  # command :scan do |c|
+  #   c.syntax = 'aka scan [options]'
+  #   c.summary = ''
+  #   c.action do |args, options|
+  #     scan()
+  #   end
+  # end
