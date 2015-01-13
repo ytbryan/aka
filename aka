@@ -3,8 +3,8 @@ require 'rubygems'
 require 'net/scp'
 require 'colorize'
 require "safe_yaml/load"
-require 'commander/import'
 require 'highline/import'
+require 'commander/import'
 
 default_command :version #note that this is calling version(), not program(:version)
 
@@ -12,13 +12,15 @@ default_command :version #note that this is calling version(), not program(:vers
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.41'
-program :last_update, '12 Jan 2015' #not going to update
+program :version, '0.3.42'
+program :last_update, '13 Jan 2015' #not going to update
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
 program :path_to_aka, "#{Dir.home}/.aka"
 program :path_to_location, "#{Dir.home}/.aka/.location"
 program :path_to_global, "#{Dir.home}/.aka/.global"
 program :path_to_groups, "#{Dir.home}/.aka/groups"
+program :path_to_remote, "#{Dir.home}/.aka/.remote"
+program :path_to_history, "#{Dir.home}/.aka/.history"
 
 command :global do |c|
   c.syntax = 'aka global [options]'
@@ -61,7 +63,7 @@ command :local do |c|
     # write("hello", ".group")
     value = read(".group")
     if value == ""
-      puts "No local group alias found. To set the alias group -> aka local [name]".red
+      puts "No local group alias found. To set a local alias group -> aka local [name]".red
     else
       puts value
     end
@@ -79,10 +81,10 @@ def show_groups
   directory = "#{program(:path_to_aka)}/groups/"
   filetype = "*.yml"
   Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
-    filename =  fullname.slice(directory.size,fullname.size)
-    name = filename.split(".").first #remove .yml
+    name =  fullname.slice(directory.size,fullname.size).split(".").first #remove .yml
     puts "#{index+1}.#{name}"
   end
+  puts "No alias group is found. To set a global alias group -> aka group [name]".red if Dir.glob("#{directory}#{filetype}").count == 0
 end
 
 command :auto do |c|
