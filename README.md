@@ -23,7 +23,7 @@ Boost projects' productivity with some terminal shortcuts.
 
 * [Overview](#overview)
 * [Installation](#installation)
-  * [Install in one line](#single-line)
+  * Install in one line
 * [Command Reference](#command-reference)
 * [TODOs](#todos)
 * [Contribute](#contribute)
