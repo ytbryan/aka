@@ -34,29 +34,8 @@ command :last do |c|
     if args.first
       showlast(args.first.to_i) if args.first.is_i?
     else
-      showlast(5)
+      showlast(10)
     end
-  end
-end
-
-def showlast howmany=5
-  if content = File.open(get_dot_file_path).read
-    content.gsub!(/\r\n?/, "\n")
-    content_array = content.split("\n")
-    #why not just call the last five lines? Because i can't be sure that they are aliases
-    total_aliases = []
-    content_array.each_with_index { |line, index|
-      value = line.split(" ")
-      if value.length > 1 and value.first == "alias"
-        total_aliases.push(line)
-      end
-    }
-    puts ""
-    total_aliases.last(howmany).each_with_index do |line, index|
-      puts "#{total_aliases.count - howmany + index }. " + line
-    end
-    puts ""
-
   end
 end
 
@@ -587,6 +566,27 @@ end
       !!(self =~ /\A[-+]?[0-9]+\z/)
     end
   end
+
+  def showlast howmany=5
+    if content = File.open(get_dot_file_path).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      #why not just call the last five lines? Because i can't be sure that they are aliases
+      total_aliases = []
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "alias"
+          total_aliases.push(line)
+        end
+      }
+      puts ""
+      total_aliases.last(howmany).each_with_index do |line, index|
+        puts "#{total_aliases.count - howmany + index }. " + line
+      end
+      puts ""
+    end
+  end
+
 
   #moved
   # def uninstall
