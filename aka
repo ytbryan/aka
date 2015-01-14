@@ -7,7 +7,6 @@ require 'highline/import'
 require 'commander/import'
 
 default_command :version #note that this is calling command :version
-
 # always_trace
 program :help_formatter, :compact
 program :author, 'ytbryan'
@@ -15,7 +14,6 @@ program :contact, 'Bryan Lim <ytbryan@gmail.com>'
 program :version, '0.3.42'
 program :last_update, '13 Jan 2015'
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
-
 #paths
 program :path_to_aka, "#{Dir.home}/.aka"
 program :path_to_location, "#{Dir.home}/.aka/.location"
@@ -23,83 +21,44 @@ program :path_to_global, "#{Dir.home}/.aka/.global"
 program :path_to_groups, "#{Dir.home}/.aka/groups"
 program :path_to_remote, "#{Dir.home}/.aka/.remote"
 program :path_to_history, "#{Dir.home}/.aka/.history"
-
-# command :global do |c|
-#   c.syntax = 'aka global [options]'
-#   c.summary = 'set the global aliases'
-#   c.action do |args, options|
-#     # write("hello", "#{program(:path_to_global)}")
-#     value = read("#{program(:path_to_global)}")
-#     if value == ""
-#       puts "No global aliases found. To set the alias group -> aka global [name]".red
-#     else
-#       puts value
-#     end
-#   end
-# end
-#
-# command :size do |c|
-#   c.syntax = 'aka size [options]'
-#   c.summary = 'set the global aliases'
-#   c.action do |args, options|
-#     value =  read("#{program(:path_to_global)}")
-#     array = value.split("\n")
-#     array.each_with_index do |file, index|
-#       puts "file->#{file}"
-#     end
-#   end
-# end
-#
-# command :append do |c|
-#   c.syntax = 'aka global [options]'
-#   c.summary = 'set the global aliases'
-#   c.action do |args, options|
-#     append_with_newline(args.first, "#{program(:path_to_global)}")
-#   end
-# end
-#
-# command :local do |c|
-#   c.syntax = 'aka local [options]'
-#   c.summary = 'set the local group'
-#   c.action do |args, options|
-#     # write("hello", ".group")
-#     value = read(".group")
-#     if value == ""
-#       puts "No local group alias found. To set a local alias group -> aka local [name]".red
-#     else
-#       puts value
-#     end
-#   end
-# end
-#
-# command :showgroups do |c|
-#   c.syntax = 'aka local [options]'
-#   c.action do |args, options|
-#     show_groups()
-#   end
-# end
-#
-# def show_groups
-#   directory = "#{program(:path_to_aka)}/groups/"
-#   filetype = "*.yml"
-#   Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
-#     name =  fullname.slice(directory.size,fullname.size).split(".").first #remove .yml
-#     puts "#{index+1}.#{name}"
-#   end
-#   puts "No alias group is found. To set a global alias group -> aka group [name]".red if Dir.glob("#{directory}#{filetype}").count == 0
-# end
-#
-# command :auto do |c|
-#   c.syntax = 'aka auto [options]'
-#   c.summary = 'auto reload the dot file'
-#   c.action do |args, options|
-#     insert_trap()
-#   end
-# end
+program :path_to_settings, "#{Dir.home}/.aka/.settings"
 
 ###########################
 ### CORE
 ###########################
+
+command :last do |c|
+  c.syntax = 'aka last [options]'
+  c.summary = 'show the last few aliases'
+  c.action do |args, options|
+    if args.first
+      showlast(args.first.to_i) if args.first.is_i?
+    else
+      showlast(5)
+    end
+  end
+end
+
+def showlast howmany=5
+  if content = File.open(get_dot_file_path).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+    #why not just call the last five lines? Because i can't be sure that they are aliases
+    total_aliases = []
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 and value.first == "alias"
+        total_aliases.push(line)
+      end
+    }
+    puts ""
+    total_aliases.last(howmany).each_with_index do |line, index|
+      puts "#{total_aliases.count - howmany + index }. " + line
+    end
+    puts ""
+
+  end
+end
 
 command :reload do |c|
   c.syntax = 'aka reload'
@@ -319,7 +278,7 @@ end
   private
 
   def write_with_newline array
-    File.open(get_bash_profile_path, 'w') { |file|
+    File.open(get_dot_file_path, 'w') { |file|
       array.each do |line|
         file.write(line + "\n")
       end
@@ -379,8 +338,8 @@ end
     if input and show_alias(input).first == false and not_empty_alias(input) == false
       array = input.split("=")
       full_command = "\nalias #{array.first}='#{array[1]}'"
-      File.open(get_bash_profile_path, 'a') { |file| file.write(full_command) }
-      puts "Added: #{full_command} to #{get_bash_profile_path}"
+      File.open(get_dot_file_path, 'a') { |file| file.write(full_command) }
+      puts "Added: #{full_command} to #{get_dot_file_path}"
       return true
     else
       puts "The alias is already present."
@@ -388,13 +347,13 @@ end
     end
   end
 
-  def get_bash_profile_path
+  def get_dot_file_path
     # return "#{Dir.home}/#{program(:location)}"
     return "#{return_location_path()}"
   end
 
   def show_alias argument
-    if content = File.open(get_bash_profile_path).read
+    if content = File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -414,7 +373,7 @@ end
   end
 
   def show argument
-    if content = File.open(get_bash_profile_path).read
+    if content = File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -435,7 +394,7 @@ end
   end
 
   def remove input
-    if content=File.open(get_bash_profile_path).read
+    if content=File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -463,7 +422,7 @@ end
     end
 
     founded = false
-    if content=File.open(get_bash_profile_path).read
+    if content=File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -551,12 +510,12 @@ end
   end
 
   def edit newcommand, this_alias
-    return append("alias " + this_alias + "='" + newcommand + "'", get_bash_profile_path )
+    return append("alias " + this_alias + "='" + newcommand + "'", get_dot_file_path )
   end
 
   def count
     alias_count = 0
-    if content=File.open(get_bash_profile_path).read
+    if content=File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -622,6 +581,10 @@ end
   class String
     def pretty
       return self.gsub("\s\t\r\f", ' ').squeeze(' ')
+    end
+
+    def is_i?
+      !!(self =~ /\A[-+]?[0-9]+\z/)
     end
   end
 
@@ -708,7 +671,7 @@ end
   #   c.summary = 'switch to zsh'
   #   c.action do |args, options|
   #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
-  #     if content = File.open(get_bash_profile_path).read
+  #     if content = File.open(get_dot_file_path).read
   #       content.gsub!(/\r\n?/, "\n")
   #       content_array = content.split("\n")
   #       content_array.each_with_index { |line, index|
@@ -728,7 +691,7 @@ end
   #   c.summary = 'switch to zsh'
   #   c.action do |args, options|
   #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
-  #     if content = File.open(get_bash_profile_path).read
+  #     if content = File.open(get_dot_file_path).read
   #       content.gsub!(/\r\n?/, "\n")
   #       content_array = content.split("\n")
   #       content_array.each_with_index { |line, index|
@@ -812,7 +775,7 @@ end
   #   c.summary = 'switch to zsh'
   #   c.action do |args, options|
   #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
-  #     if content = File.open(get_bash_profile_path).read
+  #     if content = File.open(get_dot_file_path).read
   #       content.gsub!(/\r\n?/, "\n")
   #       content_array = content.split("\n")
   #       content_array.each_with_index { |line, index|
@@ -867,5 +830,78 @@ end
   #   c.summary = ''
   #   c.action do |args, options|
   #     scan()
+  #   end
+  # end
+
+  # command :global do |c|
+  #   c.syntax = 'aka global [options]'
+  #   c.summary = 'set the global aliases'
+  #   c.action do |args, options|
+  #     # write("hello", "#{program(:path_to_global)}")
+  #     value = read("#{program(:path_to_global)}")
+  #     if value == ""
+  #       puts "No global aliases found. To set the alias group -> aka global [name]".red
+  #     else
+  #       puts value
+  #     end
+  #   end
+  # end
+  #
+  # command :size do |c|
+  #   c.syntax = 'aka size [options]'
+  #   c.summary = 'set the global aliases'
+  #   c.action do |args, options|
+  #     value =  read("#{program(:path_to_global)}")
+  #     array = value.split("\n")
+  #     array.each_with_index do |file, index|
+  #       puts "file->#{file}"
+  #     end
+  #   end
+  # end
+  #
+  # command :append do |c|
+  #   c.syntax = 'aka global [options]'
+  #   c.summary = 'set the global aliases'
+  #   c.action do |args, options|
+  #     append_with_newline(args.first, "#{program(:path_to_global)}")
+  #   end
+  # end
+  #
+  # command :local do |c|
+  #   c.syntax = 'aka local [options]'
+  #   c.summary = 'set the local group'
+  #   c.action do |args, options|
+  #     # write("hello", ".group")
+  #     value = read(".group")
+  #     if value == ""
+  #       puts "No local group alias found. To set a local alias group -> aka local [name]".red
+  #     else
+  #       puts value
+  #     end
+  #   end
+  # end
+  #
+  # command :showgroups do |c|
+  #   c.syntax = 'aka local [options]'
+  #   c.action do |args, options|
+  #     show_groups()
+  #   end
+  # end
+  #
+  # def show_groups
+  #   directory = "#{program(:path_to_aka)}/groups/"
+  #   filetype = "*.yml"
+  #   Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
+  #     name =  fullname.slice(directory.size,fullname.size).split(".").first #remove .yml
+  #     puts "#{index+1}.#{name}"
+  #   end
+  #   puts "No alias group is found. To set a global alias group -> aka group [name]".red if Dir.glob("#{directory}#{filetype}").count == 0
+  # end
+  #
+  # command :auto do |c|
+  #   c.syntax = 'aka auto [options]'
+  #   c.summary = 'auto reload the dot file'
+  #   c.action do |args, options|
+  #     insert_trap()
   #   end
   # end

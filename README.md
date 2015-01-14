@@ -9,6 +9,7 @@ Boost projects' productivity with some terminal shortcuts.
 | add alias         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
 | remove alias      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
 | show alias |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
+| show last few alias |  -       |    ![Yes](img/yes.png) |
 | edit alias |  -       |    ![Yes](img/yes.png)  |
 | count alias | -      |    ![Yes](img/yes.png) |
 | persistency        |-                    |    ![Yes](img/yes.png) |
