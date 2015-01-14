@@ -6,15 +6,17 @@ require "safe_yaml/load"
 require 'highline/import'
 require 'commander/import'
 
-default_command :version #note that this is calling version(), not program(:version)
+default_command :version #note that this is calling command :version
 
 # always_trace
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
 program :version, '0.3.42'
-program :last_update, '13 Jan 2015' #not going to update
+program :last_update, '13 Jan 2015'
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
+
+#paths
 program :path_to_aka, "#{Dir.home}/.aka"
 program :path_to_location, "#{Dir.home}/.aka/.location"
 program :path_to_global, "#{Dir.home}/.aka/.global"
@@ -22,78 +24,78 @@ program :path_to_groups, "#{Dir.home}/.aka/groups"
 program :path_to_remote, "#{Dir.home}/.aka/.remote"
 program :path_to_history, "#{Dir.home}/.aka/.history"
 
-command :global do |c|
-  c.syntax = 'aka global [options]'
-  c.summary = 'set the global aliases'
-  c.action do |args, options|
-    # write("hello", "#{program(:path_to_global)}")
-    value = read("#{program(:path_to_global)}")
-    if value == ""
-      puts "No global aliases found. To set the alias group -> aka global [name]".red
-    else
-      puts value
-    end
-  end
-end
-
-command :size do |c|
-  c.syntax = 'aka size [options]'
-  c.summary = 'set the global aliases'
-  c.action do |args, options|
-    value =  read("#{program(:path_to_global)}")
-    array = value.split("\n")
-    array.each_with_index do |file, index|
-      puts "file->#{file}"
-    end
-  end
-end
-
-command :append do |c|
-  c.syntax = 'aka global [options]'
-  c.summary = 'set the global aliases'
-  c.action do |args, options|
-    append_with_newline(args.first, "#{program(:path_to_global)}")
-  end
-end
-
-command :local do |c|
-  c.syntax = 'aka local [options]'
-  c.summary = 'set the local group'
-  c.action do |args, options|
-    # write("hello", ".group")
-    value = read(".group")
-    if value == ""
-      puts "No local group alias found. To set a local alias group -> aka local [name]".red
-    else
-      puts value
-    end
-  end
-end
-
-command :showgroups do |c|
-  c.syntax = 'aka local [options]'
-  c.action do |args, options|
-    show_groups()
-  end
-end
-
-def show_groups
-  directory = "#{program(:path_to_aka)}/groups/"
-  filetype = "*.yml"
-  Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
-    name =  fullname.slice(directory.size,fullname.size).split(".").first #remove .yml
-    puts "#{index+1}.#{name}"
-  end
-  puts "No alias group is found. To set a global alias group -> aka group [name]".red if Dir.glob("#{directory}#{filetype}").count == 0
-end
-
-command :auto do |c|
-  c.syntax = 'aka auto [options]'
-  c.summary = 'auto reload the dot file'
-  c.action do |args, options|
-    insert_trap()
-  end
-end
+# command :global do |c|
+#   c.syntax = 'aka global [options]'
+#   c.summary = 'set the global aliases'
+#   c.action do |args, options|
+#     # write("hello", "#{program(:path_to_global)}")
+#     value = read("#{program(:path_to_global)}")
+#     if value == ""
+#       puts "No global aliases found. To set the alias group -> aka global [name]".red
+#     else
+#       puts value
+#     end
+#   end
+# end
+#
+# command :size do |c|
+#   c.syntax = 'aka size [options]'
+#   c.summary = 'set the global aliases'
+#   c.action do |args, options|
+#     value =  read("#{program(:path_to_global)}")
+#     array = value.split("\n")
+#     array.each_with_index do |file, index|
+#       puts "file->#{file}"
+#     end
+#   end
+# end
+#
+# command :append do |c|
+#   c.syntax = 'aka global [options]'
+#   c.summary = 'set the global aliases'
+#   c.action do |args, options|
+#     append_with_newline(args.first, "#{program(:path_to_global)}")
+#   end
+# end
+#
+# command :local do |c|
+#   c.syntax = 'aka local [options]'
+#   c.summary = 'set the local group'
+#   c.action do |args, options|
+#     # write("hello", ".group")
+#     value = read(".group")
+#     if value == ""
+#       puts "No local group alias found. To set a local alias group -> aka local [name]".red
+#     else
+#       puts value
+#     end
+#   end
+# end
+#
+# command :showgroups do |c|
+#   c.syntax = 'aka local [options]'
+#   c.action do |args, options|
+#     show_groups()
+#   end
+# end
+#
+# def show_groups
+#   directory = "#{program(:path_to_aka)}/groups/"
+#   filetype = "*.yml"
+#   Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
+#     name =  fullname.slice(directory.size,fullname.size).split(".").first #remove .yml
+#     puts "#{index+1}.#{name}"
+#   end
+#   puts "No alias group is found. To set a global alias group -> aka group [name]".red if Dir.glob("#{directory}#{filetype}").count == 0
+# end
+#
+# command :auto do |c|
+#   c.syntax = 'aka auto [options]'
+#   c.summary = 'auto reload the dot file'
+#   c.action do |args, options|
+#     insert_trap()
+#   end
+# end
 
 ###########################
 ### CORE
@@ -124,13 +126,13 @@ command :show do |c|
   end
 end
 
-command :find do |c|
-  c.syntax = 'aka find [options]'
-  c.summary = 'find an alias'
-  c.action do |args, options|
-    find(args.first) if args.first
-  end
-end
+# command :find do |c|
+#   c.syntax = 'aka find [options]'
+#   c.summary = 'find an alias'
+#   c.action do |args, options|
+#     find(args.first) if args.first
+#   end
+# end
 
 command :remove do |c|
   c.syntax = 'aka remove [options]'
@@ -188,14 +190,14 @@ end
 ### DEVELOPMENT
 ###########################
 
-command :build do |c|
-  c.syntax = 'aka build [options]'
-  c.summary = 'build the VERSION file and run tests'
-  c.action do |args, options|
-    build()
-  end
-end
-
+# command :build do |c|
+#   c.syntax = 'aka build [options]'
+#   c.summary = 'build the VERSION file and run tests'
+#   c.action do |args, options|
+#     build()
+#   end
+# end
+#
 command :copy do |c|
   c.syntax = 'aka copy [options]'
   c.summary = 'copy a local copy of aka to /usr/local/bin'
@@ -205,15 +207,15 @@ command :copy do |c|
     puts "" if result == true
   end
 end
-
-command :bundle do |c|
-  c.syntax = 'aka bundle [options]'
-  c.summary = 'bundle install dependencies'
-  c.action do |args, options|
-    system("cd ~/.aka")
-    system("bundle install")
-  end
-end
+#
+# command :bundle do |c|
+#   c.syntax = 'aka bundle [options]'
+#   c.summary = 'bundle install dependencies'
+#   c.action do |args, options|
+#     system("cd ~/.aka")
+#     system("bundle install")
+#   end
+# end
 
 command :uninstall do |c|
   c.syntax = 'aka uninstall [options]'
@@ -234,7 +236,7 @@ end
 
 command :set do |c|
   c.syntax = 'aka set [options]'
-  c.summary = 'set the path to your dot file'
+  c.summary = 'set the path to a dot file'
   c.action do |args, options|
     # FileUtils.mkdir("#{Dir.home}/.aka") if File.directory?("#{Dir.home}/.aka")
     FileUtils.touch("#{program(:path_to_location)}") if File.exists?("#{program(:path_to_location)}")
@@ -244,7 +246,7 @@ end
 
 command :update do |c|
   c.syntax = 'aka update [options]'
-  c.summary = 'update the old copy of aka to a newer one'
+  c.summary = 'update this aka'
   c.action do |args, options|
     update()
   end
@@ -300,15 +302,15 @@ end
     end
   end
 
-  command :group do |c|
-    c.syntax = 'aka group [options]'
-    c.summary = 'create a new group for aliases'
-    c.action do |args, options|
-      #look at groups/ and print out all the files
-      puts "group is not found at #{Dir.pwd}.\nTo set a group name, type aka group [name]".red
-    end
-  end
-  alias_command :g, :group
+  # command :group do |c|
+  #   c.syntax = 'aka group [options]'
+  #   c.summary = 'create a new group for aliases'
+  #   c.action do |args, options|
+  #     #look at groups/ and print out all the files
+  #     puts "group is not found at #{Dir.pwd}.\nTo set a group name, type aka group [name]".red
+  #   end
+  # end
+  # alias_command :g, :group
 
   #############################
   ## Methods

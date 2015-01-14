@@ -1,8 +1,8 @@
-## aka - alias' best friend
+# aka - alias' best friend
 Add, edit, remove and manage alias from terminal. Grow and expand those aliases with ease.
 Boost projects' productivity with some terminal shortcuts.
 
-#### Overview
+## Overview
 
 | features          | alias           | aka |
 | :-------------: |:-------------:| :-----:|
@@ -18,52 +18,68 @@ Boost projects' productivity with some terminal shortcuts.
 | download from server | -     |    ![Yes](img/yes.png) |
 
 
-#### Installation
+## Table of Content
+
+* [Overview](#overview)
+* [Installation](#installation)
+  * [Install in one line](#single-line)
+* [Command Reference](#command-reference)
+* [TODOs](#todos)
+* [Contribute](#contribute)
+* [Version History](#version-history)
+* [License](#license)
+
+## [Installation](#installation)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka
 cd ~/.aka
 ./aka copy
 ```
 
-single line installation:
+[or install in a single line:](#single-line)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 
 ```
-
 ---
-#### 0. Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
+
+## [Command Reference](#command-reference)
+
+-
+
+## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
 aka uses trap and signal to reload your dot file on the same shell so that you do not need to source the dot file manually.
 
-#### 1. aka uses ruby.
+## 1. aka uses ruby.
 Use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
-#### 2. install dependencies for aka
+## 2. install dependencies for aka
 ```
 aka bundle
 ```
 
-#### 3. update aka to a newer version
+## 3. update aka to a newer version
 ```
 aka update
 ```
-#### 4. help and commands
+## 4. help and commands
 ```
 aka -h
 ```
 
-#### TODOS
+## [TODOs](#todos)
 - move the script to rubygems
-- complete the test
+- complete the tests
 
-#### Contact and Contribute
-- Please contact me at [@ytbryan](http://twitter.com/ytbryan)
+## [Contribute](#contribute)
+- Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - Please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
 
-#### License
-[MIT ](http://www.opensource.org/licenses/MIT)
+## [Version History](#version-history)
+-
 
-The MIT License (MIT)
+## [License](#license)
+[The MIT License (MIT)](http://www.opensource.org/licenses/MIT)
 
 Copyright (c) 2014 - 2015 ytbryan, Bryan Lim <ytbryan@gmail.com>
 
