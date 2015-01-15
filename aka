@@ -22,10 +22,18 @@ program :path_to_groups, "#{Dir.home}/.aka/groups"
 program :path_to_remote, "#{Dir.home}/.aka/.remote"
 program :path_to_history, "#{Dir.home}/.aka/.history"
 program :path_to_settings, "#{Dir.home}/.aka/.settings"
+program :path_to_dot_file_history, "#{Dir.home}/.bash_history"
 
 ###########################
 ### CORE
 ###########################
+
+command :increase do |c|
+  c.syntax = 'aka last [options]'
+  c.action do |args, options|
+    increase_history_limit()
+  end
+end
 
 command :last do |c|
   c.syntax = 'aka last [options]'
@@ -63,6 +71,19 @@ command :show do |c|
     show_alias(args.first) if args.first
   end
 end
+
+command :history do |c|
+  c.syntax = 'aka history [options]'
+  c.summary = 'show history'
+  c.action do |args, options|
+    if args.first
+      showHistory(args.first.to_i) if args.first.is_i?
+    else
+      showHistory(10)
+    end
+  end
+end
+
 
 # command :find do |c|
 #   c.syntax = 'aka find [options]'
@@ -117,9 +138,7 @@ command :count do |c|
   c.action do |args, options|
     puts "#{count()} aliases from #{return_location_path()}"
     #last three aliases used
-
     #last three added aliases
-
     #last three aliases removed
   end
 end
@@ -275,7 +294,6 @@ end
   def append_with_newline str, path
     File.open(path, 'a') { |file| file.write(str + "\n") }
   end
-
 
   def reload_bash_file()
     system("kill -SIGUSR1 #{Process.ppid}")
@@ -511,7 +529,7 @@ end
   def insert_trap
     input = ask "Make your your dot file auto reload #{return_location_path()}? (y/N)"
     if input == 'y'
-      trap = "sigusr1() { source ~/.bash_profile;  echo 'reloaded dot file'; }\ntrap sigusr1 SIGUSR1"
+      trap = "sigusr1() { source ~/.bash_profile; history -a; echo 'reloaded dot file and history file'; }\ntrap sigusr1 SIGUSR1"
       append(trap, "#{return_location_path()}")
     end
   end
@@ -532,6 +550,14 @@ end
     end
     return ""
   end
+
+  # def readFromHistory
+  #   answer = dot_location_exists?("#{program(:path_to_history)}")
+  #   if answer == true and content = File.open("#{program(:path_to_history)}").read
+  #     return content
+  #   end
+  #   return ""
+  # end
 
   def readFromLocation
     answer = dot_location_exists?("#{program(:path_to_location)}")
@@ -567,7 +593,7 @@ end
     end
   end
 
-  def showlast howmany=5
+  def showlast howmany=10
     if content = File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
@@ -580,12 +606,113 @@ end
         end
       }
       puts ""
-      total_aliases.last(howmany).each_with_index do |line, index|
-        puts "#{total_aliases.count - howmany + index }. " + line
+      if total_aliases.count > howmany
+        total_aliases.last(howmany).each_with_index do |line, index|
+          puts "#{total_aliases.count - howmany + index+1}. " + line
+        end
+      else
+        total_aliases.last(howmany).each_with_index do |line, index|
+          puts "#{index+1}. " + line
+        end
+
       end
       puts ""
     end
   end
+
+  def showHistory howmany=10
+    value = reload_bash_file()
+    if content = File.open(get_history_file).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      total_aliases = []
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        total_aliases.push(value.first)
+      }
+      count_aliases(total_aliases, howmany)
+    end
+  end
+
+  def count_aliases array, howmany
+    name_array,count_array = [], []
+    #find the unique value
+    array.each_with_index { |value, index|
+      if name_array.include?(value) == false
+        name_array.push(value)
+      end
+    }
+
+    #count the value
+    name_array.each { |unique_value|
+      count = 0
+      array.each { |value|
+        if (unique_value == value)
+          count+=1
+        end
+      }
+      count_array.push(count)
+    }
+
+    sorted_count_array, sorted_name_array = sort(count_array, name_array)
+
+    # #print out
+    if sorted_count_array.count == sorted_name_array.count
+      puts ""
+      sorted_name_array.first(howmany).each_with_index { |value, index|
+        percent = ((sorted_count_array[index]).round(2)/array.size.round(2))*100
+        puts "#{index+1}. #{value} = #{percent.round(2)}%"
+      }
+      puts ""
+    else
+      puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
+            name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
+    end
+    puts "There's a total of #{array.size} lines in #{program(:path_to_dot_file_history)}."
+  end
+
+  def sort(countarray, namearray) #highest first. decscending.
+    temp = 0, temp2 = ""
+    countarray.each_with_index { |count, index|
+      countarray[0..countarray.size-index].each_with_index { |x, thisindex|  #always one less than total
+
+        if index < countarray.size-1 and thisindex < countarray.size-1
+          if countarray[thisindex] < countarray[thisindex+1] #if this count is less than next count
+            temp = countarray[thisindex]
+            countarray[thisindex] = countarray[thisindex+1]
+            countarray[thisindex+1] = temp
+
+            temp2 = namearray[thisindex]
+            namearray[thisindex] = namearray[thisindex+1]
+            namearray[thisindex+1] = temp2
+          end
+        end
+
+      }
+    }#outer loop
+    return countarray, namearray
+  end
+
+
+  def get_history_file
+    return "#{program(:path_to_dot_file_history)}"
+  end
+
+  def get_latest_history_file
+    system("history -a")
+  end
+
+  def increase_history_limit
+    #append to /etc/profile
+    append("export HISTSIZE=10000","/etc/profile")
+  end
+
+  def setup
+    #add the reload code
+
+    #increase the history limit
+  end
+
 
 
   #moved
