@@ -11,7 +11,7 @@ default_command :version #note that this is calling command :version
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.42'
+program :version, '0.3.47'
 program :last_update, '13 Jan 2015'
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
 #paths
@@ -24,14 +24,52 @@ program :path_to_history, "#{Dir.home}/.aka/.history"
 program :path_to_settings, "#{Dir.home}/.aka/.settings"
 program :path_to_dot_file_history, "#{Dir.home}/.bash_history"
 
+command :local do |c|
+  c.syntax = 'aka local [options]'
+  c.summary = 'set the local group'
+  c.action do |args, options|
+    if args.first
+      write(args.first, ".group")
+      puts "#{args.first} .group created."
+    else
+      value = read(".group")
+      if value == ""
+        puts "No local group alias found. To create a .group -> aka local [name]".red
+      else
+        puts value
+      end
+    end
+  end
+end
+
+command :increase do |c|
+  c.syntax = 'aka last [options]'
+  c.summary = 'increase your history limit'
+  c.action do |args, options|
+    increase_history_limit()
+  end
+end
+
 ###########################
 ### CORE
 ###########################
 
-command :increase do |c|
-  c.syntax = 'aka last [options]'
+command :clean do |c|
+  c.syntax = 'aka clean [options]'
+  c.summary = 'remove newlines in dot file'
+  c.action do |args, options|
+    cleanup()
+  end
+end
+
+
+command :setup do |c|
+  c.syntax = 'aka setup [options]'
+  c.summary = 'setup aka'
   c.action do |args, options|
     increase_history_limit()
+    insert_trap()
+    #maybe clean up your bashfile?
   end
 end
 
@@ -72,14 +110,14 @@ command :show do |c|
   end
 end
 
-command :history do |c|
-  c.syntax = 'aka history [options]'
-  c.summary = 'show history'
+command :usage do |c|
+  c.syntax = 'aka usage [options]'
+  c.summary = 'show usage'
   c.action do |args, options|
     if args.first
-      showHistory(args.first.to_i) if args.first.is_i?
+      showUsage(args.first.to_i) if args.first.is_i?
     else
-      showHistory(10)
+      showUsage(10)
     end
   end
 end
@@ -183,13 +221,13 @@ command :uninstall do |c|
   end
 end
 
-command :open do |c|
-  c.syntax = 'aka open [options]'
-  c.summary = 'simply open the dot file'
-  c.action do |args, options|
-    system("at  #{return_location_path()}")
-  end
-end
+# command :open do |c|
+#   c.syntax = 'aka open [options]'
+#   c.summary = 'simply open the dot file'
+#   c.action do |args, options|
+#     system("at  #{return_location_path()}")
+#   end
+# end
 
 command :set do |c|
   c.syntax = 'aka set [options]'
@@ -259,21 +297,29 @@ end
     end
   end
 
-  # command :group do |c|
-  #   c.syntax = 'aka group [options]'
-  #   c.summary = 'create a new group for aliases'
-  #   c.action do |args, options|
-  #     #look at groups/ and print out all the files
-  #     puts "group is not found at #{Dir.pwd}.\nTo set a group name, type aka group [name]".red
-  #   end
-  # end
-  # alias_command :g, :group
+  command :group do |c|
+    c.syntax = 'aka group [options]'
+    c.summary = 'create a new group for aliases'
+    c.action do |args, options|
+      #look at groups/ and print out all the files
+      puts "group is not found at #{Dir.pwd}.\nTo set a group name, type aka group [name]".red
+    end
+  end
+  alias_command :g, :group
 
   #############################
   ## Methods
   #############################
 
   private
+
+  def write_with array
+    File.open(get_dot_file_path, 'w') { |file|
+      array.each do |line|
+        file.write(line)
+      end
+    }
+  end
 
   def write_with_newline array
     File.open(get_dot_file_path, 'w') { |file|
@@ -536,7 +582,6 @@ end
 
   def write_to_location location, address
     if aka_directory_exists?
-      # write("#{Dir.home}/#{program(:location)}","#{Dir.home}/.aka/#{program(:path_to_location)}")
       write(location, address)
     else
       puts ".aka not found.".red
@@ -551,19 +596,9 @@ end
     return ""
   end
 
-  # def readFromHistory
-  #   answer = dot_location_exists?("#{program(:path_to_history)}")
-  #   if answer == true and content = File.open("#{program(:path_to_history)}").read
-  #     return content
-  #   end
-  #   return ""
-  # end
-
   def readFromLocation
     answer = dot_location_exists?("#{program(:path_to_location)}")
     if answer == true and content = File.open("#{program(:path_to_location)}").read
-      # puts "#{program(:path_to_location)} is available."
-      # puts "->#{content}"
       return content
     end
     return ""
@@ -581,16 +616,6 @@ end
 
   def return_location_path
     return readFromLocation()
-  end
-
-  class String
-    def pretty
-      return self.gsub("\s\t\r\f", ' ').squeeze(' ')
-    end
-
-    def is_i?
-      !!(self =~ /\A[-+]?[0-9]+\z/)
-    end
   end
 
   def showlast howmany=10
@@ -620,7 +645,7 @@ end
     end
   end
 
-  def showHistory howmany=10
+  def showUsage howmany=10
     value = reload_bash_file()
     if content = File.open(get_history_file).read
       content.gsub!(/\r\n?/, "\n")
@@ -642,7 +667,6 @@ end
         name_array.push(value)
       end
     }
-
     #count the value
     name_array.each { |unique_value|
       count = 0
@@ -661,7 +685,8 @@ end
       puts ""
       sorted_name_array.first(howmany).each_with_index { |value, index|
         percent = ((sorted_count_array[index]).round(2)/array.size.round(2))*100
-        puts "#{index+1}. #{value} = #{percent.round(2)}%"
+        str = "#{index+1}. #{value}"
+        puts "#{str} #{showSpace(str)} #{showBar(percent)}"
       }
       puts ""
     else
@@ -693,7 +718,6 @@ end
     return countarray, namearray
   end
 
-
   def get_history_file
     return "#{program(:path_to_dot_file_history)}"
   end
@@ -713,6 +737,56 @@ end
     #increase the history limit
   end
 
+  def cleanup
+    if content = File.open(get_dot_file_path).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      total_aliases = []
+      content_array.each_with_index { |line, index|
+        if line == ""
+          content_array.delete_at(index)
+        end
+      }
+      write_with_newline(content_array)
+    end
+  end
+
+  ##################################################################
+  ##################################################################
+  ## Getting these babies ready for beauty contest
+  ##################################################################
+  ##################################################################
+
+  class String
+    def pretty
+      return self.gsub("\s\t\r\f", ' ').squeeze(' ')
+    end
+
+    def is_i?
+      !!(self =~ /\A[-+]?[0-9]+\z/)
+    end
+  end
+
+  def showSpace word
+    space = ""
+    val = 20 - word.size
+    val = 20 if val < 0
+    val.times do
+      space += " "
+    end
+    return space
+  end
+
+  def showBar percent
+    result = ""
+    val = percent/100 * 50
+    val = 2 if val > 1 and val < 2
+    val = 1 if val.round <= 1 #for visibiity, show two bars if it's just one
+    val.round.times do
+      result += "/"
+    end
+    return result + " #{percent.round(2)}%"
+  end
 
 
   #moved
@@ -994,19 +1068,6 @@ end
   #   end
   # end
   #
-  # command :local do |c|
-  #   c.syntax = 'aka local [options]'
-  #   c.summary = 'set the local group'
-  #   c.action do |args, options|
-  #     # write("hello", ".group")
-  #     value = read(".group")
-  #     if value == ""
-  #       puts "No local group alias found. To set a local alias group -> aka local [name]".red
-  #     else
-  #       puts value
-  #     end
-  #   end
-  # end
   #
   # command :showgroups do |c|
   #   c.syntax = 'aka local [options]'
