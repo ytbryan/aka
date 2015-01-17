@@ -6,17 +6,17 @@ Boost projects' productivity with some terminal shortcuts.
 
 | features          | alias           | aka |
 | :-------------: |:-------------:| :-----:|
-| add alias         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
-| remove alias      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
-| show alias |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
-| show last few alias |  -       |    ![Yes](img/yes.png) |
-| edit alias |  -       |    ![Yes](img/yes.png)  |
-| count alias | -      |    ![Yes](img/yes.png) |
-| persistency        |-                    |    ![Yes](img/yes.png) |
-| auto reload dot file      |-  |    ![Yes](img/yes.png)|
-| history | -      |    ![Yes](img/yes.png) |
-| upload to server | -      |    ![Yes](img/yes.png) |
-| download from server | -     |    ![Yes](img/yes.png) |
+| [add alias](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
+| [remove alias](#aka-remove)      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
+| [show alias](#aka-show) |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
+| [show last few alias](#aka-last) |  -       |    ![Yes](img/yes.png) |
+| [edit alias](#aka-edit) |  -       |    ![Yes](img/yes.png)  |
+| [count alias](#aka-count) | -      |    ![Yes](img/yes.png) |
+| [persistency](#aka-persist)        |-                    |    ![Yes](img/yes.png) |
+| [auto reload dot file](#aka-reload)      |-  |    ![Yes](img/yes.png)|
+| [aka usage](#aka-usage) | -      |    ![Yes](img/yes.png) |
+| [upload to server](#aka-upload) | -      |    ![Yes](img/yes.png) |
+| [download from server](#aka-download) | -     |    ![Yes](img/yes.png) |
 
 
 ## Table of Content
