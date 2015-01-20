@@ -13,7 +13,7 @@ Boost projects' productivity with some terminal shortcuts.
 | [edit alias](#aka-edit) |  -       |    ![Yes](img/yes.png)  |
 | [count alias](#aka-count) | -      |    ![Yes](img/yes.png) |
 | [persistency](#aka-persist)        |-                    |    ![Yes](img/yes.png) |
-| [auto reload dot file](#aka-reload)      |-  |    ![Yes](img/yes.png)|
+| [auto reload dotfile](#aka-reload)      |-  |    ![Yes](img/yes.png)|
 | [aka usage](#aka-usage) | -      |    ![Yes](img/yes.png) |
 | [upload to server](#aka-upload) | -      |    ![Yes](img/yes.png) |
 | [download from server](#aka-download) | -     |    ![Yes](img/yes.png) |

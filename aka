@@ -7,13 +7,15 @@ require 'highline/import'
 require 'commander/import'
 
 default_command :version #note that this is calling command :version
+
 # always_trace
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.47'
-program :last_update, '13 Jan 2015'
+program :version, '0.3.50'
+program :last_update, '21 Jan 2015'
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
+
 #paths
 program :path_to_aka, "#{Dir.home}/.aka"
 program :path_to_location, "#{Dir.home}/.aka/.location"
@@ -23,6 +25,26 @@ program :path_to_remote, "#{Dir.home}/.aka/.remote"
 program :path_to_history, "#{Dir.home}/.aka/.history"
 program :path_to_settings, "#{Dir.home}/.aka/.settings"
 program :path_to_dot_file_history, "#{Dir.home}/.bash_history"
+
+command :proj do |c|
+  c.syntax = 'aka proj [options]'
+  c.summary = ''
+  c.action do |args, options|
+    if args.first
+      write(args.first, ".group")
+      puts "#{args.first} .group created."
+    else
+      value = read(".group")
+      if value == ""
+        puts "No local group alias found. To create a .group -> aka local [name]".red
+      else
+        puts value
+      end
+    end
+  end
+end
+
+
 
 command :local do |c|
   c.syntax = 'aka local [options]'
@@ -89,16 +111,17 @@ command :reload do |c|
   c.syntax = 'aka reload'
   c.summary = 'reload dot file'
   c.action do |args, options|
-    reload_bash_file()
+    reload_dot_file()
   end
 end
 
 command :add do |c|
   c.syntax = 'aka add [options]'
   c.summary = 'add an alias'
+  c.option '--noreload', 'switch off reloading'
   c.action do |args, options|
     result = add(args.first) if args.first
-    reload_bash_file() if result == true
+    reload_dot_file() if result == true and !options.noreload
   end
 end
 
@@ -122,21 +145,15 @@ command :usage do |c|
   end
 end
 
-
-# command :find do |c|
-#   c.syntax = 'aka find [options]'
-#   c.summary = 'find an alias'
-#   c.action do |args, options|
-#     find(args.first) if args.first
-#   end
-# end
-
 command :remove do |c|
   c.syntax = 'aka remove [options]'
   c.summary = 'remove an alias'
+  c.option '--noreload', 'switch off reloading'
+  c.option '--nounalias', 'switch off unaliasing'
   c.action do |args, options|
-    remove(args.first) if args.first
-    reload_bash_file()
+    result = remove(args.first) if args.first
+    unalias_the(args.first) if !options.nounalias and result == true and args.first
+    reload_dot_file() if result == true and !options.noreload
   end
 end
 alias_command :'rm', :remove
@@ -144,19 +161,37 @@ alias_command :'rm', :remove
 command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.summary = 'edit the alias'
+  c.option '--noreload', 'switch off reloading'
   c.action do |args, options|
-    truth, _alias = show_alias(args.first)
-    if truth == true
-      input = ask "Enter a new command for alias '#{args.first}'?\n"
-      answer = ask "#{input} confirm? (y/N)"
-      if answer == 'y'
-        remove(_alias) #remove that alias
-        edit(input, _alias) #edit that alias
-        reload_bash_file()
+
+    if args.first
+      puts "well well well"
+      values = args.first.split("=")
+      if values.size > 1
+        truth, _alias = show_alias(args.first)
+        if truth == true
+          remove(_alias) #remove that alias
+          edit(values[1], _alias) #edit that alias
+          reload_dot_file() if !options.noreload
+        else
+          puts "alias '#{args.first}' cannot be found".red
+        end
+      else
+        truth, _alias = show_alias(args.first)
+        if truth == true
+          input = ask "Enter a new command for alias '#{args.first}'?\n"
+          answer = ask "#{input} confirm? (y/N)"
+          if answer == 'y'
+            remove(_alias) #remove that alias
+            edit(input, _alias) #edit that alias
+            reload_dot_file() if !options.noreload
+          end
+        else
+          puts "alias '#{args.first}' cannot be found".red
+        end
       end
-    else
-      puts "alias '#{args.first}' cannot be found".red
-    end
+    end #if args.first
+
   end
 end
 
@@ -175,9 +210,6 @@ command :count do |c|
   c.summary = 'count number of alias'
   c.action do |args, options|
     puts "#{count()} aliases from #{return_location_path()}"
-    #last three aliases used
-    #last three added aliases
-    #last three aliases removed
   end
 end
 
@@ -202,7 +234,7 @@ command :copy do |c|
     puts "" if result == true
   end
 end
-#
+
 # command :bundle do |c|
 #   c.syntax = 'aka bundle [options]'
 #   c.summary = 'bundle install dependencies'
@@ -293,6 +325,7 @@ end
     c.syntax = 'aka test [options]'
     c.summary = 'run the tests'
     c.action do |args, options|
+      system("ruby #{program(:path_to_aka)}/tests/test.rb")
       #run the tests
     end
   end
@@ -341,8 +374,13 @@ end
     File.open(path, 'a') { |file| file.write(str + "\n") }
   end
 
-  def reload_bash_file()
+  def reload_dot_file
     system("kill -SIGUSR1 #{Process.ppid}")
+  end
+
+  def unalias_the value
+    system "echo '#{value}' > ~/sigusr1-args;"
+    system "kill -SIGUSR2 #{Process.ppid}"
   end
 
   def split_domain_user fulldomain
@@ -415,6 +453,11 @@ end
     return [false, nil]
   end
 
+  def unalias value
+    puts "unalias #{value}"
+    system "unalias #{value}"
+  end
+
   def show argument
     if content = File.open(get_dot_file_path).read
       content.gsub!(/\r\n?/, "\n")
@@ -447,11 +490,13 @@ end
           if answer.first == input
             content_array.delete_at(index) and write_with_newline(content_array)
             puts "Removed: #{line} from #{Dir.home}/.bash_profile".red
+            return true
           end
         end
       }
     else
       puts "#{@pwd} cannot be found.".red
+      return false
     end
   end
 
@@ -486,7 +531,6 @@ end
     append(record,".history")
   end
 
-  #moved
   def history
     if content = File.open(bash_history_path).read
       puts ".bash_history is available"
@@ -646,7 +690,7 @@ end
   end
 
   def showUsage howmany=10
-    value = reload_bash_file()
+    value = reload_dot_file()
     if content = File.open(get_history_file).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
