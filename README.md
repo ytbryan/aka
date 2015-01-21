@@ -72,6 +72,13 @@ aka update
 aka -h
 ```
 
+
+## Run tests
+
+```
+aka test
+```
+
 ## [TODOs](#todos)
 - move the script to rubygems
 - complete the tests
