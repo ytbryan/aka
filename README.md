@@ -1,3 +1,14 @@
+```
+db              88      a8P               db
+d88b             88    ,88'               d88b
+d8'`8b            88  ,88"                d8'`8b
+d8'  `8b           88,d88'                d8'  `8b
+d8YaaaaY8b          8888"88,              d8YaaaaY8b
+d8""""""""8b         88P   Y8b            d8""""""""8b
+d8'        `8b   888  88     "88,   888   d8'        `8b
+d8'          `8b  888  88       Y8b  888  d8'          `8b
+```
+
 # aka - alias' best friend
 Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
@@ -54,7 +65,6 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 
 ## [Command Reference](#command-reference)
 
-
 ### [`aka add`](#aka-add) - add an alias to dot file
 ```
    aka add hello="echo helloworld"
@@ -79,12 +89,11 @@ aka edit hello="echo hello"
 ## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
 aka uses trap and signal to reload your dot file on the same shell so that you do not need to source the dot file manually.
 
-
 ## Unaliasing of aliases
 `aka rm` includes `unalias` in order to keep removed aliases from the current shell. trap and signal using `SIGUSR2` is used to achieve this.
 
 ## aka uses ruby.
-Use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
+If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
 ## install dependencies for aka
 ```
@@ -94,7 +103,6 @@ aka bundle
 ```
 aka -h
 ```
-
 
 ## Run tests
 
@@ -109,6 +117,7 @@ aka test
 ## [Contribute](#contribute)
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - Please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
+- I'm looking for ways to make aka better. Let me know if you have an idea.
 
 ## [Version History](#version-history)
 -
