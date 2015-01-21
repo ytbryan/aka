@@ -5,9 +5,11 @@ GEM
     commander (4.2.1)
       highline (~> 1.6.11)
     highline (1.6.21)
+    minitest (5.5.0)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
+    safe_yaml (1.0.4)
 
 PLATFORMS
   ruby
@@ -16,4 +18,6 @@ DEPENDENCIES
   colorize
   commander
   highline
+  minitest
   net-scp
+  safe_yaml
