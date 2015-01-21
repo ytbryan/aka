@@ -1,14 +1,3 @@
-```
-db              88      a8P               db
-d88b             88    ,88'               d88b
-d8'`8b            88  ,88"                d8'`8b
-d8'  `8b           88,d88'                d8'  `8b
-d8YaaaaY8b          8888"88,              d8YaaaaY8b
-d8""""""""8b         88P   Y8b            d8""""""""8b
-d8'        `8b   888  88     "88,   888   d8'        `8b
-d8'          `8b  888  88       Y8b  888  d8'          `8b
-```
-
 # aka - alias' best friend
 Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
@@ -16,17 +5,17 @@ Here's some of aka's features:
 
 | features          | alias           | aka |
 | :-------------: |:----------:| :-----:|
-| [add alias](#aka-add)         | ![Yes](demo/yes.png) | ![Yes](demo/yes.png) |
-| [remove alias](#aka-remove)      | ![Yes](demo/yes.png)     |   ![Yes](demo/yes.png) |
-| [show alias](#aka-show) |  ![Yes](demo/yes.png)       |    ![Yes](demo/yes.png) |
-| [show last few added alias](#aka-last) |  -       |    ![Yes](demo/yes.png) |
-| [edit alias](#aka-edit) |  -       |    ![Yes](demo/yes.png)  |
-| [count alias](#aka-count) | -      |    ![Yes](demo/yes.png) |
-| [auto reload dot file](#aka-reload)      |-  |    ![Yes](demo/yes.png)|
-| [aka usage](#aka-usage) | -      |    ![Yes](demo/yes.png) |
-| [upload to server](#aka-upload) | -      |    ![Yes](demo/yes.png) |
-| [download from server](#aka-download) | -     |    ![Yes](demo/yes.png) |
-| [persistency](#aka-persist)        |-                    |    ![Yes](demo/yes.png) |
+| add alias       | ![Yes](demo/yes.png) | ![Yes](demo/yes.png) |
+| remove alias      | ![Yes](demo/yes.png)     |   ![Yes](demo/yes.png) |
+| show alias |  ![Yes](demo/yes.png)       |    ![Yes](demo/yes.png) |
+| show last few added alias |  -       |    ![Yes](demo/yes.png) |
+| edit alias |  -       |    ![Yes](demo/yes.png)  |
+| count alias | -      |    ![Yes](demo/yes.png) |
+| auto reload dot file      |-  |    ![Yes](demo/yes.png)|
+| aka usage | -      |    ![Yes](demo/yes.png) |
+| upload to server | -      |    ![Yes](demo/yes.png) |
+| download from server | -     |    ![Yes](demo/yes.png) |
+| persistency        |-                    |    ![Yes](demo/yes.png) |
 
 ## Table of Content
 
