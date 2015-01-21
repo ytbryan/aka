@@ -1,2 +1,2 @@
 language: ruby
-script: aka test
+script: ruby tests/test.rb
