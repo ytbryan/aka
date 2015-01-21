@@ -7,14 +7,13 @@ require 'highline/import'
 require 'commander/import'
 
 default_command :version #note that this is calling command :version
-
 # always_trace
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.67'
+program :version, '0.3.69'
 program :last_update, '21 Jan 2015'
-program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
+program :description, 'add, remove, edit and grow your aliases from terminal.'
 
 command :global do |c|
   c.syntax = 'aka global [options]'
@@ -44,28 +43,6 @@ command :local do |c|
         puts value
       end
     end
-  end
-end
-
-###########################
-### CORE
-###########################
-
-command :clean do |c|
-  c.syntax = 'aka clean [options]'
-  c.summary = 'remove newlines in dot file'
-  c.action do |args, options|
-    cleanup()
-  end
-end
-
-command :setup do |c|
-  c.syntax = 'aka setup [options]'
-  c.summary = 'setup aka'
-  c.action do |args, options|
-    increase_history_limit()
-    insert_trap()
-    # 10.times do { cleanup() }
   end
 end
 
@@ -181,7 +158,24 @@ command :edit do |c|
         end
       end
     end #if args.first
+  end
+end
 
+command :clean do |c|
+  c.syntax = 'aka clean [options]'
+  c.summary = 'remove newlines in dot file'
+  c.action do |args, options|
+    cleanup()
+  end
+end
+
+command :setup do |c|
+  c.syntax = 'aka setup [options]'
+  c.summary = 'setup aka'
+  c.action do |args, options|
+    increase_history_limit()
+    insert_trap()
+    # 10.times do { cleanup() }
   end
 end
 
@@ -200,47 +194,6 @@ command :count do |c|
   c.summary = 'count number of alias'
   c.action do |args, options|
     puts "#{count()} aliases from #{read_yml(".config")["location"]}"
-  end
-end
-
-###########################
-### DEVELOPMENT
-###########################
-
-command :build do |c|
-  c.syntax = 'aka build [options]'
-  c.summary = 'build the VERSION file and run tests'
-  c.action do |args, options|
-    write(program(:version), './VERSION')
-    puts "VERSION #{program(:version)} created at #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}"
-  end
-end
-
-command :copy do |c|
-  c.syntax = 'aka copy [options]'
-  c.summary = 'copy a local copy of aka to /usr/local/bin'
-  c.action do |args, options|
-    result = system("sudo cp aka /usr/local/bin")
-    puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == true
-    puts "" if result == true
-  end
-end
-
-command :bundle do |c|
-  c.syntax = 'aka bundle [options]'
-  c.summary = 'bundle install dependencies'
-  c.action do |args, options|
-    system("cd ~/.aka")
-    system("bundle install")
-  end
-end
-
-command :uninstall do |c|
-  c.syntax = 'aka uninstall [options]'
-  c.summary = 'uninstall aka'
-  c.action do |args, options|
-    input = ask "Confirm that you want to uninstall aka? (y/N)"
-    system("sudo rm -rf ~/.aka; sudo rm -rf /usr/local/bin/aka;") if input == "y"
   end
 end
 
@@ -558,7 +511,6 @@ end
     return append("alias " + newalias + "='" + thiscommand + "'", read_yml(".config")["location"] )
   end
 
-
   def count
     alias_count = 0
     if content=File.open(read_yml(".config")["location"]).read
@@ -599,12 +551,10 @@ end
     return ""
   end
 
-  #find out if file in .location exist
   def dot_location_exists? address
     return File.exist? address
   end
 
-  #if .aka exist?
   def aka_directory_exists?
     return File.directory?("#{Dir.home}/.aka")
   end
@@ -630,7 +580,6 @@ end
         total_aliases.last(howmany).each_with_index do |line, index|
           puts "#{index+1}. " + line
         end
-
       end
       puts ""
     end
@@ -714,7 +663,6 @@ end
   end
 
   def increase_history_limit
-    #append to /etc/profile
     append("export HISTSIZE=10000","/etc/profile")
   end
 
@@ -803,3 +751,44 @@ end
   #   end
   # end
   #
+
+  ###########################
+  ### DEVELOPMENT
+  ###########################
+
+  command :build do |c|
+    c.syntax = 'aka build [options]'
+    c.summary = 'build the VERSION file and run tests'
+    c.action do |args, options|
+      write(program(:version), './VERSION')
+      puts "VERSION #{program(:version)} created at #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}"
+    end
+  end
+
+  command :copy do |c|
+    c.syntax = 'aka copy [options]'
+    c.summary = 'copy a local copy of aka to /usr/local/bin'
+    c.action do |args, options|
+      result = system("sudo cp aka /usr/local/bin")
+      puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == true
+      puts "" if result == true
+    end
+  end
+
+  command :bundle do |c|
+    c.syntax = 'aka bundle [options]'
+    c.summary = 'bundle install dependencies'
+    c.action do |args, options|
+      system("cd ~/.aka")
+      system("bundle install")
+    end
+  end
+
+  command :uninstall do |c|
+    c.syntax = 'aka uninstall [options]'
+    c.summary = 'uninstall aka'
+    c.action do |args, options|
+      input = ask "Confirm that you want to uninstall aka? (y/N)"
+      system("sudo rm -rf ~/.aka; sudo rm -rf /usr/local/bin/aka;") if input == "y"
+    end
+  end

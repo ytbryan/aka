@@ -1,35 +1,21 @@
 # aka - alias' best friend
-We use aliases on a daily basis for projects.
-
-But each time, we need to break our workflow and open that texteditor when adding, removing or editing those aliases.
-
-We uses popular dot files but we don't know which aliases are used the most and which are not.
-
-Introducing aka - alias' best friend. Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
+Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
 Here's some of aka's features:
 
 | features          | alias           | aka |
 | :-------------: |:----------:| :-----:|
-| [add alias](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
-| [remove alias](#aka-remove)      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
-| [show alias](#aka-show) |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
-| [show last few added alias](#aka-last) |  -       |    ![Yes](img/yes.png) |
-| [edit alias](#aka-edit) |  -       |    ![Yes](img/yes.png)  |
-| [count alias](#aka-count) | -      |    ![Yes](img/yes.png) |
-| [auto reload dotfile](#aka-reload)      |-  |    ![Yes](img/yes.png)|
-| [aka usage](#aka-usage) | -      |    ![Yes](img/yes.png) |
-| [upload to server](#aka-upload) | -      |    ![Yes](img/yes.png) |
-| [download from server](#aka-download) | -     |    ![Yes](img/yes.png) |
-| [persistency](#aka-persist)        |-                    |    ![Yes](img/yes.png) |
-
-## aka local
-
-```
-aka local #show the local alias
-aka local -a #add alias to .aka
-aka local -rm hello #remove alias from .aka
-```
+| [add alias](#aka-add)         | ![Yes](demo/yes.png) | ![Yes](demo/yes.png) |
+| [remove alias](#aka-remove)      | ![Yes](demo/yes.png)     |   ![Yes](demo/yes.png) |
+| [show alias](#aka-show) |  ![Yes](demo/yes.png)       |    ![Yes](demo/yes.png) |
+| [show last few added alias](#aka-last) |  -       |    ![Yes](demo/yes.png) |
+| [edit alias](#aka-edit) |  -       |    ![Yes](demo/yes.png)  |
+| [count alias](#aka-count) | -      |    ![Yes](demo/yes.png) |
+| [auto reload dot file](#aka-reload)      |-  |    ![Yes](demo/yes.png)|
+| [aka usage](#aka-usage) | -      |    ![Yes](demo/yes.png) |
+| [upload to server](#aka-upload) | -      |    ![Yes](demo/yes.png) |
+| [download from server](#aka-download) | -     |    ![Yes](demo/yes.png) |
+| [persistency](#aka-persist)        |-                    |    ![Yes](demo/yes.png) |
 
 ## Table of Content
 
@@ -68,6 +54,26 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 
 ## [Command Reference](#command-reference)
 
+
+### [`aka add`](#aka-add) - add an alias to dot file
+```
+   aka add hello="echo helloworld"
+```
+
+### [`aka rm`](#aka-remove) - remove an alias from dot file
+```
+  aka rm hello
+```
+
+### [`aka show`](#aka-show) - show an alias
+```
+   aka show hello
+```
+
+### [`aka edit`](#aka-edit)- edit an alias
+```
+aka edit hello="echo hello"
+```
 -
 
 ## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
@@ -77,19 +83,14 @@ aka uses trap and signal to reload your dot file on the same shell so that you d
 ## Unaliasing of aliases
 `aka rm` includes `unalias` in order to keep removed aliases from the current shell. trap and signal using `SIGUSR2` is used to achieve this.
 
-## 1. aka uses ruby.
+## aka uses ruby.
 Use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
-## 2. install dependencies for aka
+## install dependencies for aka
 ```
 aka bundle
 ```
-
-## 3. update aka to a newer version
-```
-aka update
-```
-## 4. help and commands
+## help and commands
 ```
 aka -h
 ```
@@ -100,13 +101,6 @@ aka -h
 ```
 aka test
 ```
-
-- alias is one of the most used built-in shell functions created when computers are slower.
-- aka is like a friendly add-on that expands the most used shell functionality. It removes the limit of alias history of 1000 using and include an auto-reload using
-signal and trap.
-- It will be a sin to have all these extended functionalities without making them available for collabration.
-Use `aka local` and `aka global` to include your favourite aliases into projects.
-
 
 ## [TODOs](#todos)
 - move the script to rubygems
