@@ -82,7 +82,7 @@ class TestAka < MiniTest::Test
       }
     end
 
-    must_be true, truth
+    assert_equal true, truth
     system %(aka rm somethingsomethingsomething --noreload --nounalias)
 
   end
@@ -126,9 +126,9 @@ class TestAka < MiniTest::Test
   #   skip "test this later"
   # end
   #
-  def test_that_you_can_beam
-    skip "test this later"
-  end
+  # def test_that_you_can_beam
+  #   skip "test this later"
+  # end
   #
   # def test_that_you_can_dl
   #   skip "test this later"

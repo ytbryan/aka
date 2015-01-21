@@ -1,7 +1,3 @@
-.history
-.location
-.remote
 aliases/
 groups/
-.global
 .config

@@ -12,63 +12,38 @@ default_command :version #note that this is calling command :version
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.51'
+program :version, '0.3.67'
 program :last_update, '21 Jan 2015'
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
 
-#paths
-program :path_to_aka, "#{Dir.home}/.aka"
-program :path_to_location, "#{Dir.home}/.aka/.location"
-program :path_to_global, "#{Dir.home}/.aka/.global"
-program :path_to_groups, "#{Dir.home}/.aka/groups"
-program :path_to_remote, "#{Dir.home}/.aka/.remote"
-program :path_to_history, "#{Dir.home}/.aka/.history"
-program :path_to_settings, "#{Dir.home}/.aka/.settings"
-program :path_to_dot_file_history, "#{Dir.home}/.bash_history"
-
-command :proj do |c|
-  c.syntax = 'aka proj [options]'
-  c.summary = ''
+command :global do |c|
+  c.syntax = 'aka global [options]'
+  c.summary = 'set the global aliases'
   c.action do |args, options|
-    if args.first
-      write(args.first, ".group")
-      puts "#{args.first} .group created."
+    value = read("read_yml('.config')['global']")
+    if value == ""
+      puts "No global aliases found. To set the alias group -> aka global [name]".red
     else
-      value = read(".group")
-      if value == ""
-        puts "No local group alias found. To create a .group -> aka local [name]".red
-      else
-        puts value
-      end
+      puts value
     end
   end
 end
-
-
 
 command :local do |c|
   c.syntax = 'aka local [options]'
   c.summary = 'set the local group'
   c.action do |args, options|
     if args.first
-      write(args.first, ".group")
-      puts "#{args.first} .group created."
+      write(args.first, ".aka")
+      puts "#{args.first} .aka created."
     else
-      value = read(".group")
+      value = read(".aka")
       if value == ""
         puts "No local group alias found. To create a .group -> aka local [name]".red
       else
         puts value
       end
     end
-  end
-end
-
-command :increase do |c|
-  c.syntax = 'aka last [options]'
-  c.summary = 'increase your history limit'
-  c.action do |args, options|
-    increase_history_limit()
   end
 end
 
@@ -84,14 +59,13 @@ command :clean do |c|
   end
 end
 
-
 command :setup do |c|
   c.syntax = 'aka setup [options]'
   c.summary = 'setup aka'
   c.action do |args, options|
     increase_history_limit()
     insert_trap()
-    #maybe clean up your bashfile?
+    # 10.times do { cleanup() }
   end
 end
 
@@ -225,7 +199,7 @@ command :count do |c|
   c.syntax = 'aka count [options]'
   c.summary = 'count number of alias'
   c.action do |args, options|
-    puts "#{count()} aliases from #{return_location_path()}"
+    puts "#{count()} aliases from #{read_yml(".config")["location"]}"
   end
 end
 
@@ -233,14 +207,15 @@ end
 ### DEVELOPMENT
 ###########################
 
-# command :build do |c|
-#   c.syntax = 'aka build [options]'
-#   c.summary = 'build the VERSION file and run tests'
-#   c.action do |args, options|
-#     build()
-#   end
-# end
-#
+command :build do |c|
+  c.syntax = 'aka build [options]'
+  c.summary = 'build the VERSION file and run tests'
+  c.action do |args, options|
+    write(program(:version), './VERSION')
+    puts "VERSION #{program(:version)} created at #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}"
+  end
+end
+
 command :copy do |c|
   c.syntax = 'aka copy [options]'
   c.summary = 'copy a local copy of aka to /usr/local/bin'
@@ -251,14 +226,14 @@ command :copy do |c|
   end
 end
 
-# command :bundle do |c|
-#   c.syntax = 'aka bundle [options]'
-#   c.summary = 'bundle install dependencies'
-#   c.action do |args, options|
-#     system("cd ~/.aka")
-#     system("bundle install")
-#   end
-# end
+command :bundle do |c|
+  c.syntax = 'aka bundle [options]'
+  c.summary = 'bundle install dependencies'
+  c.action do |args, options|
+    system("cd ~/.aka")
+    system("bundle install")
+  end
+end
 
 command :uninstall do |c|
   c.syntax = 'aka uninstall [options]'
@@ -269,21 +244,12 @@ command :uninstall do |c|
   end
 end
 
-# command :open do |c|
-#   c.syntax = 'aka open [options]'
-#   c.summary = 'simply open the dot file'
-#   c.action do |args, options|
-#     system("at  #{return_location_path()}")
-#   end
-# end
-
 command :set do |c|
   c.syntax = 'aka set [options]'
   c.summary = 'set the path to a dot file'
   c.action do |args, options|
-    # FileUtils.mkdir("#{Dir.home}/.aka") if File.directory?("#{Dir.home}/.aka")
-    FileUtils.touch("#{program(:path_to_location)}") if File.exists?("#{program(:path_to_location)}")
-    File.write("#{program(:path_to_location)}", args.first) if File.exists?(args.first) #if the file exists
+    FileUtils.touch(read_yml(".config")["location"]) if File.exists?(read_yml(".config")["location"])
+    File.write(read_yml(".config")["location"], args.first) if File.exists?(args.first) #if the file exists
   end
 end
 
@@ -341,8 +307,7 @@ end
     c.syntax = 'aka test [options]'
     c.summary = 'run the tests'
     c.action do |args, options|
-      system("ruby #{program(:path_to_aka)}/tests/test.rb")
-      #run the tests
+      system("ruby #{read_yml(".config")["aka"]}/tests/test.rb")
     end
   end
 
@@ -362,8 +327,16 @@ end
 
   private
 
+  def read_yml path
+    return YAML.load_file(path)
+  end
+
+  def write_yml path, theyml
+    File.open(path, 'w') {|f| f.write theyml.to_yaml } #Store
+  end
+
   def write_with array
-    File.open(get_dot_file_path, 'w') { |file|
+    File.open(read_yml(".config")["location"], 'w') { |file|
       array.each do |line|
         file.write(line)
       end
@@ -371,7 +344,7 @@ end
   end
 
   def write_with_newline array
-    File.open(get_dot_file_path, 'w') { |file|
+    File.open(read_yml(".config")["location"], 'w') { |file|
       array.each do |line|
         file.write(line + "\n")
       end
@@ -412,17 +385,27 @@ end
     return [username, domain, port]
   end
 
-  def makeGroup
-    alias_path = ".aka/alias.yml"
-    group_path = ".aka/group.yml"
-    FileUtils.touch(group_path) if File.exist?(group_path)
-    #write yaml file
-    File.open(group_path, 'w') do |f|
-      f.write("")
+  # def makeGroup
+  #   alias_path = ".aka/alias.yml"
+  #   group_path = ".aka/group.yml"
+  #   FileUtils.touch(group_path) if File.exist?(group_path)
+  #   #write yaml file
+  #   File.open(group_path, 'w') do |f|
+  #     f.write("")
+  #   end
+  # end
+
+  def add input
+    if input and show_alias(input).first == false and not_empty_alias(input) == false
+      array = input.split("=")
+      full_command = "\nalias #{array.first}='#{array[1]}'"
+      File.open(read_yml(".config")["location"], 'a') { |file| file.write(full_command) }
+      puts "Added: #{full_command} to #{read_yml(".config")["location"]}"
+      return true
+    else
+      puts "The alias is already present."
+      return false
     end
-    #write to group file
-    #backup group
-    #make .aka file
   end
 
   def not_empty_alias input
@@ -431,26 +414,9 @@ end
     return array[1].strip == ""
   end
 
-  def add input
-    if input and show_alias(input).first == false and not_empty_alias(input) == false
-      array = input.split("=")
-      full_command = "\nalias #{array.first}='#{array[1]}'"
-      File.open(get_dot_file_path, 'a') { |file| file.write(full_command) }
-      puts "Added: #{full_command} to #{get_dot_file_path}"
-      return true
-    else
-      puts "The alias is already present."
-      return false
-    end
-  end
-
-  def get_dot_file_path
-    # return "#{Dir.home}/#{program(:location)}"
-    return "#{return_location_path()}"
-  end
-
   def show_alias argument
-    if content = File.open(get_dot_file_path).read
+    # puts "show_alias"
+    if content = File.open(read_yml(".config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -460,7 +426,6 @@ end
           if found?(answer.first, argument.split("=").first, line) == true
             # return [true, answer.first]
             return [true, answer.first, answer[1]]
-
           end
         end
       }
@@ -473,34 +438,29 @@ end
     # return [false, nil]
   end
 
-  def unalias value
-    puts "unalias #{value}"
-    system "unalias #{value}"
-  end
-
-  def show argument
-    if content = File.open(get_dot_file_path).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-      content_array.each_with_index { |line, index|
-        value = line.split(" ")
-        if value.length > 1 and value.first == "alias"
-          answer = value[1].split("=")
-          if found?(answer.first, argument, line)
-            return true
-          end
-        end
-      }
-    else
-      puts "#{@pwd} cannot be found.".red
-      return false
-    end
-    puts "No alias is found.".red
-    return false
-  end
+  # def show argument
+  #   if content = File.open(read_yml(".config")["location"]).read
+  #     content.gsub!(/\r\n?/, "\n")
+  #     content_array = content.split("\n")
+  #     content_array.each_with_index { |line, index|
+  #       value = line.split(" ")
+  #       if value.length > 1 and value.first == "alias"
+  #         answer = value[1].split("=")
+  #         if found?(answer.first, argument, line)
+  #           return true
+  #         end
+  #       end
+  #     }
+  #   else
+  #     puts "#{@pwd} cannot be found.".red
+  #     return false
+  #   end
+  #   puts "No alias is found.".red
+  #   return false
+  # end
 
   def remove input
-    if content=File.open(get_dot_file_path).read
+    if content=File.open(read_yml(".config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -520,36 +480,36 @@ end
     end
   end
 
-  def find input
-    if input == nil
-      puts "Press q to cancel. or press ctrl+z to stop".red
-      input = ask "Which alias to find: (q to quit)"
-      if input == "q"
-        puts "Exit." and exit()
-      end
-    end
+  # def find input
+  #   if input == nil
+  #     puts "Press q to cancel. or press ctrl+z to stop".red
+  #     input = ask "Which alias to find: (q to quit)"
+  #     if input == "q"
+  #       puts "Exit." and exit()
+  #     end
+  #   end
+  #
+  #   founded = false
+  #   if content=File.open(read_yml(".config")["location"]).read
+  #     content.gsub!(/\r\n?/, "\n")
+  #     content_array = content.split("\n")
+  #     content_array.each_with_index { |line, index|
+  #       value = line.split(" ")
+  #       if value.length > 1 and value.first == "alias"
+  #         answer = value[1].split("=")
+  #         if found?(answer.first, input, line) == true
+  #           founded = true
+  #         end
+  #       end
+  #     }
+  #     puts "nothing is found." if founded == false
+  #   end
+  # end
 
-    founded = false
-    if content=File.open(get_dot_file_path).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-      content_array.each_with_index { |line, index|
-        value = line.split(" ")
-        if value.length > 1 and value.first == "alias"
-          answer = value[1].split("=")
-          if found?(answer.first, input, line) == true
-            founded = true
-          end
-        end
-      }
-      puts "nothing is found." if founded == false
-    end
-  end
-
-  def record method, command
-    record = method + "," + command + "," + Time.now.to_s
-    append(record,".history")
-  end
+  # def record method, command
+  #   record = method + "," + command + "," + Time.now.to_s
+  #   append(record,".history")
+  # end
 
   def history
     if content = File.open(bash_history_path).read
@@ -577,27 +537,6 @@ end
     puts "https://github.com/ytbryan/aka"
   end
 
-  def footer
-    puts ""
-    puts "Check out 'aka help' for more information about specific commands"
-    puts "For full documentation, see: http://github.com/ytbryan/aka#readme"
-    puts ""
-  end
-
-  def commands
-    puts ""
-    puts "Some useful aka commands include: "
-    puts ""
-    puts "-s, -save        save a copy of your dotfile"
-    puts "-h, -help        show a list of options and commands"
-    puts "-set             set the path to your dotfile"
-    puts "-rm, -remove     remove an alias"
-    puts "-v, -version     show version of aka"
-    puts "-c, -commands    list all the commands"
-    puts "-un, -uninstall  uninstall aka"
-    puts "-e, -edit        edit aliases"
-  end
-
   def found? answer, argument, line
     if answer == argument
       puts "Found -> " + line.red
@@ -611,23 +550,18 @@ end
     system("sudo rm -rf /usr/local/bin/aka; curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/cmd/aka; chmod 755 /usr/local/bin/aka") #download the ruby file into _plugins
   end
 
-  def build
-    write(program(:version), './VERSION')
-    puts "VERSION #{program(:version)} created at #{Time.now.strftime("%I:%M%p, %A, %d %b %Y")}"
-  end
-
   def edit newcommand, this_alias
-    return append("alias " + this_alias + "='" + newcommand + "'", get_dot_file_path )
+    return append("alias " + this_alias + "='" + newcommand + "'", read_yml(".config")["location"] )
   end
 
   def edit_alias newalias, thiscommand
-    return append("alias " + newalias + "='" + thiscommand + "'", get_dot_file_path )
+    return append("alias " + newalias + "='" + thiscommand + "'", read_yml(".config")["location"] )
   end
 
 
   def count
     alias_count = 0
-    if content=File.open(get_dot_file_path).read
+    if content=File.open(read_yml(".config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -642,10 +576,10 @@ end
   end
 
   def insert_trap
-    input = ask "Make your your dot file auto reload #{return_location_path()}? (y/N)"
+    input = ask "Make your your dot file auto reload #{read_yml(".config")["location"]}? (y/N)"
     if input == 'y'
       trap = "sigusr1() { source ~/.bash_profile; history -a; echo 'reloaded dot file and history file'; }\ntrap sigusr1 SIGUSR1"
-      append(trap, "#{return_location_path()}")
+      append(trap, read_yml('.config')['location'])
     end
   end
 
@@ -665,14 +599,6 @@ end
     return ""
   end
 
-  def readFromLocation
-    answer = dot_location_exists?("#{program(:path_to_location)}")
-    if answer == true and content = File.open("#{program(:path_to_location)}").read
-      return content
-    end
-    return ""
-  end
-
   #find out if file in .location exist
   def dot_location_exists? address
     return File.exist? address
@@ -683,12 +609,8 @@ end
     return File.directory?("#{Dir.home}/.aka")
   end
 
-  def return_location_path
-    return readFromLocation()
-  end
-
   def showlast howmany=10
-    if content = File.open(get_dot_file_path).read
+    if content = File.open(read_yml(".config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       #why not just call the last five lines? Because i can't be sure that they are aliases
@@ -716,7 +638,7 @@ end
 
   def showUsage howmany=10
     value = reload_dot_file()
-    if content = File.open(get_history_file).read
+    if content = File.open(read_yml(".config")["history"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       total_aliases = []
@@ -762,7 +684,7 @@ end
       puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
             name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
     end
-    puts "There's a total of #{array.size} lines in #{program(:path_to_dot_file_history)}."
+    puts "There's a total of #{array.size} lines in #{read_yml(".config")["history"]}."
   end
 
   def sort(countarray, namearray) #highest first. decscending.
@@ -787,10 +709,6 @@ end
     return countarray, namearray
   end
 
-  def get_history_file
-    return "#{program(:path_to_dot_file_history)}"
-  end
-
   def get_latest_history_file
     system("history -a")
   end
@@ -800,14 +718,10 @@ end
     append("export HISTSIZE=10000","/etc/profile")
   end
 
-  def setup
-    #add the reload code
-
-    #increase the history limit
-  end
-
   def cleanup
-    if content = File.open(get_dot_file_path).read
+    puts "entered cleanup"
+    if content = File.open("#{read_yml(".config")["location"]}").read
+      puts "yes?"
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       total_aliases = []
@@ -820,11 +734,9 @@ end
     end
   end
 
-  ##################################################################
-  ##################################################################
+  ################################################
   ## Getting these babies ready for beauty contest
-  ##################################################################
-  ##################################################################
+  ################################################
 
   class String
     def pretty
@@ -857,168 +769,6 @@ end
     return result + " #{percent.round(2)}%"
   end
 
-
-  #moved
-  # def uninstall
-  #   input = ""
-  #   while input == ""
-  #     input = ask "Remove aka? (y/N)".red
-  #     if input == "N"
-  #       puts "cancel."
-  #     elsif input == "y"
-  #       system("sudo rm #{@localbin}/aka")
-  #       puts "aka removed from #{@localbin}".red
-  #     end
-  #   end
-  # end
-
-  # def set
-  #   puts "TODO: path"
-  #   system("touch ~/.aka/path")
-  #   if content = File.open(bash_history_path).read
-  #   end
-  # end
-
-  # def readBash
-  #   str = "", count = 0
-  #   if profile = File.exist?("#{Dir.home}/.bash_profile")
-  #     count+= 1
-  #     str = "#{count}. #{Dir.home}/.bash_profile\n"
-  #   end
-  #
-  #   if  zsh = File.exist?("#{Dir.home}/.zshrc")
-  #     count+= 1
-  #     str = str + "#{count}. #{Dir.home}/.zshrc\n"
-  #   end
-  #
-  #   if bashrc = File.exist?("#{Dir.home}/.bashrc")
-  #     count+= 1
-  #     str = str + "#{count}. #{Dir.home}/.bashrc\n"
-  #   end
-  #
-  #   if count == 0
-  #     puts "No .bash_profile or .zshrc or .bashrc detected. Try to create a dot file first."
-  #   elsif count == 1
-  #     puts "one only"
-  #     set_the_dot_file()
-  #   elsif profile and zsh and bashrc
-  #     puts "three"
-  #     input = ask "which dot file do you want to use? \n#{str}"
-  #   else
-  #     puts "two"
-  #     input = ask "Which dot file do you want to use? \n#{str}"
-  #   end
-  # end
-
-  # #write to .location
-  # def single_dot_file_found_write_to_location #always ensure this is safe
-  #   puts "enter here"
-  #   if profile = File.exist?("#{Dir.home}/.bash_profile")
-  #     write_to_location("#{Dir.home}/.bash_profile","#{program(:path_to_location)}" )
-  #   elsif zsh = File.exist?("#{Dir.home}/.zshrc")
-  #     write_to_location("#{Dir.home}/.zshrc","#{program(:path_to_location)}" )
-  #   elsif bashrc = File.exist?("#{Dir.home}/.bashrc")
-  #     write_to_location("#{Dir.home}/.bashrc","#{program(:path_to_location)}" )
-  #   end
-  # end
-
-
-  # command :janice do |c|
-  #   c.syntax = 'aka update [options]'
-  #   c.summary = 'update the old copy of aka to a newer one'
-  #   c.action do |args, options|
-  #     # puts "#{program(:test)}"
-  #     puts args
-  #     puts Dir.pwd
-  #     # str = args.join("\ ") + "/"
-  #     # FileUtils.touch("#{Dir.home}/") if File.exists?("#{Dir.home}/
-  #     # FileUtils.mkdir_p str
-  #   end
-  # end
-
-  # command :eh3 do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
-  #   c.action do |args, options|
-  #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
-  #     if content = File.open(get_dot_file_path).read
-  #       content.gsub!(/\r\n?/, "\n")
-  #       content_array = content.split("\n")
-  #       content_array.each_with_index { |line, index|
-  #         value = line.split(" ")
-  #         puts line
-  #         # if value.length > 1 and value.first == "alias"
-  #         #   answer = value[1].split("=")
-  #         #   puts answer.first
-  #         # end
-  #       }
-  #     end
-  #   end
-  # end
-
-  # command :eh2 do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
-  #   c.action do |args, options|
-  #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
-  #     if content = File.open(get_dot_file_path).read
-  #       content.gsub!(/\r\n?/, "\n")
-  #       content_array = content.split("\n")
-  #       content_array.each_with_index { |line, index|
-  #         value = line.split(" ")
-  #         if value.length > 1 and value.first == "alias"
-  #           answer = value[1].split("=")
-  #           alias_name = answer.first
-  #           # puts answer.first
-  #           out_file = File.new("aliases/#{answer.first}.yml", "w")
-  #         end
-  #       }
-  #     end
-  #     # group = YAML.load_file("group.yml")
-  #     # puts group["woodcutter"]
-  #     # system("echo $SHELL") >> answer
-  #     # puts answer
-  #     # puts "hello"
-  #   end
-  # end
-
-  # command :xxx do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
-  #   c.action do |args, options|
-  #     readBash()
-  #     # add = YAML.load_file("aliases/add.yml")
-  #     # add['add']['comment'] = "something esle"
-  #     # add['add'][1] = "group"
-  #     # add['add'][2] = "tada"
-  #     # File.open('aliases/add.yml', 'w') {|f| f.write add.to_yaml } #Store
-  #   end
-  # end
-
-  # command :sss do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
-  #   c.action do |args, options|
-  #     add = YAML.load_file("aliases/add.yml")
-  #     add['add']['comment'] = "something esle"
-  #     add['add'][1] = "group"
-  #     add['add'][2] = "tada"
-  #     File.open('aliases/add.yml', 'w') {|f| f.write add.to_yaml } #Store
-  #   end
-  # end
-
-  # command :read do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
-  #   c.action do |args, options|
-  #     add = YAML.load_file("aliases/add.yml")
-  #     add['add']['comment'] = "something esle"
-  #     add['add'][1] = "group"
-  #     add['add'][2] = "tada"
-  #     File.open('aliases/add.yml', 'w') {|f| f.write add.to_yaml } #Store
-  #   end
-  # end
-
   # command :start do |c|
   #   c.syntax = 'aka switch [options]'
   #   c.summary = 'switch to zsh'
@@ -1031,134 +781,25 @@ end
   #   end
   # end
 
-  # command :switch do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
-  #   c.action do |args, options|
-  #     write_to_location("hello")
-  #     # readFromLocation()
-  #   end
-  # end
 
-  # command :eh do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
+  # command :config do |c|
   #   c.action do |args, options|
-  #     puts "there is #{Dir["aliases/*"].length} aliases in aliases folder."
-  #     if content = File.open(get_dot_file_path).read
-  #       content.gsub!(/\r\n?/, "\n")
-  #       content_array = content.split("\n")
-  #       content_array.each_with_index { |line, index|
-  #         value = line.split(" ")
-  #         if value.length > 1 and value.first == "alias"
-  #           answer = value[1].split("=")
-  #           alias_name = answer.first
-  #           out_file = File.new("aliases/#{answer.first}.yml", "w")
-  #         end
-  #       }
-  #     end
-  #     # group = YAML.load_file("group.yml")
-  #     # puts group["woodcutter"]
-  #     # system("echo $SHELL") >> answer
-  #     # puts answer
-  #     # puts "hello"
+  #     # theyml = Hash.new
+  #     # theyml["location"] = "~/.aka/.location"
+  #     # theyml["global"] = "/Users/ytbryan/.bash_profile"
+  #     # theyml["groups"] = "~/.aka/groups"
+  #     # theyml["remote"] = "255, admin, 12.12.12.233"
+  #     # theyml["path"] = "~/.aka"
+  #     # write_yml(".config", theyml)
+  #     FileUtils.touch(read_yml(".config")["location"])
   #   end
   # end
   #
-  # command :read do |c|
-  #   c.syntax = 'aka switch [options]'
-  #   c.summary = 'switch to zsh'
+  # command :readconfig do |c|
   #   c.action do |args, options|
-  #     value =  readFromLocation()
-  #     answer = dot_location_exists(value)
-  #     if value != "" and answer == true
-  #       puts value
-  #     else
-  #       if value != ""
-  #         puts "#{value} is found in .location but the actual file is missing. Recreate it first. Or change it using aka set [option]\n Read aka -h for help".red if value != ""
-  #       else
-  #         puts "Try to set the location of dot file. \naka set .bash_profile #.bashrc #.zshrc".red
-  #       end
-  #     end
-  #   end
-  # end
-
-  #############################
-  ## Experimental
-  #############################
-
-  # command :undo do |c|
-  #   c.syntax = 'aka undo [options]'
-  #   c.summary = 'undo a removal of alias'
-  #   c.action do |args, options|
-  #     puts "this undo"
-  #   end
-  # end
-
-  # command :scan do |c|
-  #   c.syntax = 'aka scan [options]'
-  #   c.summary = ''
-  #   c.action do |args, options|
-  #     scan()
-  #   end
-  # end
-
-  # command :global do |c|
-  #   c.syntax = 'aka global [options]'
-  #   c.summary = 'set the global aliases'
-  #   c.action do |args, options|
-  #     # write("hello", "#{program(:path_to_global)}")
-  #     value = read("#{program(:path_to_global)}")
-  #     if value == ""
-  #       puts "No global aliases found. To set the alias group -> aka global [name]".red
-  #     else
-  #       puts value
-  #     end
+  #     puts "read_yml('.config')['location'] ->#{read_yml(".config")["location"].class} -> #{read_yml(".config")["location"]}"
+  #     puts "read_yml(".config")["location"] -> #{ read_yml(".config")["location"].class} -> #{ read_yml(".config")["location"]}"
+  #     puts "#{program(:path_to_location).class} -> #{program(:path_to_location)}"
   #   end
   # end
   #
-  # command :size do |c|
-  #   c.syntax = 'aka size [options]'
-  #   c.summary = 'set the global aliases'
-  #   c.action do |args, options|
-  #     value =  read("#{program(:path_to_global)}")
-  #     array = value.split("\n")
-  #     array.each_with_index do |file, index|
-  #       puts "file->#{file}"
-  #     end
-  #   end
-  # end
-  #
-  # command :append do |c|
-  #   c.syntax = 'aka global [options]'
-  #   c.summary = 'set the global aliases'
-  #   c.action do |args, options|
-  #     append_with_newline(args.first, "#{program(:path_to_global)}")
-  #   end
-  # end
-  #
-  #
-  # command :showgroups do |c|
-  #   c.syntax = 'aka local [options]'
-  #   c.action do |args, options|
-  #     show_groups()
-  #   end
-  # end
-  #
-  # def show_groups
-  #   directory = "#{program(:path_to_aka)}/groups/"
-  #   filetype = "*.yml"
-  #   Dir.glob("#{directory}#{filetype}").each_with_index do |fullname, index|
-  #     name =  fullname.slice(directory.size,fullname.size).split(".").first #remove .yml
-  #     puts "#{index+1}.#{name}"
-  #   end
-  #   puts "No alias group is found. To set a global alias group -> aka group [name]".red if Dir.glob("#{directory}#{filetype}").count == 0
-  # end
-  #
-  # command :auto do |c|
-  #   c.syntax = 'aka auto [options]'
-  #   c.summary = 'auto reload the dot file'
-  #   c.action do |args, options|
-  #     insert_trap()
-  #   end
-  # end

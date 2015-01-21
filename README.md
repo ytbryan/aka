@@ -1,22 +1,30 @@
 # aka - alias' best friend
-Add, edit, remove and manage alias from terminal. Grow and expand those aliases with ease.
-Boost projects' productivity with some terminal shortcuts.
+Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
 Here's some of aka's features:
 
 | features          | alias           | aka |
 | :-------------: |:----------:| :-----:|
-| [add alias](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
+| [`add alias`](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
 | [remove alias](#aka-remove)      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
 | [show alias](#aka-show) |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
-| [show last few alias](#aka-last) |  -       |    ![Yes](img/yes.png) |
+| [show last few added alias](#aka-last) |  -       |    ![Yes](img/yes.png) |
 | [edit alias](#aka-edit) |  -       |    ![Yes](img/yes.png)  |
 | [count alias](#aka-count) | -      |    ![Yes](img/yes.png) |
-| [persistency](#aka-persist)        |-                    |    ![Yes](img/yes.png) |
 | [auto reload dotfile](#aka-reload)      |-  |    ![Yes](img/yes.png)|
 | [aka usage](#aka-usage) | -      |    ![Yes](img/yes.png) |
 | [upload to server](#aka-upload) | -      |    ![Yes](img/yes.png) |
 | [download from server](#aka-download) | -     |    ![Yes](img/yes.png) |
+| [persistency](#aka-persist)        |-                    |    ![Yes](img/yes.png) |
+
+## aka local
+
+```
+aka local #show the local alias
+aka local -a #add alias to .aka
+aka local -rm hello #remove alias from .aka
+
+```
 
 ## Table of Content
 
@@ -24,10 +32,16 @@ Here's some of aka's features:
 * [Installation](#installation)
   * Install in one line
 * [Command Reference](#command-reference)
-  * [`add`](#aka-add)
-  * [`remove`](#aka-remove)
-  * [`show`](#aka-show)
-  * [`edit`](#aka-edit)
+  * [`aka add`](#aka-add)
+  * [`aka remove`](#aka-remove)
+  * [`aka show`](#aka-show)
+  * [`aka edit`](#aka-edit)
+  * [`aka count`](#aka-count)
+  * [`aka usage`](#aka-usage)
+  * [`aka download`](#aka-download)
+  * [`aka upload`](#aka-upload)
+  * [`aka global`](#aka-global)
+  * [`aka local`](#aka-local)
 * [TODOs](#todos)
 * [Contribute](#contribute)
 * [Version History](#version-history)
@@ -81,6 +95,13 @@ aka -h
 ```
 aka test
 ```
+
+- alias is one of the most used built-in shell functions created when computers are slower.
+- aka is like a friendly add-on that expands the most used shell functionality. It removes the limit of alias history of 1000 using and include an auto-reload using
+signal and trap.
+- It will be a sin to have all these extended functionalities without making them available for collabration.
+Use `aka local` and `aka global` to include your favourite aliases into projects.
+
 
 ## [TODOs](#todos)
 - move the script to rubygems
