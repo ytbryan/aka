@@ -2,10 +2,10 @@
 Add, edit, remove and manage alias from terminal. Grow and expand those aliases with ease.
 Boost projects' productivity with some terminal shortcuts.
 
-## Overview
+Here's some of aka's features:
 
 | features          | alias           | aka |
-| :-------------: |:-------------:| :-----:|
+| :-------------: |:----------:| :-----:|
 | [add alias](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
 | [remove alias](#aka-remove)      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
 | [show alias](#aka-show) |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
@@ -18,13 +18,16 @@ Boost projects' productivity with some terminal shortcuts.
 | [upload to server](#aka-upload) | -      |    ![Yes](img/yes.png) |
 | [download from server](#aka-download) | -     |    ![Yes](img/yes.png) |
 
-
 ## Table of Content
 
 * [Overview](#overview)
 * [Installation](#installation)
   * Install in one line
 * [Command Reference](#command-reference)
+  * [`add`](#aka-add)
+  * [`remove`](#aka-remove)
+  * [`show`](#aka-show)
+  * [`edit`](#aka-edit)
 * [TODOs](#todos)
 * [Contribute](#contribute)
 * [Version History](#version-history)
