@@ -4,6 +4,9 @@ require "minitest/autorun"
 class TestAka < MiniTest::Test
 
   def setup #nothing to setup
+    #installation
+    system "./aka copy"
+    #required for test
     system("touch #{Dir.home}/.bash_profile")
   end
 
@@ -123,9 +126,9 @@ class TestAka < MiniTest::Test
   #   skip "test this later"
   # end
   #
-  # def test_that_you_can_beam
-  #   skip "test this later"
-  # end
+  def test_that_you_can_beam
+    skip "test this later"
+  end
   #
   # def test_that_you_can_dl
   #   skip "test this later"
