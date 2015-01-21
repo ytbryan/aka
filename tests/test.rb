@@ -4,7 +4,7 @@ require "minitest/autorun"
 class TestAka < MiniTest::Test
 
   def setup #nothing to setup
-
+    system("touch #{Dir.home}/.bash_profile")
   end
 
   def test_removing_is_working
