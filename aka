@@ -162,29 +162,45 @@ command :edit do |c|
   c.syntax = 'aka edit [options]'
   c.summary = 'edit the alias'
   c.option '--noreload', 'switch off reloading'
+  c.option '--name', 'edit the name only'
   c.action do |args, options|
-
     if args.first
-      puts "well well well"
       values = args.first.split("=")
       if values.size > 1
         truth, _alias = show_alias(args.first)
         if truth == true
-          remove(_alias) #remove that alias
-          edit(values[1], _alias) #edit that alias
-          reload_dot_file() if !options.noreload
+          if options.name
+            remove(_alias) #remove that alias
+            edit_alias(values[1], _alias) #edit that alias
+            reload_dot_file() if !options.noreload
+          else
+            remove(_alias) #remove that alias
+            edit(values[1], _alias) #edit that alias
+            reload_dot_file() if !options.noreload
+          end
         else
           puts "alias '#{args.first}' cannot be found".red
         end
       else
-        truth, _alias = show_alias(args.first)
+        truth, _alias, command = show_alias(args.first)
         if truth == true
-          input = ask "Enter a new command for alias '#{args.first}'?\n"
-          answer = ask "#{input} confirm? (y/N)"
-          if answer == 'y'
-            remove(_alias) #remove that alias
-            edit(input, _alias) #edit that alias
-            reload_dot_file() if !options.noreload
+          if options.name
+            # value = args.first.split("=")
+            input = ask "Enter a new alias for command '#{command}'?\n"
+            answer = ask "#{input} confirm? (y/N)"
+            if answer == 'y'
+              remove(_alias) #remove that alias
+              edit_alias(input, _alias) #edit that alias
+              reload_dot_file() if !options.noreload
+            end
+          else
+            input = ask "Enter a new command for alias '#{args.first}'?\n"
+            answer = ask "#{input} confirm? (y/N)"
+            if answer == 'y'
+              remove(_alias) #remove that alias
+              edit(input, _alias) #edit that alias
+              reload_dot_file() if !options.noreload
+            end
           end
         else
           puts "alias '#{args.first}' cannot be found".red
@@ -442,15 +458,19 @@ end
         if value.length > 1 and value.first == "alias"
           answer = value[1].split("=")
           if found?(answer.first, argument.split("=").first, line) == true
-            return [true, answer.first]
+            # return [true, answer.first]
+            return [true, answer.first, answer[1]]
+
           end
         end
       }
     else
       puts "#{@pwd} cannot be found.".red
-      return [false, nil]
+      return [false, nil, nil]
+      # return [false, nil]
     end
-    return [false, nil]
+    return [false, nil, nil]
+    # return [false, nil]
   end
 
   def unalias value
@@ -599,6 +619,11 @@ end
   def edit newcommand, this_alias
     return append("alias " + this_alias + "='" + newcommand + "'", get_dot_file_path )
   end
+
+  def edit_alias newalias, thiscommand
+    return append("alias " + newalias + "='" + thiscommand + "'", get_dot_file_path )
+  end
+
 
   def count
     alias_count = 0
