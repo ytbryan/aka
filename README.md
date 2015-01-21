@@ -1,11 +1,17 @@
 # aka - alias' best friend
-Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
+We use aliases on a daily basis for projects.
+
+But each time, we need to break our workflow and open that texteditor when adding, removing or editing those aliases.
+
+We uses popular dot files but we don't know which aliases are used the most and which are not.
+
+Introducing aka - alias' best friend. Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
 Here's some of aka's features:
 
 | features          | alias           | aka |
 | :-------------: |:----------:| :-----:|
-| [`add alias`](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
+| [add alias](#aka-add)         | ![Yes](img/yes.png) | ![Yes](img/yes.png) |
 | [remove alias](#aka-remove)      | ![Yes](img/yes.png)     |   ![Yes](img/yes.png) |
 | [show alias](#aka-show) |  ![Yes](img/yes.png)       |    ![Yes](img/yes.png) |
 | [show last few added alias](#aka-last) |  -       |    ![Yes](img/yes.png) |
@@ -23,7 +29,6 @@ Here's some of aka's features:
 aka local #show the local alias
 aka local -a #add alias to .aka
 aka local -rm hello #remove alias from .aka
-
 ```
 
 ## Table of Content
