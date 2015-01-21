@@ -70,15 +70,6 @@ class TestAka < MiniTest::Test
         if value.length > 1 and value.first == "alias"
           answer = value[1].split("=")
           if found?(answer.first, compare, line)
-            # puts line
-            # puts value
-            #
-            # puts "|#{answer.size}|"
-            # puts "|#{answer[3]}|"
-            # puts "|#{answer[2]}|"
-            # puts "|#{answer[1]}|"
-            # puts "|#{answer[0]}|"
-
             if answer[1] == "'echo well'"
               truth = true
               break

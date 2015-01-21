@@ -12,7 +12,7 @@ default_command :version #note that this is calling command :version
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.50'
+program :version, '0.3.51'
 program :last_update, '21 Jan 2015'
 program :description, 'add, remove, edit, manage and grow your aliases from terminal.'
 
