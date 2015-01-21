@@ -1,2 +1,3 @@
 language: ruby
-script: ruby tests/test.rb
+rvm:
+  - 2.1.5p273
