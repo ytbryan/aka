@@ -51,6 +51,10 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 ## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
 aka uses trap and signal to reload your dot file on the same shell so that you do not need to source the dot file manually.
 
+
+## Unaliasing of aliases
+`aka rm` includes `unalias` in order to keep removed aliases from the current shell. trap and signal using `SIGUSR2` is used to achieve this.
+
 ## 1. aka uses ruby.
 Use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
