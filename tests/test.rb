@@ -82,7 +82,7 @@ class TestAka < MiniTest::Test
       }
     end
 
-    assert_equal true, truth
+    must_be true, truth
     system %(aka rm somethingsomethingsomething --noreload --nounalias)
 
   end
