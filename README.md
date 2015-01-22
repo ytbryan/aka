@@ -23,16 +23,15 @@ Here's some of aka's features:
 * [Installation](#installation)
   * Install in one line
 * [Command Reference](#command-reference)
-  * [`aka add`](#aka-add)
-  * [`aka remove`](#aka-remove)
-  * [`aka show`](#aka-show)
-  * [`aka edit`](#aka-edit)
-  * [`aka count`](#aka-count)
-  * [`aka usage`](#aka-usage)
-  * [`aka download`](#aka-download)
-  * [`aka upload`](#aka-upload)
-  * [`aka global`](#aka-global)
-  * [`aka local`](#aka-local)
+  * [aka add](#aka-add)
+  * [aka remove](#aka-remove)
+  * [aka show](#aka-show)
+  * [aka edit](#aka-edit)
+  * [aka count](#aka-count)
+  * [aka usage](#aka-usage)
+  * [aka download](#aka-download)
+  * [aka upload](#aka-upload)
+  * [aka proj](#aka-proj)
 * [TODOs](#todos)
 * [Contribute](#contribute)
 * [Version History](#version-history)
@@ -48,31 +47,40 @@ cd ~/.aka
 [or install in a single line:](#single-line)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
-
 ```
 ---
 
 ## [Command Reference](#command-reference)
 
-### [`aka add`](#aka-add) - add an alias to dot file
+### [aka add](#aka-add) - add an alias to dot file
 ```
    aka add hello="echo helloworld"
 ```
 
-### [`aka rm`](#aka-remove) - remove an alias from dot file
+### [aka rm](#aka-remove) - remove an alias from dot file
 ```
   aka rm hello
 ```
 
-### [`aka show`](#aka-show) - show an alias
+### [aka show](#aka-show) - show an alias
 ```
    aka show hello
 ```
 
-### [`aka edit`](#aka-edit)- edit an alias
+### [aka edit](#aka-edit)- edit an alias
 ```
 aka edit hello="echo hello"
 ```
+
+
+
+### [aka proj](#aka-edit)- show the aliases added to this proj
+Some aliases are used more frequently on a certain projects. `aka proj` is a simple way to show which alias is being added to this proj.
+```
+aka proj
+```
+To add to project, `aka add hello="echo helloworld" -p `
+To remove from project, `aka rm hello -p`
 -
 
 ## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
@@ -86,7 +94,8 @@ If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rb
 
 ## install dependencies for aka
 ```
-aka bundle
+cd ~/.aka
+bundle install
 ```
 ## help and commands
 ```
@@ -105,11 +114,14 @@ aka test
 
 ## [Contribute](#contribute)
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
-- Please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
-- I'm looking for ways to make aka better. Let me know if you have an idea.
+- If you have an idea to make aka better, please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
 
 ## [Version History](#version-history)
--
+
+
+
+`0.3.71` - First public release
+
 
 ## [License](#license)
 [The MIT License (MIT)](http://www.opensource.org/licenses/MIT)
