@@ -37,14 +37,13 @@ Here's some of aka's features:
   * Install in one line
 * [Command Reference](#command-reference)
   * [`aka add`](#aka-add)
-  * [aka remove](#aka-remove)
-  * [aka show](#aka-show)
-  * [aka edit](#aka-edit)
-  * [aka count](#aka-count)
-  * [aka usage](#aka-usage)
-  * [aka dl](#aka-download)
-  * [aka upload](#aka-upload)
-  * [aka proj](#aka-proj)
+  * [`aka remove`](#aka-remove)
+  * [`aka show`](#aka-show)
+  * [`aka edit`](#aka-edit)
+  * [`aka count`](#aka-count)
+  * [`aka usage`](#aka-usage)
+  * [`aka dl`](#aka-download)
+  * [`aka upload`](#aka-upload)
 * [TODOs](#todos)
 * [Contribute](#contribute)
 * [Version History](#version-history)
@@ -71,32 +70,25 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
    aka add hello="echo helloworld"
 ```
 
-### [aka rm](#aka-remove) - remove an alias from dot file
+### [aka rm](#aka-remove)
+- remove an alias from dot file
 ```
   aka rm hello
 ```
 
-### [aka show](#aka-show) - show an alias
+### [aka show](#aka-show)
+- show an alias
 ```
    aka show hello
 ```
 
-### [aka edit](#aka-edit)- edit an alias
+### [aka edit](#aka-edit)
+- edit an alias
 ```
 aka edit hello="echo hi there"
 
 ```
 
-
-
-### [aka proj](#aka-edit)- show the aliases added to this proj
-Some aliases are used more frequently on a certain projects. `aka proj` is a simple way to show which alias is being added to this proj.
-```
-aka proj
-```
-To add to project, `aka add hello="echo helloworld" -p `
-To remove from project, `aka rm hello -p`
--
 
 ## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
 aka uses trap and signal to reload your dot file on the same shell so that you do not need to source the dot file manually.
