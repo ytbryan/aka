@@ -1,6 +1,18 @@
 # aka - alias' best friend
 Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
+## [What's in the package?](#what)
+
+- Auto reloading of your dot file
+
+- Expand alias history to 10,000
+
+- Server friendly commands with `aka dl` and `aka uplaod`
+
+- Share your aliases in your project with `aka proj`.
+
+- Manage your aliases via terminal without breaking your workflow <3
+
 Here's some of aka's features:
 
 | features          | alias           | aka |
@@ -19,17 +31,18 @@ Here's some of aka's features:
 
 ## Table of Content
 
-* [Overview](#overview)
+* [What's in the package](#what)
+* [Some feature comparison](#overview)
 * [Installation](#installation)
   * Install in one line
 * [Command Reference](#command-reference)
-  * [aka add](#aka-add)
+  * [`aka add`](#aka-add)
   * [aka remove](#aka-remove)
   * [aka show](#aka-show)
   * [aka edit](#aka-edit)
   * [aka count](#aka-count)
   * [aka usage](#aka-usage)
-  * [aka download](#aka-download)
+  * [aka dl](#aka-download)
   * [aka upload](#aka-upload)
   * [aka proj](#aka-proj)
 * [TODOs](#todos)
@@ -52,7 +65,8 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 
 ## [Command Reference](#command-reference)
 
-### [aka add](#aka-add) - add an alias to dot file
+### [aka add](#aka-add)
+- add an alias to dot file
 ```
    aka add hello="echo helloworld"
 ```
@@ -69,7 +83,8 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 
 ### [aka edit](#aka-edit)- edit an alias
 ```
-aka edit hello="echo hello"
+aka edit hello="echo hi there"
+
 ```
 
 

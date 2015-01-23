@@ -35,7 +35,7 @@ command :last do |c|
     if args.first
       showlast(args.first.to_i) if args.first.is_i?
     else
-      showlast(10)
+      showlast(20)
     end
   end
 end
@@ -51,8 +51,8 @@ end
 command :add do |c|
   c.syntax = 'aka add [name="command"] [options]'
   c.summary = 'add an alias to dot file'
-  c.option '--noreload', 'switch off reloading'
-  c.option '--proj', 'add this alias to the proj and dot file'
+  c.option '--noreload', 'switch off reloading of dot file'
+  c.option '-p','--proj', 'add this alias to the proj and dot file'
   c.action do |args, options|
     result = add(args.first) if args.first
     if options.proj and result == true
@@ -74,11 +74,20 @@ end
 command :usage do |c|
   c.syntax = 'aka usage [options]'
   c.summary = 'show your aliases usage'
+  c.option '--least', 'show the least used aliases'
   c.action do |args, options|
     if args.first
-      showUsage(args.first.to_i) if args.first.is_i?
+      if options.least
+        showUsage(args.first.to_i, true) if args.first.is_i?
+      else
+        showUsage(args.first.to_i) if args.first.is_i?
+      end
     else
-      showUsage(10)
+      if options.least
+        showUsage(20,true)
+      else
+        showUsage(20)
+      end
     end
   end
 end
@@ -157,6 +166,14 @@ command :setup do |c|
     increase_history_limit()
     insert_trap()
     # 10.times do { cleanup() }
+    cleanup()
+  end
+end
+
+command :clean do |c|
+  c.syntax = 'aka clean [options]'
+  c.summary = 'clean up your dot file'
+  c.action do |args, options|
     cleanup()
   end
 end
@@ -553,8 +570,9 @@ end
     end
   end
 
-  def showUsage howmany=10
+  def showUsage howmany=10, least=false
     value = reload_dot_file()
+    #get all aliases
     if content = File.open(read_yml("#{Dir.home}/.aka/.config")["history"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
@@ -563,11 +581,11 @@ end
         value = line.split(" ")
         total_aliases.push(value.first)
       }
-      count_aliases(total_aliases, howmany)
+      count_aliases(total_aliases, howmany, least)
     end
   end
 
-  def count_aliases array, howmany
+  def count_aliases array, howmany, least=false
     name_array,count_array = [], []
     #find the unique value
     array.each_with_index { |value, index|
@@ -588,18 +606,34 @@ end
 
     sorted_count_array, sorted_name_array = sort(count_array, name_array)
 
-    # #print out
-    if sorted_count_array.count == sorted_name_array.count
-      puts ""
-      sorted_name_array.first(howmany).each_with_index { |value, index|
-        percent = ((sorted_count_array[index]).round(2)/array.size.round(2))*100
-        str = "#{index+1}. #{value}"
-        puts "#{str} #{showSpace(str)} #{showBar(percent)}"
-      }
-      puts ""
+    #display the least used aliases
+    if least == true
+      if sorted_count_array.count == sorted_name_array.count
+        puts ""
+        sorted_name_array.last(howmany).each_with_index { |value, index|
+          percent = ((sorted_count_array[sorted_name_array.last(howmany).size + index]).round(2)/array.size.round(2))*100
+          str = "#{sorted_name_array.size-sorted_name_array.last(howmany).size+index+1}. #{value}"
+          puts "#{str} #{showSpace(str)} #{showBar(percent)}"
+        }
+        puts ""
+      else
+        puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
+        name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
+      end
     else
-      puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
-            name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
+      # #print out
+      if sorted_count_array.count == sorted_name_array.count
+        puts ""
+        sorted_name_array.first(howmany).each_with_index { |value, index|
+          percent = ((sorted_count_array[index]).round(2)/array.size.round(2))*100
+          str = "#{index+1}. #{value}"
+          puts "#{str} #{showSpace(str)} #{showBar(percent)}"
+        }
+        puts ""
+      else
+        puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
+              name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
+      end
     end
     puts "There's a total of #{array.size} lines in #{read_yml("#{Dir.home}/.aka/.config")["history"]}."
   end
@@ -743,6 +777,41 @@ end
   def add_to_proj fullalias
     values = fullalias.split("=")
     yml = read_yml("#{Dir.pwd}/.aka")
-    yml["aka"][values.first] = values[1]
-    write_yml("#{Dir.pwd}/.aka", yml)
+    puts yml
+    if yml == false
+      puts "nil"
+      write_new_proj_aka_file fullalias
+    else
+      puts "not nil"
+      yml["proj"]["title"] = "this is title"
+      yml["proj"]["summary"] = "this is summary"
+      yml["proj"]["aka"][values.first] = values[1]
+      write_yml("#{Dir.pwd}/.aka", yml)
+    end
+  end
+  #aka proj import
+  #aka add aka="echo" -p
+  #aka rm aka -p
+
+  def write_new_proj_aka_file fullalias
+    values = fullalias.split("=")
+
+    theyml = {"proj" => {
+                "title" => "",
+                 "summary" => "",
+                 "aliases" => {
+                      "firstvalue" => ""
+                            }}}
+    # thirdyml = Hash.new
+    # thirdyml["firstvalue"] = ""
+    #
+    # secondyml = Hash.new
+    # secondyml["title"] = "this is title"
+    # secondyml["summary"] = "this is title"
+    # secondyml["aliases"] = thirdyml
+    #
+    # theyml = Hash.new
+    # theyml["proj"] = secondyml
+
+    write_yml("#{Dir.pwd}/.aka", theyml)
   end
