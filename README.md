@@ -63,6 +63,7 @@ The `~/.aka/.config` file is an yml file. The default values are absolute path t
 ```
 location: "/Users/ytbryan/.bash_profile" #absolute path to your dot file
 history: "/Users/ytbryan/.bash_history" #absolute path to your history file
+home: "/Users/ytbryan/.aka" #absolute path to .aka
 ```
 
 ## [Install Dependencies for aka](#dependency)

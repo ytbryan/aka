@@ -10,8 +10,8 @@ default_command :help
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.69'
-program :last_update, '21 Jan 2015'
+program :version, '0.3.78'
+program :last_update, '27 Jan 2015'
 program :description, 'add, remove, edit and grow your aliases from terminal.'
 
 # command :proj do |c|
@@ -274,7 +274,7 @@ end
     c.syntax = 'aka test [options]'
     c.summary = 'run the tests'
     c.action do |args, options|
-      system("ruby #{read_yml("#{Dir.home}/.aka/.config")["aka"]}/tests/test.rb")
+      system("ruby #{read_yml("#{Dir.home}/.aka/.config")["home"]}/tests/test.rb")
     end
   end
 
