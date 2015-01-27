@@ -14,19 +14,37 @@ program :version, '0.3.69'
 program :last_update, '21 Jan 2015'
 program :description, 'add, remove, edit and grow your aliases from terminal.'
 
-command :proj do |c|
-  c.syntax = 'aka proj [options]'
-  c.summary = 'show added project aliases'
-  c.action do |args, options|
-    if File.exist? "#{Dir.pwd}/.aka"
-      proj = read_yml("#{Dir.pwd}/.aka")
-      puts proj
-      puts proj["aka"].size
-    else
-      puts "No project aliases is set. To add an alias, use aka add [name] -p".red
-    end
-  end
-end
+# command :proj do |c|
+#   c.syntax = 'aka proj [options]'
+#   c.summary = 'show added project aliases'
+#   c.action do |args, options|
+#     if File.exist? "#{Dir.pwd}/.aka"
+#       proj = read_yml("#{Dir.pwd}/.aka")
+#
+#       puts proj
+#
+#       shortcut_str = createShortcut(proj)
+#
+#       puts "#{proj["proj"]["title"]}
+#
+#       #{proj["proj"]["summary"]}
+#
+#       Shortcuts:
+#
+#       #{shortcut_str}
+#
+#       ---------
+#       <run 'aka proj import' to import these shortcuts>
+#
+#       ytbryan@gmail.com, ytbryan
+#       ".pretty
+#
+#
+#     else
+#       puts "No project aliases is set. To add an alias, use aka add [name] -p".red
+#     end
+#   end
+# end
 
 command :last do |c|
   c.syntax = 'aka last [integer]'
@@ -814,4 +832,17 @@ end
     # theyml["proj"] = secondyml
 
     write_yml("#{Dir.pwd}/.aka", theyml)
+  end
+
+  def createShortcut(proj)
+    answer = ""
+    proj["shortcuts"].to_a.each_with_index do |each,index|
+      puts "hello there"
+        answer += "#{each["name"]}
+                    - #{each["command"]}
+                    ".pretty
+                    puts "hello wow"
+        answer += "\n"
+    end
+    return answer
   end

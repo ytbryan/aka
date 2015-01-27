@@ -35,6 +35,7 @@ Here's some of aka's features:
 * [Some feature comparison](#overview)
 * [Installation](#installation)
   * Install in one line
+  * [Install Dependencies for aka](#dependency)
 * [Command Reference](#command-reference)
   * [`aka add`](#aka-add)
   * [`aka remove`](#aka-remove)
@@ -60,6 +61,14 @@ cd ~/.aka
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 ```
+
+## [Install Dependencies for aka](#dependency)
+```
+cd ~/.aka
+bundle install
+```
+If you encounter issues like ` cannot load such file -- <GEM> (LoadError)`, please execute the commands above.
+
 ---
 
 ## [Command Reference](#command-reference)
@@ -99,11 +108,7 @@ aka uses trap and signal to reload your dot file on the same shell so that you d
 ## aka uses ruby.
 If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
-## install dependencies for aka
-```
-cd ~/.aka
-bundle install
-```
+
 ## help and commands
 ```
 aka -h
@@ -122,6 +127,9 @@ aka test
 ## [Contribute](#contribute)
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - If you have an idea to make aka better, please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
+
+## Thanks
+- Luu Gia Thuy (@luugiathuy)
 
 ## [Version History](#version-history)
 
