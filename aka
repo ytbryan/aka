@@ -181,10 +181,7 @@ command :setup do |c|
   c.syntax = 'aka setup [options]'
   c.summary = 'setup aka'
   c.action do |args, options|
-    increase_history_limit()
-    insert_trap()
-    # 10.times do { cleanup() }
-    cleanup()
+    setup()
   end
 end
 
@@ -530,12 +527,22 @@ end
     end
   end
 
-  def insert_trap
-    input = ask "Make your your dot file auto reload #{read_yml("#{Dir.home}/.aka/.config")["location"]}? (y/N)"
+  def setup
+    input = ask "- Do you wish to expand your bash history? (y/N)"
     if input == 'y'
-      trap = "sigusr1() { source ~/.bash_profile; history -a; echo 'reloaded dot file and history file'; }\ntrap sigusr1 SIGUSR1"
-      append(trap, read_yml('#{Dir.home}/.aka/.config')['location'])
+      append("export HISTSIZE=10000","/etc/profile")
     end
+
+    input = ask "- Do you wish to setup auto-reloading of your dot file <#{read_yml("#{Dir.home}/.aka/.config")["location"]}>? (y/N)"
+    if input == 'y'
+      trap = "sigusr2() { unalias $1;}
+      sigusr1() { source #{read_yml("#{Dir.home}/.aka/.config")["location"]}; history -a; echo 'reloaded dot file'; }
+      trap sigusr1 SIGUSR1
+      trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
+      append(trap, read_yml("#{Dir.home}/.aka/.config")['location'])
+    end
+
+    puts "Done. Please restart this shell.".red
   end
 
   def write_to_location location, address
@@ -680,10 +687,6 @@ end
 
   def get_latest_history_file
     system("history -a")
-  end
-
-  def increase_history_limit
-    append("export HISTSIZE=10000","/etc/profile")
   end
 
   def cleanup

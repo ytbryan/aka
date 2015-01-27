@@ -2,32 +2,27 @@
 Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
 
 ## [What's in the package?](#what)
-
-- Auto reloading of your dot file
-
+- Add, remove, edit aliases without opening your text editor.
+- Auto reload your dot file after each action
 - Expand alias history to 10,000
-
 - Server friendly commands with `aka dl` and `aka uplaod`
-
-- Share your aliases in your project with `aka proj`.
-
 - Manage your aliases via terminal without breaking your workflow <3
 
 Here's some of aka's features:
 
-| features          | alias           | aka |
-| :-------------: |:----------:| :-----:|
-| add alias       | ![Yes](demo/yes.png) | ![Yes](demo/yes.png) |
-| remove alias      | ![Yes](demo/yes.png)     |   ![Yes](demo/yes.png) |
-| show alias |  ![Yes](demo/yes.png)       |    ![Yes](demo/yes.png) |
-| show last few added alias |  -       |    ![Yes](demo/yes.png) |
-| edit alias |  -       |    ![Yes](demo/yes.png)  |
-| count alias | -      |    ![Yes](demo/yes.png) |
-| auto reload dot file      |-  |    ![Yes](demo/yes.png)|
-| aka usage | -      |    ![Yes](demo/yes.png) |
-| upload to server | -      |    ![Yes](demo/yes.png) |
-| download from server | -     |    ![Yes](demo/yes.png) |
-| persistency        |-                    |    ![Yes](demo/yes.png) |
+| features                  | alias                        | aka |
+| :-----------------------: |:----------------------------:| :-----:|
+| add alias                 | ![Yes](demo/yes.png)         | ![Yes](demo/yes.png) |
+| remove alias              | ![Yes](demo/yes.png)         |   ![Yes](demo/yes.png) |
+| show alias                |  ![Yes](demo/yes.png)        |    ![Yes](demo/yes.png) |
+| show last few added alias |  -                           |    ![Yes](demo/yes.png) |
+| edit alias                |  -                           |    ![Yes](demo/yes.png) |
+| count alias               |  -                           |    ![Yes](demo/yes.png)|
+| auto reload dot file      |  -                           |    ![Yes](demo/yes.png)|
+| aka usage                 |  -                           |    ![Yes](demo/yes.png)|
+| upload to server          |  -                           |    ![Yes](demo/yes.png)|
+| download from server      |  -                           |    ![Yes](demo/yes.png)|
+| persistency               |  -                           |    ![Yes](demo/yes.png)|
 
 ## Table of Content
 
@@ -35,7 +30,8 @@ Here's some of aka's features:
 * [Some feature comparison](#overview)
 * [Installation](#installation)
   * Install in one line
-  * [Install Dependencies for aka](#dependency)
+  * [Install Dependencies](#dependency)
+  * [Setup auto reloading and expanded history](#setup)
 * [Command Reference](#command-reference)
   * [`aka add`](#aka-add)
   * [`aka remove`](#aka-remove)
@@ -63,11 +59,20 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 ```
 
 ## [Install Dependencies for aka](#dependency)
+If you encounter issues like ` cannot load such file -- <GEM> (LoadError)`, please run the commands below.
+
 ```
 cd ~/.aka
 bundle install
 ```
-If you encounter issues like ` cannot load such file -- <GEM> (LoadError)`, please execute the commands above.
+
+## [Setup auto-reloading of dot file and expand bash history](#setup)
+
+`aka setup` writes to /etc/profile for expanded history. Hence, please use `sudo aka setup` to give aka the permission to write to /etc/profile.
+
+```
+aka setup
+```
 
 ---
 
@@ -75,24 +80,28 @@ If you encounter issues like ` cannot load such file -- <GEM> (LoadError)`, plea
 
 ### [aka add](#aka-add)
 - add an alias to dot file
+
 ```
    aka add hello="echo helloworld"
 ```
 
 ### [aka rm](#aka-remove)
 - remove an alias from dot file
+
 ```
   aka rm hello
 ```
 
 ### [aka show](#aka-show)
 - show an alias
+
 ```
    aka show hello
 ```
 
 ### [aka edit](#aka-edit)
 - edit an alias
+
 ```
 aka edit hello="echo hi there"
 
@@ -108,12 +117,6 @@ aka uses trap and signal to reload your dot file on the same shell so that you d
 ## aka uses ruby.
 If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
-
-## help and commands
-```
-aka -h
-```
-
 ## Run tests
 
 ```
@@ -128,8 +131,8 @@ aka test
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - If you have an idea to make aka better, please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
 
-## Thanks
-- Luu Gia Thuy (@luugiathuy)
+## Thank You
+- Luu Gia Thuy [@luugiathuy](http://www.github.com/luugiathuy)
 
 ## [Version History](#version-history)
 
