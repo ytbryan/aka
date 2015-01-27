@@ -25,12 +25,12 @@ Here's some of aka's features:
 | persistency               |  -                           |    ![Yes](demo/yes.png)|
 
 ## Table of Content
-
 * [What's in the package](#what)
 * [Some feature comparison](#overview)
 * [Installation](#installation)
   * Install in one line
   * [Install Dependencies](#dependency)
+  * [Setup the /.aka/.config file](#config)
   * [Setup auto reloading and expanded history](#setup)
 * [Command Reference](#command-reference)
   * [`aka add`](#aka-add)
@@ -58,7 +58,17 @@ cd ~/.aka
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 ```
 
+## [Setup the config file](#config)
+
+The `.config` file is an yml file. The default values are absolute path to my dot file and history file. If you are using `.bashrc` or `.zshrc`, please change the location value to the respective path. Relative path is not allowed in the `.config`
+```
+#default values
+location: "/Users/ytbryan/.bash_profile" #absolute path to your dot file
+history: "/Users/ytbryan/.bash_history" #absolute path to your history file
+```
+
 ## [Install Dependencies for aka](#dependency)
+
 If you encounter issues like ` cannot load such file -- <GEM> (LoadError)`, please run the commands below.
 
 ```
@@ -117,7 +127,7 @@ aka uses trap and signal to reload your dot file on the same shell so that you d
 ## aka uses ruby.
 If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
-## Run tests
+## Run Tests
 
 ```
 aka test
