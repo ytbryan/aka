@@ -5,7 +5,7 @@ Grow and expand those aliases with ease. Boost projects' productivity with some 
 - Add, remove, edit aliases without opening your text editor.
 - Auto reload your dot file after each action
 - Expand alias history to 10,000
-- Server friendly commands with `aka dl` and `aka uplaod`
+- Server friendly commands with `aka dl` and `aka upload`
 - Manage your aliases via terminal without breaking your workflow <3
 
 Here's some of aka's features:
@@ -52,7 +52,6 @@ git clone https://github.com/ytbryan/aka.git ~/.aka
 cd ~/.aka
 ./aka copy
 ```
-
 [or install in a single line:](#single-line)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
@@ -60,9 +59,8 @@ git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
 
 ## [Setup the config file](#config)
 
-The `.config` file is an yml file. The default values are absolute path to my dot file and history file. If you are using `.bashrc` or `.zshrc`, please change the location value to the respective path. Relative path is not allowed in the `.config`
+The `~/.aka/.config` file is an yml file. The default values are absolute path to my dot file and history file. If you are using `.bashrc` or `.zshrc`, please change the location value to its respective path. Relative path is not allowed in the `~/.aka/.config`
 ```
-#default values
 location: "/Users/ytbryan/.bash_profile" #absolute path to your dot file
 history: "/Users/ytbryan/.bash_history" #absolute path to your history file
 ```
