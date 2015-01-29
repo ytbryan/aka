@@ -36,6 +36,13 @@ command :reload do |c|
 end
 
 
+command :ubuntu do |c|
+  c.syntax = 'aka reload'
+  c.summary = 'reload in ubuntu server. This is to test the hypothesis'
+  c.action do |args, options|
+    reload()
+  end
+end
 
 
 command :add do |c|
