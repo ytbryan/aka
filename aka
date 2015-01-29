@@ -14,37 +14,6 @@ program :version, '0.3.78'
 program :last_update, '27 Jan 2015'
 program :description, 'add, remove, edit and grow your aliases from terminal.'
 
-# command :proj do |c|
-#   c.syntax = 'aka proj [options]'
-#   c.summary = 'show added project aliases'
-#   c.action do |args, options|
-#     if File.exist? "#{Dir.pwd}/.aka"
-#       proj = read_yml("#{Dir.pwd}/.aka")
-#
-#       puts proj
-#
-#       shortcut_str = createShortcut(proj)
-#
-#       puts "#{proj["proj"]["title"]}
-#
-#       #{proj["proj"]["summary"]}
-#
-#       Shortcuts:
-#
-#       #{shortcut_str}
-#
-#       ---------
-#       <run 'aka proj import' to import these shortcuts>
-#
-#       ytbryan@gmail.com, ytbryan
-#       ".pretty
-#
-#
-#     else
-#       puts "No project aliases is set. To add an alias, use aka add [name] -p".red
-#     end
-#   end
-# end
 
 command :last do |c|
   c.syntax = 'aka last [integer]'
@@ -65,6 +34,9 @@ command :reload do |c|
     reload_dot_file()
   end
 end
+
+
+
 
 command :add do |c|
   c.syntax = 'aka add [name="command"] [options]'
@@ -154,7 +126,7 @@ command :edit do |c|
           if options.name
             # value = args.first.split("=")
             input = ask "Enter a new alias for command '#{command}'?\n"
-            answer = ask "#{input} confirm? (y/N)"
+            answer = ask "'#{input}' - Please confirm the new alias? (y/N)"
             if answer == 'y'
               remove(_alias) #remove that alias
               edit_alias(input, _alias) #edit that alias
@@ -162,7 +134,7 @@ command :edit do |c|
             end
           else
             input = ask "Enter a new command for alias '#{args.first}'?\n"
-            answer = ask "#{input} confirm? (y/N)"
+            answer = ask "'#{input}' - Please confirm the new command? (y/N)"
             if answer == 'y'
               remove(_alias) #remove that alias
               edit(input, _alias) #edit that alias
@@ -267,6 +239,30 @@ end
       end
     end
 
+
+    # command :proj do |c|
+    #   c.syntax = 'aka proj [options]'
+    #   c.summary = 'show added project aliases'
+    #   c.action do |args, options|
+    #     if File.exist? "#{Dir.pwd}/.aka"
+    #       proj = read_yml("#{Dir.pwd}/.aka")
+    #       puts proj
+    #       shortcut_str = createShortcut(proj)
+    #       puts "#{proj["proj"]["title"]}
+    #       #{proj["proj"]["summary"]}
+    #       Shortcuts:
+    #       #{shortcut_str}
+    #       ---------
+    #       <run 'aka proj import' to import these shortcuts>
+    #       ytbryan@gmail.com, ytbryan
+    #       ".pretty
+    #     else
+    #       puts "No project aliases is set. To add an alias, use aka add [name] -p".red
+    #     end
+    #   end
+    # end
+
+
   #############################
   ## Tests
   #############################
@@ -283,6 +279,10 @@ end
   #############################
 
   private
+
+  def reload
+    system "source #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
+  end
 
   def read_yml path
     return YAML.load_file(path)
@@ -342,22 +342,12 @@ end
     return [username, domain, port]
   end
 
-  # def makeGroup
-  #   alias_path = ".aka/alias.yml"
-  #   group_path = ".aka/group.yml"
-  #   FileUtils.touch(group_path) if File.exist?(group_path)
-  #   #write yaml file
-  #   File.open(group_path, 'w') do |f|
-  #     f.write("")
-  #   end
-  # end
-
   def add input
     if input and show_alias(input).first == false and not_empty_alias(input) == false
       array = input.split("=")
-      full_command = "\nalias #{array.first}='#{array[1]}'"
-      File.open(read_yml("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write(full_command) }
-      puts "Added: #{full_command} to #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
+      full_command = "alias #{array.first}='#{array[1]}'"
+      File.open(read_yml("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
+      puts "#{full_command} is added to #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
       return true
     else
       puts "The alias is already present."

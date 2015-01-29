@@ -28,9 +28,8 @@ Here's some of aka's features:
 * [What's in the package](#what)
 * [Some feature comparison](#overview)
 * [Installation](#installation)
-  * Install in one line
-  * [Install Dependencies](#dependency)
   * [Setup the /.aka/.config file](#config)
+  * [Bundle install those dependencies](#dependency)
   * [Setup auto reloading and expanded history](#setup)
 * [Command Reference](#command-reference)
   * [`aka add`](#aka-add)
@@ -46,20 +45,22 @@ Here's some of aka's features:
 * [Version History](#version-history)
 * [License](#license)
 
+
 ## [Installation](#installation)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka
 cd ~/.aka
+bundle install
 ./aka copy
 ```
 [or install in a single line:](#single-line)
 ```
-git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; ./aka copy
+git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka copy
 ```
 
 ## [Setup the config file](#config)
 
-The `~/.aka/.config` file is an yml file. The default values are absolute path to my dot file and history file. If you are using `.bashrc` or `.zshrc`, please change the location value to its respective path. Relative path is not allowed in the `~/.aka/.config`
+The `~/.aka/.config` file is an yml file. The default values are absolute path to my dot file and history file. If you are using `.bashrc` or `.zshrc`, please change the location value to its respective path by uncommenting the location in the `config` file. Relative path is not allowed in the `~/.aka/.config`
 ```
 location: "/Users/ytbryan/.bash_profile" #absolute path to your dot file
 history: "/Users/ytbryan/.bash_history" #absolute path to your history file
@@ -140,8 +141,9 @@ aka test
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - If you have an idea to make aka better, please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
 
-## Thank You
+## Thank You Folks
 - Luu Gia Thuy [@luugiathuy](http://www.github.com/luugiathuy)
+- Koh Poh Chiat [@sockmister](https://www.github.com/sockmister)
 
 ## [Version History](#version-history)
 
