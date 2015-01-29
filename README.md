@@ -147,8 +147,6 @@ aka test
 
 ## [Version History](#version-history)
 
-
-
 `0.3.71` - First public release
 
 
