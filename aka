@@ -14,7 +14,6 @@ program :version, '0.3.78'
 program :last_update, '27 Jan 2015'
 program :description, 'add, remove, edit and grow your aliases from terminal.'
 
-
 command :last do |c|
   c.syntax = 'aka last [integer]'
   c.summary = 'show the last few aliases'
@@ -190,14 +189,14 @@ command :count do |c|
   end
 end
 
-# command :set do |c|
-#   c.syntax = 'aka set [options]'
-#   c.summary = 'set the path to a dot file'
-#   c.action do |args, options|
-#     FileUtils.touch(read_yml("#{Dir.home}/.aka/.config")["location"]) if File.exists?(read_yml("#{Dir.home}/.aka/.config")["location"])
-#     File.write(read_yml("#{Dir.home}/.aka/.config")["location"], args.first) if File.exists?(args.first) #if the file exists
-#   end
-# end
+#aka setpath ~/.bashrc --history --home
+command :setpath do |c|
+  c.syntax = 'aka setpath [options]'
+  c.summary = 'set the path to your dot file'
+  c.action do |args, options|
+    setPath(args.first) if args.first
+  end
+end
 
 # command :update do |c|
 #   c.syntax = 'aka update [options]'
@@ -286,6 +285,12 @@ end
   #############################
 
   private
+
+  def setPath(path, value="location")
+    data = read_yml("#{Dir.home}/.aka/.config")
+    data[value] = path
+    write_yml("#{Dir.home}/.aka/.config", data)
+  end
 
   def reload
     system "source #{read_yml("#{Dir.home}/.aka/.config")["location"]}"

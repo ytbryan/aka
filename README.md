@@ -10,19 +10,19 @@ Grow and expand those aliases with ease. Boost projects' productivity with some 
 
 Here's some of aka's features:
 
-| features                  | alias                        | aka |
-| :-----------------------: |:----------------------------:| :-----:|
-| add alias                 | ![Yes](demo/yes.png)         | ![Yes](demo/yes.png) |
-| remove alias              | ![Yes](demo/yes.png)         |   ![Yes](demo/yes.png) |
-| show alias                |  ![Yes](demo/yes.png)        |    ![Yes](demo/yes.png) |
-| show last few added alias |  -                           |    ![Yes](demo/yes.png) |
-| edit alias                |  -                           |    ![Yes](demo/yes.png) |
-| count alias               |  -                           |    ![Yes](demo/yes.png)|
-| auto reload dot file      |  -                           |    ![Yes](demo/yes.png)|
-| aka usage                 |  -                           |    ![Yes](demo/yes.png)|
-| upload to server          |  -                           |    ![Yes](demo/yes.png)|
-| download from server      |  -                           |    ![Yes](demo/yes.png)|
-| persistency               |  -                           |    ![Yes](demo/yes.png)|
+| features                  | alias                        | aka                  |
+| :-----------------------: |:----------------------------:| :-------------------:|
+| add alias                 |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| remove alias              |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| show alias                |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| show last few added alias |  -                           | ![Yes](demo/yes.png) |
+| edit alias                |  -                           | ![Yes](demo/yes.png) |
+| count alias               |  -                           | ![Yes](demo/yes.png) |
+| auto reload dot file      |  -                           | ![Yes](demo/yes.png) |
+| aka usage                 |  -                           | ![Yes](demo/yes.png) |
+| upload to server          |  -                           | ![Yes](demo/yes.png) |
+| download from server      |  -                           | ![Yes](demo/yes.png) |
+| persistency               |  -                           | ![Yes](demo/yes.png) |
 
 ## Table of Content
 * [What's in the package](#what)
@@ -141,9 +141,15 @@ aka test
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - If you have an idea to make aka better, please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
 
-## Thank You Folks
+## Thanks to these folks
 - Luu Gia Thuy [@luugiathuy](http://www.github.com/luugiathuy)
 - Koh Poh Chiat [@sockmister](https://www.github.com/sockmister)
+
+## Tested on:
+- OSX Yosemite 10.10.1
+- Ubuntu 14.04.1 LTS
+
+We need your help to test aka on various platforms. Submit an issue if you encounter a problem. State the error, platform and how to duplicate the error. Thank you.
 
 ## [Version History](#version-history)
 
