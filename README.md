@@ -40,6 +40,7 @@ Here's some of aka's features:
   * [`aka usage`](#aka-usage)
   * [`aka dl`](#aka-download)
   * [`aka upload`](#aka-upload)
+* [Deinstallation](#deinstallation)
 * [TODOs](#todos)
 * [Contribute](#contribute)
 * [Version History](#version-history)
@@ -56,6 +57,11 @@ bundle install
 [or install in a single line:](#single-line)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka copy
+```
+
+## [Install Bundle](#install-bundle)
+```
+sudo gem install bundle
 ```
 
 ## [Setup the config file](#config)
@@ -117,7 +123,6 @@ aka edit hello="echo hi there"
 
 ```
 
-
 ## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
 aka uses trap and signal to reload your dot file on the same shell so that you do not need to source the dot file manually.
 
@@ -131,6 +136,17 @@ If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rb
 
 ```
 aka test
+```
+
+## [Deinstallation](#deinstallation)
+remove the ruby dependency
+```
+sudo gem uninstall commander, highline, net-scp, colorize, minitest, safe_yaml, rake
+```
+
+remove .aka
+```
+rm -rf ~/.aka
 ```
 
 ## [TODOs](#todos)

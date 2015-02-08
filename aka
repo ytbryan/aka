@@ -10,8 +10,8 @@ default_command :help
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.78'
-program :last_update, '27 Jan 2015'
+program :version, '0.3.84'
+program :last_update, '8 Feb 2015'
 program :description, 'add, remove, edit and grow your aliases from terminal.'
 
 command :last do |c|
@@ -21,7 +21,8 @@ command :last do |c|
     if args.first
       showlast(args.first.to_i) if args.first.is_i?
     else
-      showlast(20)
+      value = readYML("#{Dir.home}/.aka/.config")["last"]
+      showlast(value.to_i) #this is unsafe
     end
   end
 end
@@ -33,16 +34,6 @@ command :reload do |c|
     reload_dot_file()
   end
 end
-
-
-command :ubuntu do |c|
-  c.syntax = 'aka reload'
-  c.summary = 'reload in ubuntu server. This is to test the hypothesis'
-  c.action do |args, options|
-    reload()
-  end
-end
-
 
 command :add do |c|
   c.syntax = 'aka add [name="command"] [options]'
@@ -58,6 +49,7 @@ command :add do |c|
     reload_dot_file() if result == true and !options.noreload
   end
 end
+alias_command :a, :add
 
 command :show do |c|
   c.syntax = 'aka show [options]'
@@ -80,9 +72,13 @@ command :usage do |c|
       end
     else
       if options.least
-        showUsage(20,true)
+        # showUsage(20,true)
+        value = readYML("#{Dir.home}/.aka/.config")["usage"]
+        showlast(value.to_i, true) #this is unsafe
       else
-        showUsage(20)
+        # showUsage(20)
+        value = readYML("#{Dir.home}/.aka/.config")["usage"]
+        showlast(value.to_i) #this is unsafe
       end
     end
   end
@@ -185,16 +181,19 @@ command :count do |c|
   c.syntax = 'aka count [options]'
   c.summary = 'count the number of alias'
   c.action do |args, options|
-    puts "#{count()} aliases from #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
+    puts "#{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
   end
 end
 
+#aka set ~/.bahs --path location
+#aka set ~/.bahs --path home
 #aka setpath ~/.bashrc --history --home
-command :setpath do |c|
-  c.syntax = 'aka setpath [options]'
+command :set do |c|
+  c.syntax = 'aka set the path [options]'
   c.summary = 'set the path to your dot file'
+  c.option '-p','--path STRING', 'set the path for home'
   c.action do |args, options|
-    setPath(args.first) if args.first
+    setPath(args.first, options.path) if args.first
   end
 end
 
@@ -244,14 +243,14 @@ end
         end
       end
     end
-
+    alias_command :'up', :upload
 
     # command :proj do |c|
     #   c.syntax = 'aka proj [options]'
     #   c.summary = 'show added project aliases'
     #   c.action do |args, options|
     #     if File.exist? "#{Dir.pwd}/.aka"
-    #       proj = read_yml("#{Dir.pwd}/.aka")
+    #       proj = readYML("#{Dir.pwd}/.aka")
     #       puts proj
     #       shortcut_str = createShortcut(proj)
     #       puts "#{proj["proj"]["title"]}
@@ -276,7 +275,7 @@ end
     c.syntax = 'aka test [options]'
     c.summary = 'run the tests'
     c.action do |args, options|
-      system("ruby #{read_yml("#{Dir.home}/.aka/.config")["home"]}/tests/test.rb")
+      system("ruby #{readYML("#{Dir.home}/.aka/.config")["home"]}/tests/test.rb")
     end
   end
 
@@ -286,26 +285,32 @@ end
 
   private
 
-  def setPath(path, value="location")
-    data = read_yml("#{Dir.home}/.aka/.config")
-    data[value] = path
-    write_yml("#{Dir.home}/.aka/.config", data)
+  def setPath(path, value)
+    data = readYML("#{Dir.home}/.aka/.config")
+    if data.has_key?(value) == true
+      old_path = data[value]
+      data[value] = path
+      writeYML("#{Dir.home}/.aka/.config", data)
+      puts "data[#{value}] has #{old_path} changed to #{path}"
+    else
+      puts "error: --#{value} does not exist in #{Dir.home}/.aka/.config "
+    end
   end
 
   def reload
-    system "source #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
+    system "source #{readYML("#{Dir.home}/.aka/.config")["location"]}"
   end
 
-  def read_yml path
+  def readYML path
     return YAML.load_file(path)
   end
 
-  def write_yml path, theyml
+  def writeYML path, theyml
     File.open(path, 'w') {|f| f.write theyml.to_yaml } #Store
   end
 
   def write_with array
-    File.open(read_yml("#{Dir.home}/.aka/.config")["location"], 'w') { |file|
+    File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'w') { |file|
       array.each do |line|
         file.write(line)
       end
@@ -313,7 +318,7 @@ end
   end
 
   def write_with_newline array
-    File.open(read_yml("#{Dir.home}/.aka/.config")["location"], 'w') { |file|
+    File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'w') { |file|
       array.each do |line|
         file.write(line + "\n")
       end
@@ -358,8 +363,8 @@ end
     if input and show_alias(input).first == false and not_empty_alias(input) == false
       array = input.split("=")
       full_command = "alias #{array.first}='#{array[1]}'"
-      File.open(read_yml("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
-      puts "#{full_command} is added to #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
+      File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
+      puts "#{full_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
       return true
     else
       puts "The alias is already present."
@@ -374,7 +379,7 @@ end
   end
 
   def show_alias argument
-    if content = File.open(read_yml("#{Dir.home}/.aka/.config")["location"]).read
+    if content = File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -394,7 +399,7 @@ end
   end
 
   # def show argument
-  #   if content = File.open(read_yml("#{Dir.home}/.aka/.config")["location"]).read
+  #   if content = File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
   #     content.gsub!(/\r\n?/, "\n")
   #     content_array = content.split("\n")
   #     content_array.each_with_index { |line, index|
@@ -415,7 +420,7 @@ end
   # end
 
   def remove input
-    if content=File.open(read_yml("#{Dir.home}/.aka/.config")["location"]).read
+    if content=File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -445,7 +450,7 @@ end
   #   end
   #
   #   founded = false
-  #   if content=File.open(read_yml("#{Dir.home}/.aka/.config")["location"]).read
+  #   if content=File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
   #     content.gsub!(/\r\n?/, "\n")
   #     content_array = content.split("\n")
   #     content_array.each_with_index { |line, index|
@@ -506,16 +511,16 @@ end
   # end
 
   def edit newcommand, this_alias
-    return append("alias " + this_alias + "='" + newcommand + "'", read_yml("#{Dir.home}/.aka/.config")["location"] )
+    return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
   end
 
   def edit_alias newalias, thiscommand
-    return append("alias " + newalias + "='" + thiscommand + "'", read_yml("#{Dir.home}/.aka/.config")["location"] )
+    return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
   end
 
   def count
     alias_count = 0
-    if content=File.open(read_yml("#{Dir.home}/.aka/.config")["location"]).read
+    if content=File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -535,13 +540,13 @@ end
       append("export HISTSIZE=10000","/etc/profile")
     end
 
-    input = ask "- Do you wish to setup auto-reloading of your dot file <#{read_yml("#{Dir.home}/.aka/.config")["location"]}>? (y/N)"
+    input = ask "- Do you wish to setup auto-reloading of your dot file <#{readYML("#{Dir.home}/.aka/.config")["location"]}>? (y/N)"
     if input == 'y'
       trap = "sigusr2() { unalias $1;}
-      sigusr1() { source #{read_yml("#{Dir.home}/.aka/.config")["location"]}; history -a; echo 'reloaded dot file'; }
+      sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["location"]}; history -a; echo 'reloaded dot file'; }
       trap sigusr1 SIGUSR1
       trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
-      append(trap, read_yml("#{Dir.home}/.aka/.config")['location'])
+      append(trap, readYML("#{Dir.home}/.aka/.config")['location'])
     end
 
     puts "Done. Please restart this shell.".red
@@ -572,7 +577,7 @@ end
   end
 
   def showlast howmany=10
-    if content = File.open(read_yml("#{Dir.home}/.aka/.config")["location"]).read
+    if content = File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       #why not just call the last five lines? Because i can't be sure that they are aliases
@@ -600,7 +605,7 @@ end
   def showUsage howmany=10, least=false
     value = reload_dot_file()
     #get all aliases
-    if content = File.open(read_yml("#{Dir.home}/.aka/.config")["history"]).read
+    if content = File.open(readYML("#{Dir.home}/.aka/.config")["history"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       total_aliases = []
@@ -662,7 +667,7 @@ end
               name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
       end
     end
-    puts "There's a total of #{array.size} lines in #{read_yml("#{Dir.home}/.aka/.config")["history"]}."
+    puts "There's a total of #{array.size} lines in #{readYML("#{Dir.home}/.aka/.config")["history"]}."
   end
 
   def sort(countarray, namearray) #highest first. decscending.
@@ -693,7 +698,7 @@ end
 
   def cleanup
     puts "entered cleanup"
-    if content = File.open("#{read_yml("#{Dir.home}/.aka/.config")["location"]}").read
+    if content = File.open("#{readYML("#{Dir.home}/.aka/.config")["location"]}").read
       puts "yes?"
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
@@ -751,15 +756,15 @@ end
   #     # theyml["groups"] = "~/.aka/groups"
   #     # theyml["remote"] = "255, admin, 12.12.12.233"
   #     # theyml["path"] = "~/.aka"
-  #     # write_yml("#{Dir.home}/.aka/.config", theyml)
-  #     FileUtils.touch(read_yml("#{Dir.home}/.aka/.config")["location"])
+  #     # writeYML("#{Dir.home}/.aka/.config", theyml)
+  #     FileUtils.touch(readYML("#{Dir.home}/.aka/.config")["location"])
   #   end
   # end
   #
   # command :readconfig do |c|
   #   c.action do |args, options|
-  #     puts "read_yml('#{Dir.home}/.aka/.config')['location'] ->#{read_yml("#{Dir.home}/.aka/.config")["location"].class} -> #{read_yml("#{Dir.home}/.aka/.config")["location"]}"
-  #     puts "read_yml("#{Dir.home}/.aka/.config")["location"] -> #{ read_yml("#{Dir.home}/.aka/.config")["location"].class} -> #{ read_yml("#{Dir.home}/.aka/.config")["location"]}"
+  #     puts "readYML('#{Dir.home}/.aka/.config')['location'] ->#{readYML("#{Dir.home}/.aka/.config")["location"].class} -> #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+  #     puts "readYML("#{Dir.home}/.aka/.config")["location"] -> #{ readYML("#{Dir.home}/.aka/.config")["location"].class} -> #{ readYML("#{Dir.home}/.aka/.config")["location"]}"
   #     puts "#{program(:path_to_location).class} -> #{program(:path_to_location)}"
   #   end
   # end
@@ -799,7 +804,7 @@ end
 
   def add_to_proj fullalias
     values = fullalias.split("=")
-    yml = read_yml("#{Dir.pwd}/.aka")
+    yml = readYML("#{Dir.pwd}/.aka")
     puts yml
     if yml == false
       puts "nil"
@@ -809,7 +814,7 @@ end
       yml["proj"]["title"] = "this is title"
       yml["proj"]["summary"] = "this is summary"
       yml["proj"]["aka"][values.first] = values[1]
-      write_yml("#{Dir.pwd}/.aka", yml)
+      writeYML("#{Dir.pwd}/.aka", yml)
     end
   end
   #aka proj import
@@ -836,7 +841,7 @@ end
     # theyml = Hash.new
     # theyml["proj"] = secondyml
 
-    write_yml("#{Dir.pwd}/.aka", theyml)
+    writeYML("#{Dir.pwd}/.aka", theyml)
   end
 
   def createShortcut(proj)
