@@ -58,7 +58,6 @@ bundle install
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka copy
 ```
-
 ## [Install Bundle](#install-bundle)
 ```
 sudo gem install bundle
@@ -99,6 +98,7 @@ aka setup
 
 ```
    aka add hello="echo helloworld"
+   aka a helloagain="echo hello again"
 ```
 
 ### [aka rm](#aka-remove)

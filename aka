@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'rubygems'
 require 'net/scp'
+require 'open-uri'
 require 'colorize'
 require "safe_yaml/load"
 require 'highline/import'
@@ -185,9 +186,6 @@ command :count do |c|
   end
 end
 
-#aka set ~/.bahs --path location
-#aka set ~/.bahs --path home
-#aka setpath ~/.bashrc --history --home
 command :set do |c|
   c.syntax = 'aka set the path [options]'
   c.summary = 'set the path to your dot file'
@@ -197,13 +195,15 @@ command :set do |c|
   end
 end
 
-# command :update do |c|
-#   c.syntax = 'aka update [options]'
-#   c.summary = 'update this aka'
-#   c.action do |args, options|
-#     update()
-#   end
-# end
+command :save do |c|
+  c.syntax = 'aka save [options]'
+  c.summary = 'save from website'
+  c.action do |args, options|
+    content = open(args.first).read
+    File.open(".bash_profile_saved", 'w') { |file| file.write(content) }
+  end
+end
+
 
 #aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
 # ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
@@ -499,7 +499,7 @@ end
 
   def found? answer, argument, line
     if answer == argument
-      puts "Found -> " + line.red
+      puts line.red
       return true
     else
       return false
@@ -591,11 +591,13 @@ end
       puts ""
       if total_aliases.count > howmany
         total_aliases.last(howmany).each_with_index do |line, index|
-          puts "#{total_aliases.count - howmany + index+1}. " + line
+          splitted= line.split('=')
+          puts "#{total_aliases.count - howmany + index+1}. " + splitted[0] + "=" + splitted[1].red
         end
       else
         total_aliases.last(howmany).each_with_index do |line, index|
-          puts "#{index+1}. " + line
+          splitted= line.split('=')
+          puts "#{index+1}. " + splitted[0] + "=" + splitted[1].red
         end
       end
       puts ""

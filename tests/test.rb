@@ -1,13 +1,23 @@
 require "minitest/autorun"
-#this test is limited because I'm unable to test the behavior of calling
-#aliases. Hence this tests will revolve around
+#this test is currently limited to testing simple functionality as I cannot test the behavior of calling aliases.
 class TestAka < MiniTest::Test
 
   def setup #nothing to setup
-    #installation
     system "./aka copy"
-    #required for test
     system("touch #{Dir.home}/.bash_profile")
+  end
+
+  def test_that_you_can_setup
+    system "git clone https://github.com/ytbryan/aka.git ~/.aka"
+    system "cd #{Dir.home}/.aka"
+    system "bundle install"
+    system "./aka copy"
+  end
+
+  def test_that_save_works
+    system "aka save something .bash_profile_saved"
+    existence = File.exists? ".bash_profile_saved"
+    puts "aka save worked." if existence == true
   end
 
   def test_removing_is_working
@@ -34,7 +44,6 @@ class TestAka < MiniTest::Test
   end
 
   def test_adding_is_working
-    #add to your bashfile
     system %(aka add somethingsomethingsomething="echo somethingsomethingsomething" --noreload)
     #check that alias is present
     truth = false
