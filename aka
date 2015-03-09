@@ -6,6 +6,7 @@ require 'colorize'
 require "safe_yaml/load"
 require 'highline/import'
 require 'commander/import'
+
 # always_trace
 default_command :help
 program :help_formatter, :compact

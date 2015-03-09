@@ -1,12 +1,13 @@
 # aka - alias' best friend
-Grow and expand those aliases with ease. Boost projects' productivity with some terminal shortcuts.
+Grow and expand those aliases on the fly. Boost projects' productivity with some terminal shortcuts.
 
-## [What's in the package?](#what)
-- Add, remove, edit aliases without opening your text editor.
-- Auto reload your dot file after each action
-- Expand alias history to 10,000
-- Server friendly commands with `aka dl` and `aka upload`
-- Manage your aliases via terminal without breaking your workflow <3
+#### [What's in the package?](#what)
+- Add, remove, edit aliases on the fly.
+- Manage them without opening your text editor.
+- Auto reload your dot file after each action.
+- Expand alias history to 10,000.
+- Upload and download your aliases using `aka dl` and `aka upload`.
+- Manage those beloved shortcuts without breaking your workflow <3.
 
 Here's some of aka's features:
 
@@ -28,6 +29,8 @@ Here's some of aka's features:
 * [What's in the package](#what)
 * [Some feature comparison](#overview)
 * [Installation](#installation)
+  * [Ruby Installation](#dependency-install)
+  * [Manual Installation](#manual-installation)
   * [Setup the /.aka/.config file](#config)
   * [Bundle install those dependencies](#dependency)
   * [Setup auto reloading and expanded history](#setup)
@@ -46,8 +49,28 @@ Here's some of aka's features:
 * [Version History](#version-history)
 * [License](#license)
 
+## aka uses ruby
+```
+$ ruby -v
+ruby: command not found
+```
+Install and manage your ruby using [rbenv](https://github.com/sstephenson/rbenv). Add [ruby-build](https://github.com/sstephenson/ruby-build) to use `rbenv install`
 
 ## [Installation](#installation)
+
+## [Manual Setup](#manual-installation)
+You can execute the following by calling `./aka setup`
+1. Add the first line
+2. This line `sigusr1() { source /Users/ytbryan/.bash_profile; history -a; echo 'reloaded dot file'; }` is to make reloading after action work.
+Add `trap sigusr1 SIGUSR1`
+3. Add this line `sigusr2() { unalias $1;}` is to make removing alias works.
+Add `trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2`
+4. Edit /etc/profile and add `export HISTSIZE=10000` at the end of the file
+5.  
+6. Tell aka that you have done the setup `./aka ok` and restart your terminal.
+
+## [Using git checkout](#git-installation)
+
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka
 cd ~/.aka
@@ -93,7 +116,7 @@ aka setup
 
 ## [Command Reference](#command-reference)
 
-### [aka add](#aka-add)
+### [aka add [name='command']](#aka-add)
 - add an alias to dot file
 
 ```
@@ -101,21 +124,21 @@ aka setup
    aka a helloagain="echo hello again"
 ```
 
-### [aka rm](#aka-remove)
+### [aka rm [name]](#aka-remove)
 - remove an alias from dot file
 
 ```
   aka rm hello
 ```
 
-### [aka show](#aka-show)
+### [aka show [name]](#aka-show)
 - show an alias
 
 ```
    aka show hello
 ```
 
-### [aka edit](#aka-edit)
+### [aka edit [name]](#aka-edit)
 - edit an alias
 
 ```
@@ -123,14 +146,11 @@ aka edit hello="echo hi there"
 
 ```
 
-## Sourcing of dot files (.bash_profile, .bashrc, .zshrc)
-aka uses trap and signal to reload your dot file on the same shell so that you do not need to source the dot file manually.
+## How it works
+- aka writes alias to your dot file so that you do not need to open a text editor for that.
+- aka uses trap and signal to reload your dot file on the same shell so that you do not need to source your dot file after each action.
+- when the user executes `aka rm` , a signal `SIGUSR2` is sent to remove the alias from the current shell.
 
-## Unaliasing of aliases
-`aka rm` includes `unalias` in order to keep removed aliases from the current shell. trap and signal using `SIGUSR2` is used to achieve this.
-
-## aka uses ruby.
-If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rbenv) to install ruby.
 
 ## Run Tests
 
@@ -138,7 +158,7 @@ If you do not have ruby installed, use [rbenv](https://github.com/sstephenson/rb
 aka test
 ```
 
-## [Deinstallation](#deinstallation)
+## [Remove aka ](#deinstallation)
 remove the ruby dependency
 ```
 sudo gem uninstall commander, highline, net-scp, colorize, minitest, safe_yaml, rake
@@ -156,6 +176,7 @@ rm -rf ~/.aka
 ## [Contribute](#contribute)
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
 - If you have an idea to make aka better, please feel free to contribute via [a pull request](https://github.com/ytbryan/aka/compare)
+- Make a copy and [fork this project](https://github.com/ytbryan/aka/fork)
 
 ## Thanks to these folks
 - Luu Gia Thuy [@luugiathuy](http://www.github.com/luugiathuy)
@@ -173,9 +194,10 @@ We need your help to test aka on various platforms. Submit an issue if you encou
 
 
 ## [License](#license)
+
 [The MIT License (MIT)](http://www.opensource.org/licenses/MIT)
 
-Copyright (c) 2014 - 2015 ytbryan, Bryan Lim <ytbryan@gmail.com>
+Copyright (c) 2014 ytbryan, Bryan Lim <ytbryan@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
