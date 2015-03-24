@@ -1,9 +1,10 @@
-# aka - alias' best friend - that simple shortcut to create more shortcuts in your terminal.
+# aka - alias' best friend
 
-Grow and expand those terminal shortcuts (aliases) on the fly. Boost projects' productivity with terminal shortcuts. Aka is built for terminal users' happiness and productivity.
+Grow and expand those terminal shortcuts (aliases) on the fly.
 
-#### Let's face it, creating alias isn't hard.
-aka is that shortcut to create more terminal shortcuts. Creating alias isn't hard. You just need to repeat these steps: open editor to open dot file. Add `alias something='something'`, save dot file. Source dot file. Every Single Time. These steps are just unnecessary.
+Boost projects' productivity with more terminal shortcuts.
+
+Built for your terminal's happiness and productivity.
 
 #### [What's in the package?](#what)
 - Add, remove, edit aliases on the fly.
@@ -13,9 +14,6 @@ aka is that shortcut to create more terminal shortcuts. Creating alias isn't har
 - Upload and download your aliases using `aka dl` and `aka upload`.
 - Manage those beloved shortcuts without breaking your workflow <3.
 - install packages like `core` and `designers`
-
-#### What's alias
-alias is built-in functions on your terminal to navigate directory, execute commands and accomplish daily task via the terminal without the use of a GUI or a mouse.
 
 Check out some of aka's features:
 
@@ -32,6 +30,8 @@ Check out some of aka's features:
 | upload to server          |  -                           | ![Yes](demo/yes.png) |
 | download from server      |  -                           | ![Yes](demo/yes.png) |
 | persistency               |  -                           | ![Yes](demo/yes.png) |
+| Add last command               |  -                           | ![Yes](demo/yes.png) |
+
 
 ## Table of Content
 * [What's in the package](#what)
@@ -222,3 +222,9 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+#### Let's face it, creating alias isn't hard.
+aka is that shortcut to create more terminal shortcuts. Creating alias isn't hard. You just need to repeat these steps: open editor to open dot file. Add `alias something='something'`, save dot file. Source dot file. Every Single Time. These steps are just unnecessary.
+
+#### What's alias
+alias is built-in functions on your terminal to navigate directory, execute commands and accomplish daily task via the terminal without the use of a GUI or a mouse.

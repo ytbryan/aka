@@ -21,13 +21,19 @@ class Aka < Thor
 
   end
 
-  def show #or find
+  def find #or find
 
   end
 
   def edit
 
   end
+
+  def list
+
+  end
+
+
 
 end
 

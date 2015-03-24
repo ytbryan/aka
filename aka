@@ -8,7 +8,7 @@ require 'highline/import'
 require 'commander/import'
 
 # always_trace
-default_command :help
+default_command :list
 program :help_formatter, :compact
 program :author, 'ytbryan'
 program :contact, 'Bryan Lim <ytbryan@gmail.com>'
@@ -16,89 +16,15 @@ program :version, '0.3.84'
 program :last_update, '8 Feb 2015'
 program :description, 'add, remove, edit and grow your aliases from terminal.'
 
-command :last do |c|
+command :tada do |c|
   c.syntax = 'aka last [integer]'
-  c.summary = 'show the last few aliases'
+  c.summary = 'take in the word #{pwd} and use it'
   c.action do |args, options|
-    if args.first
-      showlast(args.first.to_i) if args.first.is_i?
-    else
-      value = readYML("#{Dir.home}/.aka/.config")["last"]
-      showlast(value.to_i) #this is unsafe
-    end
-  end
-end
+    puts args.first
 
-command :reload do |c|
-  c.syntax = 'aka reload'
-  c.summary = 'reload dot file'
-  c.action do |args, options|
-    reload_dot_file()
-  end
-end
+    str = "aka g hello='echo something'"
 
-command :generate do |c|
-  c.syntax = 'aka add [name="command"] [options]'
-  c.summary = 'add an alias to dot file'
-  c.option '--noreload', 'switch off reloading of dot file'
-  c.option '-p','--proj', 'add this alias to the proj and dot file'
-  c.action do |args, options|
-    result = add(args.first) if args.first
-    if options.proj and result == true
-      FileUtils.touch("#{Dir.pwd}/.aka")
-      add_to_proj(args.first)
-    end
-    reload_dot_file() if result == true and !options.noreload
-  end
-end
-alias_command :g, :generate
-
-command :add do |c|
-  c.syntax = 'aka add [name="command"] [options]'
-  c.summary = 'add an alias to dot file'
-  c.option '--noreload', 'switch off reloading of dot file'
-  c.option '-p','--proj', 'add this alias to the proj and dot file'
-  c.action do |args, options|
-    result = add(args.first) if args.first
-    if options.proj and result == true
-      FileUtils.touch("#{Dir.pwd}/.aka")
-      add_to_proj(args.first)
-    end
-    reload_dot_file() if result == true and !options.noreload
-  end
-end
-alias_command :a, :add
-
-command :show do |c|
-  c.syntax = 'aka show [options]'
-  c.summary = 'show an alias'
-  c.action do |args, options|
-    show_alias(args.first) if args.first
-  end
-end
-
-command :usage do |c|
-  c.syntax = 'aka usage [options]'
-  c.summary = 'show your aliases usage'
-  c.option '--least', 'show the least used aliases'
-  c.action do |args, options|
-    if args.first
-      if options.least
-        showUsage(args.first.to_i, true) if args.first.is_i?
-      else
-        showUsage(args.first.to_i) if args.first.is_i?
-      end
-    else
-      if options.least
-        # showUsage(20,true)
-        value = readYML("#{Dir.home}/.aka/.config")["usage"]
-        showlast(value.to_i, true) #this is unsafe
-      else
-        # showUsage(20)
-        value = readYML("#{Dir.home}/.aka/.config")["usage"]
-        showlast(value.to_i) #this is unsafe
-      end
-    end
+    puts "#{str}"
   end
 end
 
@@ -117,20 +43,125 @@ command :destroy do |c|
 end
 alias_command :d, :destroy
 
-command :remove do |c|
-  c.syntax = 'aka remove [options]'
-  c.summary = 'remove an alias'
-  c.option '--noreload', 'to switch off reloading'
-  c.option '--nounalias', 'to switch off unaliasing'
-  # c.option '-p', '--proj', 'remove from project and dot file'
-  # c.option '-op', '--onlyproj', 'remove from project only'
+
+command :list do |c|
+  c.syntax = 'aka list [integer]'
+  c.summary = 'list the last few aliases'
   c.action do |args, options|
-    result = remove(args.first) if args.first
-    unalias_the(args.first) if !options.nounalias and result == true and args.first
-    reload_dot_file() if result == true and !options.noreload
+    if args.first
+      showlast(args.first.to_i) if args.first.is_i?
+    else
+      value = readYML("#{Dir.home}/.aka/.config")["last"]
+      showlast(value.to_i) #this is unsafe
+    end
+
+    puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
   end
 end
-alias_command :'rm', :remove
+
+# command :reload do |c|
+#   c.syntax = 'aka reload'
+#   c.summary = 'reload dot file'
+#   c.action do |args, options|
+#     reload_dot_file()
+#   end
+# end
+
+command :generate do |c|
+  c.syntax = 'aka add [name="command"] [options]'
+  c.summary = 'add an alias to dot file'
+  c.option '--noreload', 'switch off reloading of dot file'
+  c.option '-p','--proj', 'add this alias to the proj and dot file'
+  c.option '-l','--last', 'add this alias using the last command'
+  c.action do |args, options|
+    result = false
+    if options.last
+      result = add(add_last_command(parseARGS(args.first))) if args.first
+    else
+      result = add(parseARGS(args.first)) if args.first
+      if options.proj and result == true
+        FileUtils.touch("#{Dir.pwd}/.aka")
+        add_to_proj(args.first)
+      end
+    end
+    reload_dot_file() if result == true and !options.noreload
+
+  end
+end
+alias_command :g, :generate
+
+# command :add do |c|
+#   c.syntax = 'aka add [name="command"] [options]'
+#   c.summary = 'add an alias to dot file'
+#   c.option '--noreload', 'switch off reloading of dot file'
+#   c.option '-p','--proj', 'add this alias to the proj and dot file'
+#   c.action do |args, options|
+#     result = add(args.first) if args.first
+#     if options.proj and result == true
+#       FileUtils.touch("#{Dir.pwd}/.aka")
+#       add_to_proj(args.first)
+#     end
+#     reload_dot_file() if result == true and !options.noreload
+#   end
+# end
+# alias_command :a, :add
+
+# command :show do |c|
+#   c.syntax = 'aka show [options]'
+#   c.summary = 'show an alias'
+#   c.action do |args, options|
+#     show_alias(args.first) if args.first
+#   end
+# end
+
+command :find do |c|
+  c.syntax = 'aka find [options]'
+  c.summary = 'find your favourite alias'
+  c.action do |args, options|
+    show_alias(args.first) if args.first
+  end
+end
+
+# command :usage do |c|
+#   c.syntax = 'aka usage [options]'
+#   c.summary = 'show your aliases usage'
+#   c.option '--least', 'show the least used aliases'
+#   c.action do |args, options|
+#     if args.first
+#       if options.least
+#         showUsage(args.first.to_i, true) if args.first.is_i?
+#       else
+#         showUsage(args.first.to_i) if args.first.is_i?
+#       end
+#     else
+#       if options.least
+#         # showUsage(20,true)
+#         value = readYML("#{Dir.home}/.aka/.config")["usage"]
+#         showlast(value.to_i, true) #this is unsafe
+#       else
+#         # showUsage(20)
+#         value = readYML("#{Dir.home}/.aka/.config")["usage"]
+#         showlast(value.to_i) #this is unsafe
+#       end
+#     end
+#   end
+# end
+
+
+# command :remove do |c|
+#   c.syntax = 'aka remove [options]'
+#   c.summary = 'remove an alias'
+#   c.option '--noreload', 'to switch off reloading'
+#   c.option '--nounalias', 'to switch off unaliasing'
+#   # c.option '-p', '--proj', 'remove from project and dot file'
+#   # c.option '-op', '--onlyproj', 'remove from project only'
+#   c.action do |args, options|
+#     result = remove(args.first) if args.first
+#     unalias_the(args.first) if !options.nounalias and result == true and args.first
+#     reload_dot_file() if result == true and !options.noreload
+#   end
+# end
+# alias_command :'rm', :remove
 
 command :edit do |c|
   c.syntax = 'aka edit [options]'
@@ -184,7 +215,7 @@ command :edit do |c|
   end
 end
 
-command :setup do |c|
+command :init do |c|
   c.syntax = 'aka setup [options]'
   c.summary = 'setup aka'
   c.action do |args, options|
@@ -210,13 +241,12 @@ command :version do |c|
 end
 alias_command :v, :version
 
-command :count do |c|
-  c.syntax = 'aka count [options]'
-  c.summary = 'count the number of alias'
-  c.action do |args, options|
-    puts "#{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
-  end
-end
+# command :count do |c|
+#   c.syntax = 'aka count [options]'
+#   c.summary = 'count the number of alias'
+#   c.action do |args, options|
+#   end
+# end
 
 command :set do |c|
   c.syntax = 'aka set the path [options]'
@@ -232,7 +262,7 @@ command :save do |c|
   c.summary = 'save from website'
   c.action do |args, options|
     content = open(args.first).read
-    File.open(".bash_profile_saved", 'w') { |file| file.write(content) }
+    File.open(".profile_saved", 'w') { |file| file.write(content) }
   end
 end
 
@@ -369,7 +399,11 @@ end
   end
 
   def reload_dot_file
-    system("kill -SIGUSR1 #{Process.ppid}")
+   system("kill -SIGUSR1 #{Process.ppid}")
+  end
+
+  def historywrite
+    system "kill -SIGUSR2 #{Process.ppid}"
   end
 
   def unalias_the value
@@ -393,10 +427,10 @@ end
   def add input
     if input and show_alias(input).first == false and not_empty_alias(input) == false
       array = input.split("=")
-      # full_command = "alias #{array.first}='#{array[1]}'"
-      full_command = "alias #{array.first}='#{array[1]}'     - aka g #{array.first}='#{array[1]}'"
+      full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
+      print_out_command = "aka g #{array.first}='#{array[1]}'"
       File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
-      puts "#{full_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+      puts "    #{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
       return true
     else
       puts "The alias is already present."
@@ -461,7 +495,7 @@ end
           answer = value[1].split("=")
           if answer.first == input
             content_array.delete_at(index) and write_with_newline(content_array)
-            puts "Removed: #{line} from #{Dir.home}/.bash_profile".red
+            puts "    #{line} is removed from #{Dir.home}/.bash_profile".red
             return true
           end
         end
@@ -732,17 +766,19 @@ end
   end
 
   def cleanup
-    puts "entered cleanup"
     if content = File.open("#{readYML("#{Dir.home}/.aka/.config")["location"]}").read
-      puts "yes?"
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
-      total_aliases = []
-      content_array.each_with_index { |line, index|
-        if line == ""
-          content_array.delete_at(index)
-        end
-      }
+      check = false
+      while check == false
+        check = true
+        content_array.each_with_index { |line, index|
+          if line == "" or line == "\n"
+            content_array.delete_at(index)
+            check = false
+          end
+        }
+      end
       write_with_newline(content_array)
     end
   end
@@ -892,7 +928,23 @@ end
     return answer
   end
 
-  def add_last_command
+  def add_last_command name
+    command= find_last_command()
+    return str = name + "=" + "#{command}"
+  end
+
+  def find_last_command
+    #i think if you do history -w, you can retrieve the latest command
+    if content = File.open(readYML("#{Dir.home}/.aka/.config")["history"]).read
+      count=0
+      content.gsub!(/\r\n?/, "\n")
+      content_array = content.split("\n")
+      # content_array.each_with_index { |line, index|
+      #   puts "#{index} #{line}"
+      # }
+
+      return  content_array[content_array.count - 1]
+    end
     #go through the history
 
     #take the last command
@@ -902,6 +954,17 @@ end
     #append together and save it
   end
 
-  def add_pwd_to_the_command
 
+  def parseARGS str
+    array =  str.split(" ")
+    array.each_with_index do |line, value|
+      array[value] = line.gsub('#{pwd}', Shellwords.escape(Dir.pwd))
+    end
+    return array.join(" ")
+  end
+
+  def add_pwd_to_the_command
+    #detect #{pwd}
+
+    #get the pwd and replace the the pwd
   end
