@@ -1,5 +1,9 @@
-# aka - alias' best friend
-Grow and expand those aliases on the fly. Boost projects' productivity with some terminal shortcuts.
+# aka - alias' best friend - that simple shortcut to create more shortcuts in your terminal.
+
+Grow and expand those terminal shortcuts (aliases) on the fly. Boost projects' productivity with terminal shortcuts. Aka is built for terminal users' happiness and productivity.
+
+#### Let's face it, creating alias isn't hard.
+aka is that shortcut to create more terminal shortcuts. Creating alias isn't hard. You just need to repeat these steps: open editor to open dot file. Add `alias something='something'`, save dot file. Source dot file. Every Single Time. These steps are just unnecessary.
 
 #### [What's in the package?](#what)
 - Add, remove, edit aliases on the fly.
@@ -8,8 +12,12 @@ Grow and expand those aliases on the fly. Boost projects' productivity with some
 - Expand alias history to 10,000.
 - Upload and download your aliases using `aka dl` and `aka upload`.
 - Manage those beloved shortcuts without breaking your workflow <3.
+- install packages like `core` and `designers`
 
-Here's some of aka's features:
+#### What's alias
+alias is built-in functions on your terminal to navigate directory, execute commands and accomplish daily task via the terminal without the use of a GUI or a mouse.
+
+Check out some of aka's features:
 
 | features                  | alias                        | aka                  |
 | :-----------------------: |:----------------------------:| :-------------------:|
@@ -49,14 +57,26 @@ Here's some of aka's features:
 * [Version History](#version-history)
 * [License](#license)
 
-## aka uses ruby
-```
-$ ruby -v
-ruby: command not found
-```
-Install and manage your ruby using [rbenv](https://github.com/sstephenson/rbenv). Add [ruby-build](https://github.com/sstephenson/ruby-build) to use `rbenv install`
+## You need ruby to use aka
 
-## [Installation](#installation)
+If you are seeing `ruby: command not found`, then you need to install ruby.
+
+- There are many ways to install ruby. I would recommend installing it using  [rbenv](https://github.com/sstephenson/rbenv).
+- Remember to add  [ruby-build](https://github.com/sstephenson/ruby-build) and use `rbenv install <ruby_version>` to get your favorite ruby version.
+
+## [Installation using Git  ](#git-installation)
+```
+git clone https://github.com/ytbryan/aka.git ~/.aka
+cd ~/.aka
+bundle
+./aka install
+```
+[or install with a single line:](#single-line)
+```
+git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka install
+```
+## [Auto Setup](#auto-installation) (Recommended)
+
 
 ## [Manual Setup](#manual-installation)
 You can execute the following by calling `./aka setup`
@@ -69,25 +89,13 @@ Add `trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2`
 5.  
 6. Tell aka that you have done the setup `./aka ok` and restart your terminal.
 
-## [Using git checkout](#git-installation)
 
-```
-git clone https://github.com/ytbryan/aka.git ~/.aka
-cd ~/.aka
-bundle install
-./aka copy
-```
-[or install in a single line:](#single-line)
-```
-git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka copy
-```
 ## [Install Bundle](#install-bundle)
 ```
 sudo gem install bundle
 ```
 
 ## [Setup the config file](#config)
-
 The `~/.aka/.config` file is an yml file. The default values are absolute path to my dot file and history file. If you are using `.bashrc` or `.zshrc`, please change the location value to its respective path by uncommenting the location in the `config` file. Relative path is not allowed in the `~/.aka/.config`
 ```
 location: "/Users/ytbryan/.bash_profile" #absolute path to your dot file
@@ -113,22 +121,22 @@ aka setup
 ```
 
 ---
-
 ## [Command Reference](#command-reference)
 
-### [aka add [name='command']](#aka-add)
-- add an alias to dot file
+### [aka generate [name='command']](#aka-add)
+- generate an alias to dot file
 
 ```
    aka add hello="echo helloworld"
    aka a helloagain="echo hello again"
 ```
 
-### [aka rm [name]](#aka-remove)
-- remove an alias from dot file
+### [aka destroy [name]](#aka-remove)
+- destroy an alias from dot file
 
 ```
-  aka rm hello
+  aka destroy hello
+  aka d hello
 ```
 
 ### [aka show [name]](#aka-show)
@@ -149,11 +157,9 @@ aka edit hello="echo hi there"
 ## How it works
 - aka writes alias to your dot file so that you do not need to open a text editor for that.
 - aka uses trap and signal to reload your dot file on the same shell so that you do not need to source your dot file after each action.
-- when the user executes `aka rm` , a signal `SIGUSR2` is sent to remove the alias from the current shell.
-
+- when the user executes `aka destroy` , a signal `SIGUSR2` is sent to remove the alias from the current shell.
 
 ## Run Tests
-
 ```
 aka test
 ```

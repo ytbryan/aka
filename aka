@@ -37,6 +37,22 @@ command :reload do |c|
   end
 end
 
+command :generate do |c|
+  c.syntax = 'aka add [name="command"] [options]'
+  c.summary = 'add an alias to dot file'
+  c.option '--noreload', 'switch off reloading of dot file'
+  c.option '-p','--proj', 'add this alias to the proj and dot file'
+  c.action do |args, options|
+    result = add(args.first) if args.first
+    if options.proj and result == true
+      FileUtils.touch("#{Dir.pwd}/.aka")
+      add_to_proj(args.first)
+    end
+    reload_dot_file() if result == true and !options.noreload
+  end
+end
+alias_command :g, :generate
+
 command :add do |c|
   c.syntax = 'aka add [name="command"] [options]'
   c.summary = 'add an alias to dot file'
@@ -85,6 +101,21 @@ command :usage do |c|
     end
   end
 end
+
+command :destroy do |c|
+  c.syntax = 'aka remove [options]'
+  c.summary = 'remove an alias'
+  c.option '--noreload', 'to switch off reloading'
+  c.option '--nounalias', 'to switch off unaliasing'
+  # c.option '-p', '--proj', 'remove from project and dot file'
+  # c.option '-op', '--onlyproj', 'remove from project only'
+  c.action do |args, options|
+    result = remove(args.first) if args.first
+    unalias_the(args.first) if !options.nounalias and result == true and args.first
+    reload_dot_file() if result == true and !options.noreload
+  end
+end
+alias_command :d, :destroy
 
 command :remove do |c|
   c.syntax = 'aka remove [options]'
@@ -204,7 +235,6 @@ command :save do |c|
     File.open(".bash_profile_saved", 'w') { |file| file.write(content) }
   end
 end
-
 
 #aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
 # ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
@@ -363,7 +393,8 @@ end
   def add input
     if input and show_alias(input).first == false and not_empty_alias(input) == false
       array = input.split("=")
-      full_command = "alias #{array.first}='#{array[1]}'"
+      # full_command = "alias #{array.first}='#{array[1]}'"
+      full_command = "alias #{array.first}='#{array[1]}'     - aka g #{array.first}='#{array[1]}'"
       File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
       puts "#{full_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
       return true
@@ -500,6 +531,7 @@ end
 
   def found? answer, argument, line
     if answer == argument
+      # puts line.red + " - aka add #{argument}"
       puts line.red
       return true
     else
@@ -786,7 +818,7 @@ end
   #   end
   # end
 
-  command :copy do |c|
+  command :install do |c|
     c.syntax = 'aka copy [options]'
     c.summary = 'copy a local copy of aka to /usr/local/bin'
     c.action do |args, options|
@@ -858,4 +890,18 @@ end
         answer += "\n"
     end
     return answer
+  end
+
+  def add_last_command
+    #go through the history
+
+    #take the last command
+
+    #take the name
+
+    #append together and save it
+  end
+
+  def add_pwd_to_the_command
+
   end
