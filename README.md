@@ -114,10 +114,10 @@ bundle install
 
 ## [Setup auto-reloading of dot file and expand bash history](#setup)
 
-`aka setup` writes to /etc/profile for expanded history. Hence, please use `sudo aka setup` to give aka the permission to write to /etc/profile.
+`aka init` writes to /etc/profile for expanded history. Hence, please use `sudo aka init` to give aka the permission to write to /etc/profile.
 
 ```
-aka setup
+aka init
 ```
 
 ---
@@ -127,8 +127,8 @@ aka setup
 - generate an alias to dot file
 
 ```
-   aka add hello="echo helloworld"
-   aka a helloagain="echo hello again"
+   aka generate hello="echo helloworld"
+   aka g helloagain="echo hello again"
 ```
 
 ### [aka destroy [name]](#aka-remove)
@@ -139,11 +139,11 @@ aka setup
   aka d hello
 ```
 
-### [aka show [name]](#aka-show)
-- show an alias
+### [aka find [name]](#aka-show)
+- find an alias
 
 ```
-   aka show hello
+   aka find hello
 ```
 
 ### [aka edit [name]](#aka-edit)
@@ -195,7 +195,7 @@ rm -rf ~/.aka
 We need your help to test aka on various platforms. Submit an issue if you encounter a problem. State the error, platform and how to duplicate the error. Thank you.
 
 ## [Version History](#version-history)
-
+`0.3.78` - First tag
 `0.3.71` - First public release
 
 
