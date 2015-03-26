@@ -29,12 +29,10 @@ Check out some of aka's features:
 | upload to server          |  -                           | ![Yes](demo/yes.png) |
 | download from server      |  -                           | ![Yes](demo/yes.png) |
 | persistency               |  -                           | ![Yes](demo/yes.png) |
-| add your last command               |  -                           | ![Yes](demo/yes.png) |
+| add your last command     |  -                           | ![Yes](demo/yes.png) |
 
 
 ## Table of Content
-* [What's in the package](#what)
-* [Some feature comparison](#overview)
 * [Installation](#installation)
   * [Ruby Installation](#dependency-install)
   * [Manual Installation](#manual-installation)
@@ -174,12 +172,12 @@ aka test
 ```
 
 ## [Remove aka ](#deinstallation)
-remove the ruby dependency
+If you must remove the aka's ruby dependency
 ```
 sudo gem uninstall commander, highline, net-scp, colorize, minitest, safe_yaml, rake
 ```
 
-remove .aka
+if you need to remove aka,
 ```
 rm -rf ~/.aka
 ```
