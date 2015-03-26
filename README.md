@@ -13,7 +13,6 @@ Built for your terminal's happiness and productivity.
 - Expand alias history to 10,000.
 - Upload and download your aliases using `aka dl` and `aka upload`.
 - Manage those beloved shortcuts without breaking your workflow <3.
-- install packages like `core` and `designers`
 
 Check out some of aka's features:
 
@@ -30,7 +29,7 @@ Check out some of aka's features:
 | upload to server          |  -                           | ![Yes](demo/yes.png) |
 | download from server      |  -                           | ![Yes](demo/yes.png) |
 | persistency               |  -                           | ![Yes](demo/yes.png) |
-| Add last command               |  -                           | ![Yes](demo/yes.png) |
+| add your last command               |  -                           | ![Yes](demo/yes.png) |
 
 
 ## Table of Content
@@ -43,9 +42,9 @@ Check out some of aka's features:
   * [Bundle install those dependencies](#dependency)
   * [Setup auto reloading and expanded history](#setup)
 * [Command Reference](#command-reference)
-  * [`aka add`](#aka-add)
-  * [`aka remove`](#aka-remove)
-  * [`aka show`](#aka-show)
+  * [`aka generate`](#aka-add)
+  * [`aka destroy`](#aka-remove)
+  * [`aka find`](#aka-show)
   * [`aka edit`](#aka-edit)
   * [`aka count`](#aka-count)
   * [`aka usage`](#aka-usage)
@@ -129,6 +128,16 @@ aka init
 ```
    aka generate hello="echo helloworld"
    aka g helloagain="echo hello again"
+   aka g hello --last #add the previous command
+```
+
+Many times, we need to add the previous command. use `--last` or `-l` to add the last executed command.
+
+```
+> echo "hello world"
+aka g hello -l #generate alias hello="echo 'hello world'"
+hello
+> hello world
 ```
 
 ### [aka destroy [name]](#aka-remove)
@@ -195,8 +204,8 @@ rm -rf ~/.aka
 We need your help to test aka on various platforms. Submit an issue if you encounter a problem. State the error, platform and how to duplicate the error. Thank you.
 
 ## [Version History](#version-history)
-`0.3.78` - First tag
-`0.3.71` - First public release
+- `0.3.78` - First tag
+- `0.3.71` - First public release
 
 
 ## [License](#license)
@@ -222,9 +231,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-#### Let's face it, creating alias isn't hard.
-aka is that shortcut to create more terminal shortcuts. Creating alias isn't hard. You just need to repeat these steps: open editor to open dot file. Add `alias something='something'`, save dot file. Source dot file. Every Single Time. These steps are just unnecessary.
-
-#### What's alias
-alias is built-in functions on your terminal to navigate directory, execute commands and accomplish daily task via the terminal without the use of a GUI or a mouse.
