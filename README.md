@@ -2,25 +2,31 @@
 
 Grow and expand those terminal shortcuts (aliases) on the fly.
 
-Boost projects' productivity with more terminal shortcuts.
+Boost projects' productivity with better terminal shortcuts.
 
 Built for your terminal's happiness and productivity.
 
-#### [What's in the package?](#what)
+aka makes temperory alias a thing of the past.
+
+aka removes the irritation of opening the text editor, adding alias manually and sourcing the dot file just so you can create permanent terminal shortcut.
+
+
+#### What's in the package?
 - Add, remove, edit aliases on the fly.
 - Manage them without opening your text editor.
 - Auto reload your dot file after each action.
-- Expand alias history to 10,000.
+- Expand alias history to 10,000
+- Append command into history after each action
 - Upload and download your aliases using `aka dl` and `aka upload`.
 - Manage those beloved shortcuts without breaking your workflow <3.
 
-Check out some of aka's features:
+Check out some of the features:
 
 | features                  | alias                        | aka                  |
 | :-----------------------: |:----------------------------:| :-------------------:|
 | add alias                 |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
 | remove alias              |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| show alias                |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| find and show alias       |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
 | show last few added alias |  -                           | ![Yes](demo/yes.png) |
 | edit alias                |  -                           | ![Yes](demo/yes.png) |
 | count alias               |  -                           | ![Yes](demo/yes.png) |
@@ -30,7 +36,6 @@ Check out some of aka's features:
 | download from server      |  -                           | ![Yes](demo/yes.png) |
 | persistency               |  -                           | ![Yes](demo/yes.png) |
 | add your last command     |  -                           | ![Yes](demo/yes.png) |
-
 
 ## Table of Content
 * [Installation](#installation)
@@ -44,7 +49,6 @@ Check out some of aka's features:
   * [`aka destroy`](#aka-remove)
   * [`aka find`](#aka-show)
   * [`aka edit`](#aka-edit)
-  * [`aka count`](#aka-count)
   * [`aka usage`](#aka-usage)
   * [`aka dl`](#aka-download)
   * [`aka upload`](#aka-upload)
@@ -116,7 +120,6 @@ bundle install
 ```
 aka init
 ```
-
 ---
 ## [Command Reference](#command-reference)
 
@@ -204,6 +207,15 @@ We need your help to test aka on various platforms. Submit an issue if you encou
 ## [Version History](#version-history)
 - `0.3.78` - First tag
 - `0.3.71` - First public release
+
+
+## Some thoughts about Terminal Productivity
+
+Terminal producitivity is not just about more terminal shortcuts. It's about a better terminal workflow and less reducdant steps to navigate and get things done on terminal.
+
+It's about making things a little easier with lesser steps to get things done. It's about removing redundent steps from the day to day workflow so that to get the end result quicker.
+
+And that's what is aka is about.
 
 
 ## [License](#license)

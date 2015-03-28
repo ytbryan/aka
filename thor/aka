@@ -5,295 +5,105 @@ require 'open-uri'
 require 'colorize'
 require "safe_yaml/load"
 require 'highline/import'
-require 'commander/import'
+require 'thor'
 
-# always_trace
-default_command :list
-program :help_formatter, :compact
-program :author, 'ytbryan'
-program :contact, 'Bryan Lim <ytbryan@gmail.com>'
-program :version, '0.3.84'
-program :last_update, '8 Feb 2015'
-program :description, 'add, remove, edit and grow your aliases from terminal.'
+class Aka < Thor
+  include Thor::Actions
+  check_unknown_options!
+  package_name "aka"
 
-command :tada do |c|
-  c.syntax = 'aka last [integer]'
-  c.summary = 'take in the word #{pwd} and use it'
-  c.action do |args, options|
-    puts args.first
-    str = "aka g hello='echo something'"
-    puts "#{str}"
-  end
-end
-
-command :destroy do |c|
-  c.syntax = 'aka remove [options]'
-  c.summary = 'remove an alias'
-  c.option '--noreload', 'to switch off reloading'
-  c.option '--nounalias', 'to switch off unaliasing'
-  # c.option '-p', '--proj', 'remove from project and dot file'
-  # c.option '-op', '--onlyproj', 'remove from project only'
-  c.action do |args, options|
-    result = remove(args.first) if args.first
-    unalias_the(args.first) if !options.nounalias and result == true and args.first
-    reload_dot_file() if result == true and !options.noreload
-  end
-end
-alias_command :d, :destroy
-
-
-command :list do |c|
-  c.syntax = 'aka list [integer]'
-  c.summary = 'list the last few aliases'
-  c.action do |args, options|
-    if args.first
-      showlast(args.first.to_i) if args.first.is_i?
+  #
+  # TADA
+  #
+  desc "tada [name]", "generate an alias"
+  method_options :last => :boolean,
+                :something => :boolean,
+                :somethignelse => :boolean,
+                :alias => :t
+  def tada args
+    if yes? "how are you? (yN)"
+      puts "ok"
     else
-      value = readYML("#{Dir.home}/.aka/.config")["last"]
-      showlast(value.to_i) #this is unsafe
+      puts "no"
     end
-
-    puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
   end
-end
 
-# command :reload do |c|
-#   c.syntax = 'aka reload'
-#   c.summary = 'reload dot file'
-#   c.action do |args, options|
-#     reload_dot_file()
-#   end
-# end
-
-command :generate do |c|
-  c.syntax = 'aka add [name="command"] [options]'
-  c.summary = 'add an alias to dot file'
-  c.option '--noreload', 'switch off reloading of dot file'
-  c.option '-p','--proj', 'add this alias to the proj and dot file'
-  c.option '-l','--last', 'add this alias using the last command'
-  c.action do |args, options|
+  #
+  # GENERATE
+  #
+  desc "generate [name]", "generate an alias"
+  method_options :last => :boolean, :alias => :g
+  def generate args
     result = false
-    if options.last
-      result = add(add_last_command(parseARGS(args.first))) if args.first
+    if options.last?
+      result = add(add_last_command(parseARGS(args))) if args
     else
-      result = add(parseARGS(args.first)) if args.first
-      if options.proj and result == true
+      result = add(parseARGS(args)) if args
+      if options.proj? and result == true
         FileUtils.touch("#{Dir.pwd}/.aka")
-        add_to_proj(args.first)
+        add_to_proj(args)
       end
     end
-    reload_dot_file() if result == true and !options.noreload
-
-  end
-end
-alias_command :g, :generate
-
-command :find do |c|
-  c.syntax = 'aka find [options]'
-  c.summary = 'find your favourite alias'
-  c.action do |args, options|
-    show_alias(args.first) if args.first
-  end
-end
-
-command :usage do |c|
-  c.syntax = 'aka usage [options]'
-  c.summary = 'show your aliases usage'
-  c.option '--least','-l', 'show the least used aliases'
-  c.action do |args, options|
-    if args.first
-      if options.least
-        showUsage(args.first.to_i, true) if args.first.is_i?
-      else
-        showUsage(args.first.to_i) if args.first.is_i?
-      end
-    else
-      if options.least
-        # showUsage(20,true)
-        value = readYML("#{Dir.home}/.aka/.config")["usage"]
-        showlast(value.to_i, true) #this is unsafe
-      else
-        # showUsage(20)
-        value = readYML("#{Dir.home}/.aka/.config")["usage"]
-        showlast(value.to_i) #this is unsafe
-      end
-    end
-  end
-end
-
-command :edit do |c|
-  c.syntax = 'aka edit [options]'
-  c.summary = 'edit the alias'
-  c.option '--noreload', 'switch off reloading'
-  c.option '--name', 'edit the name only'
-  c.action do |args, options|
-    if args.first
-      values = args.first.split("=")
-      if values.size > 1
-        truth, _alias = show_alias(args.first)
-        if truth == true
-          if options.name
-            remove(_alias) #remove that alias
-            edit_alias(values[1], _alias) #edit that alias
-            reload_dot_file() if !options.noreload
-          else
-            remove(_alias) #remove that alias
-            edit(values[1], _alias) #edit that alias
-            reload_dot_file() if !options.noreload
-          end
-        else
-          puts "alias '#{args.first}' cannot be found".red
-        end
-      else
-        truth, _alias, command = show_alias(args.first)
-        if truth == true
-          if options.name
-            # value = args.first.split("=")
-            input = ask "Enter a new alias for command '#{command}'?\n"
-            answer = ask "'#{input}' - Please confirm the new alias? (y/N)"
-            if answer == 'y'
-              remove(_alias) #remove that alias
-              edit_alias(input, _alias) #edit that alias
-              reload_dot_file() if !options.noreload
-            end
-          else
-            input = ask "Enter a new command for alias '#{args.first}'?\n"
-            answer = ask "'#{input}' - Please confirm the new command? (y/N)"
-            if answer == 'y'
-              remove(_alias) #remove that alias
-              edit(input, _alias) #edit that alias
-              reload_dot_file() if !options.noreload
-            end
-          end
-        else
-          puts "alias '#{args.first}' cannot be found".red
-        end
-      end
-    end #if args.first
-  end
-end
-
-command :init do |c|
-  c.syntax = 'aka setup [options]'
-  c.summary = 'setup aka'
-  c.action do |args, options|
-    setup()
-  end
-end
-
-command :clean do |c|
-  c.syntax = 'aka clean [options]'
-  c.summary = 'clean up your dot file'
-  c.action do |args, options|
-    cleanup()
-  end
-end
-
-command :version do |c|
-  c.syntax = 'aka version'
-  c.summary = 'show aka version'
-  c.action do |args, options|
-    version()
-    puts ""
-  end
-end
-alias_command :v, :version
-
-command :set do |c|
-  c.syntax = 'aka set the path [options]'
-  c.summary = 'set the path to your dot file'
-  c.option '-p','--path STRING', 'set the path for home'
-  c.action do |args, options|
-    setPath(args.first, options.path) if args.first
-  end
-end
-
-command :save do |c|
-  c.syntax = 'aka save [options]'
-  c.summary = 'save from website'
-  c.action do |args, options|
-    content = open(args.first).read
-    File.open(".profile_saved", 'w') { |file| file.write(content) }
-  end
-end
-
-#aka bb --from path_from_remote --to ytbryan@12312.12.312.3.12.3 --of /path_th_local
-# ./aka beamback --from /home/ytbryan/hello --to admin@xxx.xxx.xxx.xxx:port_number_here --of /Users/ytbryan/Desktop/hello
-  command :download do |c|
-    c.syntax = 'aka download [options]'
-    c.summary = 'download a dot file from server'
-    c.action do |args, options|
-      if options.from and options.to and options.of
-        arr = split(options.to.to_s)
-        pw = ask "What's the password?"
-        result = Net::SCP.download!(arr[1], #remote
-        arr.first,#username
-        options.from.to_s, #remote_path
-        options.of.to_s, #local_path
-        :ssh => {:password => pw,
-          :port => arr[2]}) if pw
-        end
-      end
-    end
-    alias_command :dl, :download
-
-    command :upload do |c|
-      c.syntax = 'aka upload [options]'
-      c.summary = 'upload a dot file to server'
-      c.action do |args, options|
-        if options.from and options.to and options.of
-          if File.exists?(options.from.to_s)
-            arr = split(options.to.to_s)
-            result = Net::SCP.upload!(arr[1], #remote
-            arr.first, #username
-            options.from.to_s, #local_path
-            options.of.to_s, #remote_path
-            :ssh => {:port => arr[2]})
-          else
-            puts "Cannot find #{options.from}"
-          end
-        end
-      end
-    end
-    alias_command :'up', :upload
-
-    # command :proj do |c|
-    #   c.syntax = 'aka proj [options]'
-    #   c.summary = 'show added project aliases'
-    #   c.action do |args, options|
-    #     if File.exist? "#{Dir.pwd}/.aka"
-    #       proj = readYML("#{Dir.pwd}/.aka")
-    #       puts proj
-    #       shortcut_str = createShortcut(proj)
-    #       puts "#{proj["proj"]["title"]}
-    #       #{proj["proj"]["summary"]}
-    #       Shortcuts:
-    #       #{shortcut_str}
-    #       ---------
-    #       <run 'aka proj import' to import these shortcuts>
-    #       ytbryan@gmail.com, ytbryan
-    #       ".pretty
-    #     else
-    #       puts "No project aliases is set. To add an alias, use aka add [name] -p".red
-    #     end
-    #   end
-    # end
-
-
-  #############################
-  ## Tests
-  #############################
-  command :test do |c|
-    c.syntax = 'aka test [options]'
-    c.summary = 'run the tests'
-    c.action do |args, options|
-      system("ruby #{readYML("#{Dir.home}/.aka/.config")["home"]}/tests/test.rb")
-    end
+    reload_dot_file if result == true and !options.noreload
   end
 
-  #############################
-  ## Methods
-  #############################
+
+  #
+  # DESTROY
+  #
+  desc "destroy [name]", "destroy an alias"
+  method_options :force => :boolean, :alias => :d
+  def destroy args
+    result = remove(args) if args
+    unalias_the(args) if !options.nounalias and result == true and args
+    reload_dot_file if result == true and !options.noreload
+  end
+
+
+  #
+  # FIND
+  #
+  desc "find [name]", "find an alias"
+  method_options :force => :boolean, :alias => :f
+  def find
+
+  end
+
+  #
+  # EDIT
+  #
+  desc "edit [name]", "edit an alias"
+  method_options :force => :boolean, :alias => :e
+  def edit
+
+  end
+
+  desc "list [name]", "list alias"
+  method_options :force => :boolean, :alias => :l
+  def list
+
+  end
+
+  #
+  # INSTALL
+  #
+  desc "install [name]", "install aka"
+  method_options :force => :boolean
+  def install
+
+  end
+
+  #
+  # INIT
+  #
+  desc "init", "initiate aka"
+  def init
+
+  end
+
+  #
+  # PRIVATE METHODS
+  #
 
   private
 
@@ -805,24 +615,24 @@ end
   #   end
   # end
 
-  command :install do |c|
-    c.syntax = 'aka copy [options]'
-    c.summary = 'copy a local copy of aka to /usr/local/bin'
-    c.action do |args, options|
-      result = system("sudo cp aka /usr/local/bin")
-      puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == true
-      puts "" if result == true
-    end
-  end
-
-  command :uninstall do |c|
-    c.syntax = 'aka uninstall [options]'
-    c.summary = 'uninstall aka'
-    c.action do |args, options|
-      input = ask "Confirm that you want to uninstall aka? (y/N)"
-      system("sudo rm -rf ~/.aka; sudo rm -rf /usr/local/bin/aka;") if input == "y"
-    end
-  end
+  # command :install do |c|
+  #   c.syntax = 'aka copy [options]'
+  #   c.summary = 'copy a local copy of aka to /usr/local/bin'
+  #   c.action do |args, options|
+  #     result = system("sudo cp aka /usr/local/bin")
+  #     puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == true
+  #     puts "" if result == true
+  #   end
+  # end
+  #
+  # command :uninstall do |c|
+  #   c.syntax = 'aka uninstall [options]'
+  #   c.summary = 'uninstall aka'
+  #   c.action do |args, options|
+  #     input = ask "Confirm that you want to uninstall aka? (y/N)"
+  #     system("sudo rm -rf ~/.aka; sudo rm -rf /usr/local/bin/aka;") if input == "y"
+  #   end
+  # end
 
   def add_to_proj fullalias
     values = fullalias.split("=")
@@ -919,3 +729,8 @@ end
 
     #get the pwd and replace the the pwd
   end
+
+
+end
+
+Aka.start(ARGV)
