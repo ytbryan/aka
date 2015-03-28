@@ -6,11 +6,6 @@ Boost projects' productivity with better terminal shortcuts.
 
 Built for your terminal's happiness and productivity.
 
-aka makes temperory alias a thing of the past.
-
-aka removes the irritation of opening the text editor, adding alias manually and sourcing the dot file just so you can create permanent terminal shortcut.
-
-
 #### What's in the package?
 - Add, remove, edit aliases on the fly.
 - Manage them without opening your text editor.
