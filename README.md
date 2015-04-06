@@ -1,10 +1,10 @@
 # aka - alias' best friend
 
-Grow and expand those terminal shortcuts (aliases) on the fly.
+`Grow and expand` those terminal shortcuts (aliases) on the fly.
 
-Boost projects' productivity with more terminal shortcuts.
+`Boost projects' productivity` with more quality  terminal shortcuts.
 
-Built for your terminal's happiness and productivity.
+`Built for` your terminal's happiness and productivity.
 
 #### [What's in the package?](#what)
 - Add, remove, edit aliases on the fly.
@@ -13,7 +13,6 @@ Built for your terminal's happiness and productivity.
 - Expand alias history to 10,000.
 - Upload and download your aliases using `aka dl` and `aka upload`.
 - Manage those beloved shortcuts without breaking your workflow <3.
-- install packages like `core` and `designers`
 
 Check out some of aka's features:
 
