@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+# require 'rubygems'
+# require 'net/scp'
+# require 'open-uri'
+# require 'colorize'
+# require "safe_yaml/load"
+# require 'highline/import'
+# require 'thor'
+
+class Aka < Thor
+  include Thor::Actions
+
+  check_unknown_options!
+
+  def generate
+
+  end
+
+  def destroy
+
+  end
+
+  def find #or find
+
+  end
+
+  def edit
+
+  end
+
+  def list
+
+  end
+
+
+
+end
+
+Aka.start(ARGV)

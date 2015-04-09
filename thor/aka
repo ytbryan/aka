@@ -65,8 +65,8 @@ class Aka < Thor
   #
   desc "find [name]", "find an alias"
   method_options :force => :boolean, :alias => :f
-  def find
-
+  def find args
+    show_alias(args) if args
   end
 
   #
@@ -74,14 +74,63 @@ class Aka < Thor
   #
   desc "edit [name]", "edit an alias"
   method_options :force => :boolean, :alias => :e
-  def edit
-
+  def edit args
+    if args
+      values = args.split("=")
+      if values.size > 1
+        truth, _alias = show_alias(args)
+        if truth == true
+          if options.name
+            remove(_alias) #remove that alias
+            edit_alias(values[1], _alias) #edit that alias
+            reload_dot_file() if !options.noreload
+          else
+            remove(_alias) #remove that alias
+            edit_this(values[1], _alias) #edit that alias
+            reload_dot_file() if !options.noreload
+          end
+        else
+          puts "alias '#{args}' cannot be found".red
+        end
+      else
+        truth, _alias, command = show_alias(args)
+        if truth == true
+          if options.name
+            # value = args.first.split("=")
+            input = ask "Enter a new alias for command '#{command}'?\n"
+            answer = ask "'#{input}' - Please confirm the new alias? (y/N)"
+            if answer == 'y'
+              remove(_alias) #remove that alias
+              edit_alias(input, _alias) #edit that alias
+              reload_dot_file() if !options.noreload
+            end
+          else
+            input = ask "Enter a new command for alias '#{args}'?\n"
+            answer = ask "'#{input}' - Please confirm the new command? (y/N)"
+            if answer == 'y'
+              remove(_alias) #remove that alias
+              edit_this(input, _alias) #edit that alias
+              reload_dot_file() if !options.noreload
+            end
+          end
+        else
+          puts "alias '#{args}' cannot be found".red
+        end
+      end
+      
+    end #if args
   end
 
   desc "list [name]", "list alias"
   method_options :force => :boolean, :alias => :l
-  def list
-
+  def list(args=nil)
+    if args
+      showlast(args.to_i) if args.is_i?
+    else
+      value = readYML("#{Dir.home}/.aka/.config")["last"]
+      showlast(value.to_i) #this is unsafe
+    end
+    puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
   end
 
   #
@@ -90,7 +139,18 @@ class Aka < Thor
   desc "install [name]", "install aka"
   method_options :force => :boolean
   def install
-
+    if File.exist? "#{Dir.pwd}/aka"
+      if File.exist? "/usr/local/bin/aka"
+        if  yes? "aka exists. Do you want to replace? (yN)" 
+          FileUtils.rm("/usr/local/bin/aka")
+          system("ln -s #{Dir.pwd}/aka /usr/local/bin/aka")
+        end
+      else 
+        result = system("ln -s #{Dir.pwd}/aka /usr/local/bin/aka")
+      end
+    else
+      puts "cannot find aka.".red
+    end
   end
 
   #
@@ -98,8 +158,39 @@ class Aka < Thor
   #
   desc "init", "initiate aka"
   def init
-
+    setup
   end
+    
+  #
+  # USAGE
+  #
+  desc "usage", "show aka usage"
+  def usage(args=nil)
+    if args
+      if options.least
+        showUsage(args.to_i, true) if args
+      else
+        showUsage(args.to_i) if args
+      end
+    else
+      if options.least
+        value = readYML("#{Dir.home}/.aka/.config")["usage"]
+        showlast(value.to_i, true) #this is unsafe
+      else
+        value = readYML("#{Dir.home}/.aka/.config")["usage"]
+        showlast(value.to_i) #this is unsafe
+      end
+    end
+  end
+  
+  #
+  # CLEAN
+  #
+  desc "clean", "perform cleanup"
+  def clean
+    cleanup
+  end
+
 
   #
   # PRIVATE METHODS
@@ -191,7 +282,7 @@ class Aka < Thor
       full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
       print_out_command = "aka g #{array.first}='#{array[1]}'"
       File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
-      puts "    #{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+      puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
       return true
     else
       puts "The alias is already present."
@@ -256,7 +347,8 @@ class Aka < Thor
           answer = value[1].split("=")
           if answer.first == input
             content_array.delete_at(index) and write_with_newline(content_array)
-            puts "    #{line} is removed from #{Dir.home}/.bash_profile".red
+            print_out_command = "aka g #{input}=#{line.split("=")[1]}"
+            puts "#{print_out_command} is removed from #{Dir.home}/.bash_profile".red
             return true
           end
         end
@@ -327,7 +419,8 @@ class Aka < Thor
   def found? answer, argument, line
     if answer == argument
       # puts line.red + " - aka add #{argument}"
-      puts line.red
+      # puts line.red
+      puts "aka g #{argument}=#{line.split('=')[1]}".red
       return true
     else
       return false
@@ -338,7 +431,7 @@ class Aka < Thor
   #   system("sudo rm -rf /usr/local/bin/aka; curl -o /usr/local/bin/aka https://raw.githubusercontent.com/ytbryan/aka/master/cmd/aka; chmod 755 /usr/local/bin/aka") #download the ruby file into _plugins
   # end
 
-  def edit newcommand, this_alias
+  def edit_this newcommand, this_alias
     return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
   end
 
@@ -707,15 +800,11 @@ class Aka < Thor
       return  content_array[content_array.count - 1]
     end
     #go through the history
-
     #take the last command
-
     #take the name
-
     #append together and save it
   end
-
-
+  
   def parseARGS str
     array =  str.split(" ")
     array.each_with_index do |line, value|
@@ -729,8 +818,6 @@ class Aka < Thor
 
     #get the pwd and replace the the pwd
   end
-
-
 end
 
 Aka.start(ARGV)
