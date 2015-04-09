@@ -32,7 +32,7 @@ Check out some of aka's features:
 | Add last command               |  -                           | ![Yes](demo/yes.png) |
 
 
-## Table of Content
+## Table of content
 * [What's in the package](#what)
 * [Some feature comparison](#overview)
 * [Installation](#installation)
@@ -56,14 +56,14 @@ Check out some of aka's features:
 * [Version History](#version-history)
 * [License](#license)
 
-## You need ruby to use aka
+### You need ruby to use aka
 
 If you are seeing `ruby: command not found`, then you need to install ruby.
 
 - There are many ways to install ruby. I would recommend installing it using  [rbenv](https://github.com/sstephenson/rbenv).
 - Remember to add  [ruby-build](https://github.com/sstephenson/ruby-build) and use `rbenv install <ruby_version>` to get your favorite ruby version.
 
-## [Installation using Git  ](#git-installation)
+### [Installation using Git  ](#git-installation)
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka
 cd ~/.aka
@@ -74,10 +74,10 @@ bundle
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka install
 ```
-## [Auto Setup](#auto-installation) (Recommended)
+### [Auto Setup](#auto-installation) (Recommended)
 
 
-## [Manual Setup](#manual-installation)
+### [Manual Setup](#manual-installation)
 You can execute the following by calling `./aka setup`
 1. Add the first line
 2. This line `sigusr1() { source /Users/ytbryan/.bash_profile; history -a; echo 'reloaded dot file'; }` is to make reloading after action work.
@@ -89,7 +89,7 @@ Add `trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2`
 6. Tell aka that you have done the setup `./aka ok` and restart your terminal.
 
 
-## [Install Bundle](#install-bundle)
+### [Install Bundle](#install-bundle)
 ```
 sudo gem install bundle
 ```
