@@ -51,12 +51,14 @@ class Aka < Thor
   #
   # DESTROY
   #
-  desc "destroy [name]", "destroy an alias"
+  desc "destroy [name1, name2 ...]", "destroy an alias"
   method_options :force => :boolean, :alias => :d
-  def destroy args
-    result = remove(args) if args
-    unalias_the(args) if !options.nounalias and result == true and args
-    reload_dot_file if result == true and !options.noreload
+  def destroy(*args)
+    args.each_with_index do |value, index|
+      result = remove(value) 
+      unalias_the(value) if !options.nounalias and result == true
+      reload_dot_file if result == true and !options.noreload
+    end
   end
 
 
@@ -65,8 +67,10 @@ class Aka < Thor
   #
   desc "find [name]", "find an alias"
   method_options :force => :boolean, :alias => :f
-  def find args
-    show_alias(args) if args
+  def find *args
+    args.each_with_index do |value, index|
+      show_alias(value) 
+    end
   end
 
   #
@@ -353,6 +357,8 @@ class Aka < Thor
           end
         end
       }
+      
+      puts "#{input} cannot be found.".red
     else
       puts "#{@pwd} cannot be found.".red
       return false
@@ -513,12 +519,14 @@ class Aka < Thor
       if total_aliases.count > howmany
         total_aliases.last(howmany).each_with_index do |line, index|
           splitted= line.split('=')
-          puts "#{total_aliases.count - howmany + index+1}. " + splitted[0] + "=" + splitted[1].red
+          puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
+          # puts "#{total_aliases.count - howmany + index+1}. " + splitted[0] + "=" + splitted[1].red
         end
       else
         total_aliases.last(howmany).each_with_index do |line, index|
           splitted= line.split('=')
-          puts "#{index+1}. " + splitted[0] + "=" + splitted[1].red
+          # puts "#{index+1}. " + splitted[0] + "=" + splitted[1].red
+          puts "#{index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
         end
       end
       puts ""
