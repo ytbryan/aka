@@ -15,18 +15,18 @@ class Aka < Thor
   #
   # TADA
   #
-  desc "tada [name]", "generate an alias"
-  method_options :last => :boolean,
-                :something => :boolean,
-                :somethignelse => :boolean,
-                :alias => :t
-  def tada args
-    if yes? "how are you? (yN)"
-      puts "ok"
-    else
-      puts "no"
-    end
-  end
+  # desc "tada [name]", "generate an alias"
+  # method_options :last => :boolean,
+  #               :something => :boolean,
+  #               :somethignelse => :boolean,
+  #               :alias => :t
+  # def tada args
+  #   if yes? "how are you? (yN)"
+  #     puts "ok"
+  #   else
+  #     puts "no"
+  #   end
+  # end
 
   #
   # GENERATE
@@ -100,18 +100,15 @@ class Aka < Thor
         truth, _alias, command = show_alias(args)
         if truth == true
           if options.name
-            # value = args.first.split("=")
             input = ask "Enter a new alias for command '#{command}'?\n"
-            answer = ask "'#{input}' - Please confirm the new alias? (y/N)"
-            if answer == 'y'
+            if yes? "Please confirm the new alias? (y/N)"
               remove(_alias) #remove that alias
               edit_alias(input, _alias) #edit that alias
               reload_dot_file() if !options.noreload
             end
           else
             input = ask "Enter a new command for alias '#{args}'?\n"
-            answer = ask "'#{input}' - Please confirm the new command? (y/N)"
-            if answer == 'y'
+            if yes? "Please confirm the new command? (y/N)"
               remove(_alias) #remove that alias
               edit_this(input, _alias) #edit that alias
               reload_dot_file() if !options.noreload
@@ -160,7 +157,7 @@ class Aka < Thor
   #
   # INIT
   #
-  desc "init", "initiate aka"
+  desc "init", "setup aka"
   def init
     setup
   end
@@ -168,8 +165,14 @@ class Aka < Thor
   #
   # USAGE
   #
-  desc "usage", "show aka usage"
+  desc "usage", "show commands usage based on history"
+  method_option :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
+  method_option :most, :type => :boolean, :aliases => '-m', :desc => 'show the most used commands'
   def usage(args=nil)
+    if options.most
+      puts "most"
+    end
+    
     if args
       if options.least
         showUsage(args.to_i, true) if args
@@ -352,7 +355,7 @@ class Aka < Thor
           if answer.first == input
             content_array.delete_at(index) and write_with_newline(content_array)
             print_out_command = "aka g #{input}=#{line.split("=")[1]}"
-            puts "#{print_out_command} is removed from #{Dir.home}/.bash_profile".red
+            puts "removed: #{print_out_command} is removed from #{Dir.home}/.bash_profile".red
             return true
           end
         end
@@ -426,7 +429,7 @@ class Aka < Thor
     if answer == argument
       # puts line.red + " - aka add #{argument}"
       # puts line.red
-      puts "aka g #{argument}=#{line.split('=')[1]}".red
+      puts "found: aka g #{argument}=#{line.split('=')[1]}".red
       return true
     else
       return false
@@ -438,10 +441,12 @@ class Aka < Thor
   # end
 
   def edit_this newcommand, this_alias
+    puts "new: aka g #{this_alias}='#{newcommand}'"
     return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
   end
 
   def edit_alias newalias, thiscommand
+    puts "new: aka g #{this_alias}='#{newcommand}'"
     return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
   end
 
@@ -462,13 +467,11 @@ class Aka < Thor
   end
 
   def setup
-    input = ask "- Do you wish to expand your bash history? (y/N)"
-    if input == 'y'
+    if yes? "- Do you wish to expand your bash history? (y/N)"
       append("export HISTSIZE=10000","/etc/profile")
     end
 
-    input = ask "- Do you wish to setup auto-reloading of your dot file <#{readYML("#{Dir.home}/.aka/.config")["location"]}>? (y/N)"
-    if input == 'y'
+    if yes? "- Do you wish to setup auto-reloading of your dot file <#{readYML("#{Dir.home}/.aka/.config")["location"]}>? (y/N)"
       trap = "sigusr2() { unalias $1;}
       sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["location"]}; history -a; echo 'reloaded dot file'; }
       trap sigusr1 SIGUSR1
