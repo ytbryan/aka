@@ -167,12 +167,8 @@ class Aka < Thor
   #
   desc "usage", "show commands usage based on history"
   method_option :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
-  method_option :most, :type => :boolean, :aliases => '-m', :desc => 'show the most used commands'
-  def usage(args=nil)
-    if options.most
-      puts "most"
-    end
-    
+  method_option :clear, :type => :boolean, :aliases => '-c', :desc => 'clear the dot history file'
+  def usage(args=nil)    
     if args
       if options.least
         showUsage(args.to_i, true) if args
@@ -187,6 +183,10 @@ class Aka < Thor
         value = readYML("#{Dir.home}/.aka/.config")["usage"]
         showlast(value.to_i) #this is unsafe
       end
+    end
+    
+    if options[:clear]
+      puts "clear the dot history file"
     end
   end
   
@@ -678,8 +678,14 @@ class Aka < Thor
     val = 2 if val > 1 and val < 2
     val = 1 if val.round <= 1 #for visibiity, show two bars if it's just one
     val.round.times do
-      result += "/"
+      result += "+"
     end
+    
+    remaining = 50 - val.round
+    remaining.times do 
+      result += "-".red
+    end 
+    
     return result + " #{percent.round(2)}%"
   end
 
