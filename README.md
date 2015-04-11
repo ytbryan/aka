@@ -57,7 +57,7 @@ Check out some of the features:
 
 If you are seeing `ruby: command not found`, then you need to install ruby.
 
-- There are many ways to install ruby. I would recommend installing it using  [rbenv](https://github.com/sstephenson/rbenv).
+- I would recommend installing it using  [rbenv](https://github.com/sstephenson/rbenv).
 - Remember to add  [ruby-build](https://github.com/sstephenson/ruby-build) and use `rbenv install <ruby_version>` to get your favorite ruby version.
 
 ## [Installation using Git  ](#git-installation)
@@ -67,12 +67,6 @@ cd ~/.aka
 bundle
 ./aka install
 ```
-[or install with a single line:](#single-line)
-```
-git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka install
-```
-## [Auto Setup](#auto-installation) (Recommended)
-
 
 ## [Manual Setup](#manual-installation)
 You can execute the following by calling `./aka setup`
@@ -82,8 +76,14 @@ Add `trap sigusr1 SIGUSR1`
 3. Add this line `sigusr2() { unalias $1;}` is to make removing alias works.
 Add `trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2`
 4. Edit /etc/profile and add `export HISTSIZE=10000` at the end of the file
-5.  
-6. Tell aka that you have done the setup `./aka ok` and restart your terminal.
+
+
+[or install with a single line:](#single-line)
+```
+git clone https://github.com/ytbryan/aka.git ~/.aka; cd ~/.aka; bundle install; ./aka install
+```
+## [Auto Setup](#auto-installation) (Recommended)
+
 
 
 ## [Install Bundle](#install-bundle)

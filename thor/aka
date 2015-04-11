@@ -11,6 +11,17 @@ class Aka < Thor
   include Thor::Actions
   check_unknown_options!
   package_name "aka"
+  default_task :list
+
+  #
+  # DOWNLOAD
+  #
+  desc "download [path]", "download a dot file"
+  method_option :alias => :dl
+  def download args
+    puts "download #{args}"
+  
+  end
 
   #
   # TADA
@@ -51,7 +62,7 @@ class Aka < Thor
   #
   # DESTROY
   #
-  desc "destroy [name1, name2 ...]", "destroy an alias"
+  desc "destroy [name1 name2 ... ]", "destroy an alias"
   method_options :force => :boolean, :alias => :d
   def destroy(*args)
     args.each_with_index do |value, index|
@@ -65,7 +76,7 @@ class Aka < Thor
   #
   # FIND
   #
-  desc "find [name]", "find an alias"
+  desc "find [name1 name2 ... ]", "find an alias"
   method_options :force => :boolean, :alias => :f
   def find *args
     args.each_with_index do |value, index|
@@ -122,7 +133,7 @@ class Aka < Thor
     end #if args
   end
 
-  desc "list [name]", "list alias"
+  desc "list [number]", "list alias"
   method_options :force => :boolean, :alias => :l
   def list(args=nil)
     if args
@@ -132,6 +143,7 @@ class Aka < Thor
       showlast(value.to_i) #this is unsafe
     end
     puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+    reload_dot_file
   end
 
   #
@@ -158,14 +170,36 @@ class Aka < Thor
   # INIT
   #
   desc "init", "setup aka"
-  def init
-    setup
+  method_option :location => :string
+  method_option :history => :string
+  method_option :home => :string
+  method_option :install => :string
+  method_option :profile => :string
+  method_option :list => :numeric
+  method_option :usage => :numeric
+  def init args
+    if args
+      setup
+    elsif options[:location]
+      #write it down
+      #print out the result
+    end
   end
     
+    
+  #
+  # UPLOAD
+  #
+  desc "upload [path]", "upload a dot file"
+  method_option :alias => :up
+  def upload args
+    puts "upload #{args}"
+  end
+
   #
   # USAGE
   #
-  desc "usage", "show commands usage based on history"
+  desc "usage [number]", "show commands usage based on history"
   method_option :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
   method_option :clear, :type => :boolean, :aliases => '-c', :desc => 'clear the dot history file'
   def usage(args=nil)    
