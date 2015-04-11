@@ -4,7 +4,7 @@ require 'net/scp'
 require 'open-uri'
 require 'colorize'
 require "safe_yaml/load"
-require 'highline/import'
+# require 'highline/import'
 require 'thor'
 
 class Aka < Thor
@@ -16,31 +16,31 @@ class Aka < Thor
   #
   # DOWNLOAD
   # aka dl --to /Desktop/folder --from 12.23.23.54 --of --port 22
-  desc "download [path]", "download a dot file"
-  method_options :alias => :dl
-  method_options :from => :string
-  method_options :to => :string
-  method_options :of => :string
-  method_options :port => :numeric
-  def download args
-    # if options.from and options.to and options.of
-    #   arr = split(options.to.to_s)
-    #   pw = ask "What's the password?"
-    #   result = Net::SCP.download!(arr[1], #remote
-    #   arr.first,#username
-    #   options.from.to_s, #remote_path
-    #   options.of.to_s, #local_path
-    #   :ssh => {:password => pw,
-    #     :port => arr[2]}) if pw
-    #   end
-    # else
-    #   puts "Some options are missing."
-    #   puts "--of: #{options.of}"
-    #   puts "--to: #{options.to}"
-    #   puts "--from: #{options.from}"
-    #   puts "aka dl --of some_string --to some_string --from some_string --port some_number"
-    # end  
-  end
+  # desc "download [path]", "download a dot file"
+  # # method_options :alias => "-dl"
+  # method_options :from => :string
+  # method_options :to => :string
+  # method_options :of => :string
+  # method_options :port => :numeric
+  # def download args
+  #   # if options.from and options.to and options.of
+  #   #   arr = split(options.to.to_s)
+  #   #   pw = ask "What's the password?"
+  #   #   result = Net::SCP.download!(arr[1], #remote
+  #   #   arr.first,#username
+  #   #   options.from.to_s, #remote_path
+  #   #   options.of.to_s, #local_path
+  #   #   :ssh => {:password => pw,
+  #   #     :port => arr[2]}) if pw
+  #   #   end
+  #   # else
+  #   #   puts "Some options are missing."
+  #   #   puts "--of: #{options.of}"
+  #   #   puts "--to: #{options.to}"
+  #   #   puts "--from: #{options.from}"
+  #   #   puts "aka dl --of some_string --to some_string --from some_string --port some_number"
+  #   # end  
+  # end
 
   #
   # TADA
@@ -51,11 +51,15 @@ class Aka < Thor
   #               :somethignelse => :boolean,
   #               :alias => :t
   # def tada args
-  #   if yes? "how are you? (yN)"
-  #     puts "ok"
-  #   else
-  #     puts "no"
+  #   if args == "ubuntu"
+  #     puts Dir.home
   #   end
+  #   
+  #   # if yes? "how are you? (yN)"
+  #   #   puts "ok"
+  #   # else
+  #   #   puts "no"
+  #   # end
   # end
 
   #
@@ -197,10 +201,20 @@ class Aka < Thor
   method_options :list => :numeric
   method_options :usage => :numeric
   method_options :remote => :string
+  method_options :config => :boolean
+  method_options :zshrc => :boolean
+  method_options :bashrc => :boolean
+  method_options :bash => :boolean  
+  
   def init 
     if options.count < 1
       setup
     else     
+      setZSHRC if options[:zshrc]
+      setBASHRC if options[:bashrc]
+      setBASH if options[:bash]
+
+      showConfig if options[:config]
       setPath(options[:dotfile],"dotfile") if options[:dotfile]
       setPath(options[:history],"history") if options[:history]
       setPath(options[:home],"home") if options[:home]
@@ -216,29 +230,39 @@ class Aka < Thor
   #
   # UPLOAD
   #
-  desc "upload [path]", "upload a dot file"
-  method_option :alias => :up
-  method_option :from => :string
-  method_option :to => :string
-  method_option :of => :string
-  method_option :port => :numeric
-  def upload args
+  desc "upload", "upload a dot file"
+  # method_options :alias => :up
+  method_options :from => :string
+  method_options :to => :string
+  method_options :of => :string
+  def upload
     if options.from and options.to and options.of
-      if File.exists?(options.from.to_s)
-        arr = split(options.to.to_s)
-        result = Net::SCP.upload!(arr[1], #remote
-        arr.first, #username
-        options.from.to_s, #local_path
-        options.of.to_s, #remote_path
-        :ssh => {:port => arr[2]})
+      password = get_password()
+ 
+      if File.exists?(options.from)
+        success = true
+        begin
+          arr = split(options.to)
+          result = Net::SCP.upload!(arr[1], #remote
+          arr.first, #username
+          options.from.to_s, #local_path
+          options.of.to_s, #remote_path
+          :ssh => {:port => arr[2], 
+                   :password => password})
+        rescue Exception => e
+          puts "\n#{e}"
+          success = false
+        end
+      
+        puts "\nDone." if success
       else
         puts "Cannot find #{options.from}"
       end
     else
-      puts "Some options are missing."
-      puts "--of: #{options.of}"
-      puts "--to: #{options.to}"
-      puts "--from: #{options.from}"
+      puts "Some options are missing:"
+      puts "--of -> #{options.of}"
+      puts "--to -> #{options.to}"
+      puts "--from -> #{options.from}"
       puts "aka up --of some_string --to some_string --from some_string"
     end
   end
@@ -247,8 +271,8 @@ class Aka < Thor
   # USAGE
   #
   desc "usage [number]", "show commands usage based on history"
-  method_option :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
-  method_option :clear, :type => :boolean, :aliases => '-c', :desc => 'clear the dot history file'
+  # method_options :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
+  # method_options :clear, :type => :boolean, :aliases => '-c', :desc => 'clear the dot history file'
   def usage(args=nil)    
     if args
       if options.least
@@ -303,7 +327,11 @@ class Aka < Thor
   end
 
   def readYML path
-    return YAML.load_file(path)
+    if File.exists? path
+      return YAML.load_file(path)
+    else
+      puts "#{Dir.home}/.aka/.config does not exist. You need to create one, see https://github.com/ytbryan/aka/blob/master/.config".red
+    end
   end
 
   def writeYML path, theyml
@@ -311,7 +339,9 @@ class Aka < Thor
   end
 
   def write_with array
-    File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"], 'w') { |file|
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+
+    File.open(str, 'w') { |file|
       array.each do |line|
         file.write(line)
       end
@@ -319,7 +349,9 @@ class Aka < Thor
   end
 
   def write_with_newline array
-    File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"], 'w') { |file|
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+    
+    File.open(str, 'w') { |file|
       array.each do |line|
         file.write(line + "\n")
       end
@@ -369,7 +401,10 @@ class Aka < Thor
       array = input.split("=")
       full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
       print_out_command = "aka g #{array.first}='#{array[1]}'"
-      File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"], 'a') { |file| file.write("\n" +full_command) }
+
+      str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+
+      File.open(str, 'a') { |file| file.write("\n" +full_command) }
       puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
       return true
     else
@@ -385,7 +420,9 @@ class Aka < Thor
   end
 
   def show_alias argument
-    if content = File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+    
+    if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -402,6 +439,7 @@ class Aka < Thor
       return [false, nil, nil]
     end
     return [false, nil, nil]
+  
   end
 
   # def show argument
@@ -426,7 +464,10 @@ class Aka < Thor
   # end
 
   def remove input
-    if content=File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
+    
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+
+    if content=File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -481,7 +522,10 @@ class Aka < Thor
   # end
 
   def history
-    if content = File.open(bash_history_path).read
+    
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["history"])
+
+    if content = File.open(str).read
       puts ".bash_history is available"
       count=0
       content.gsub!(/\r\n?/, "\n")
@@ -533,7 +577,10 @@ class Aka < Thor
 
   def count
     alias_count = 0
-    if content=File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
+    
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+
+    if content=File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -586,9 +633,26 @@ class Aka < Thor
   def aka_directory_exists?
     return File.directory?("#{Dir.home}/.aka")
   end
+  
+  def checkConfigFile str
+    if str == ""
+      puts "dotfile is set to '#{str}'. This is wrong. Use `aka init --dotfile some_value` to set its value.".red
+      exit()
+    end
 
+    if !File.exists?(str) 
+      puts "dotfile is set to '#{str}'. #{str} does not exist. Use `aka init --dotfile some_value` to set its value.".red
+      exit()
+    end
+    
+    return str
+  end
+  
+  
   def showlast howmany=10
-    if content = File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      
+    if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       #why not just call the last five lines? Because i can't be sure that they are aliases
@@ -618,9 +682,12 @@ class Aka < Thor
   end
 
   def showUsage howmany=10, least=false
+    
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["history"])
+
     value = reload_dot_file()
     #get all aliases
-    if content = File.open(readYML("#{Dir.home}/.aka/.config")["history"]).read
+    if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       total_aliases = []
@@ -712,7 +779,10 @@ class Aka < Thor
   end
 
   def cleanup
-    if content = File.open("#{readYML("#{Dir.home}/.aka/.config")["dotfile"]}").read
+    
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+    
+    if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       check = false
@@ -886,8 +956,10 @@ class Aka < Thor
   end
 
   def find_last_command
+    
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["history"])
     #i think if you do history -w, you can retrieve the latest command
-    if content = File.open(readYML("#{Dir.home}/.aka/.config")["history"]).read
+    if content = File.open(str).read
       count=0
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
@@ -915,6 +987,36 @@ class Aka < Thor
     #detect #{pwd}
 
     #get the pwd and replace the the pwd
+  end
+
+  def showConfig
+    thing = YAML.load_file("#{Dir.home}/.aka/.config")  
+    puts ""  
+    thing.each do |company,details|
+      puts "#{company} -> " + "#{details}".red 
+    end
+  end
+
+  def setZSHRC
+    setPath("#{Dir.home}/.zshrc","dotfile")
+    setPath("#{Dir.home}/.zsh_history","history") 
+    setPath("/etc/zprofile","profile") 
+  end
+  
+  def setBASHRC
+    setPath("#{Dir.home}/.bashrc","dotfile")
+    setPath("#{Dir.home}/.bash_history","history") 
+    setPath("/etc/profile","profile") 
+  end
+  
+  def setBASH
+    setPath("#{Dir.home}/.bash_profile","dotfile")
+    setPath("#{Dir.home}/.bash_history","history") 
+    setPath("/etc/profile","profile") 
+  end
+
+  def get_password
+    ask("Enter Password: ", :echo => false)
   end
 end
 
