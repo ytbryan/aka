@@ -15,12 +15,31 @@ class Aka < Thor
 
   #
   # DOWNLOAD
-  #
+  # aka dl --to /Desktop/folder --from 12.23.23.54 --of --port 22
   desc "download [path]", "download a dot file"
-  method_option :alias => :dl
+  method_options :alias => :dl
+  method_options :from => :string
+  method_options :to => :string
+  method_options :of => :string
+  method_options :port => :numeric
   def download args
-    puts "download #{args}"
-  
+    # if options.from and options.to and options.of
+    #   arr = split(options.to.to_s)
+    #   pw = ask "What's the password?"
+    #   result = Net::SCP.download!(arr[1], #remote
+    #   arr.first,#username
+    #   options.from.to_s, #remote_path
+    #   options.of.to_s, #local_path
+    #   :ssh => {:password => pw,
+    #     :port => arr[2]}) if pw
+    #   end
+    # else
+    #   puts "Some options are missing."
+    #   puts "--of: #{options.of}"
+    #   puts "--to: #{options.to}"
+    #   puts "--from: #{options.from}"
+    #   puts "aka dl --of some_string --to some_string --from some_string --port some_number"
+    # end  
   end
 
   #
@@ -136,13 +155,13 @@ class Aka < Thor
   desc "list [number]", "list alias"
   method_options :force => :boolean, :alias => :l
   def list(args=nil)
-    if args
-      showlast(args.to_i) if args.is_i?
+    if args != nil
+      showlast(args.to_i)
     else
-      value = readYML("#{Dir.home}/.aka/.config")["last"]
+      value = readYML("#{Dir.home}/.aka/.config")["list"]
       showlast(value.to_i) #this is unsafe
     end
-    puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+    puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
     reload_dot_file
   end
 
@@ -170,19 +189,26 @@ class Aka < Thor
   # INIT
   #
   desc "init", "setup aka"
-  method_option :location => :string
-  method_option :history => :string
-  method_option :home => :string
-  method_option :install => :string
-  method_option :profile => :string
-  method_option :list => :numeric
-  method_option :usage => :numeric
-  def init args
-    if args
+  method_options :dotfile => :string
+  method_options :history => :string
+  method_options :home => :string
+  method_options :install => :string
+  method_options :profile => :string
+  method_options :list => :numeric
+  method_options :usage => :numeric
+  method_options :remote => :string
+  def init 
+    if options.count < 1
       setup
-    elsif options[:location]
-      #write it down
-      #print out the result
+    else     
+      setPath(options[:dotfile],"dotfile") if options[:dotfile]
+      setPath(options[:history],"history") if options[:history]
+      setPath(options[:home],"home") if options[:home]
+      setPath(options[:install],"install") if options[:install]
+      setPath(options[:profile],"profile") if options[:profile]
+      setPath(options[:list],"list") if options[:list]
+      setPath(options[:usage],"usage") if options[:usage]
+      setPath(options[:remote],"remote") if options[:remote]
     end
   end
     
@@ -192,8 +218,29 @@ class Aka < Thor
   #
   desc "upload [path]", "upload a dot file"
   method_option :alias => :up
+  method_option :from => :string
+  method_option :to => :string
+  method_option :of => :string
+  method_option :port => :numeric
   def upload args
-    puts "upload #{args}"
+    if options.from and options.to and options.of
+      if File.exists?(options.from.to_s)
+        arr = split(options.to.to_s)
+        result = Net::SCP.upload!(arr[1], #remote
+        arr.first, #username
+        options.from.to_s, #local_path
+        options.of.to_s, #remote_path
+        :ssh => {:port => arr[2]})
+      else
+        puts "Cannot find #{options.from}"
+      end
+    else
+      puts "Some options are missing."
+      puts "--of: #{options.of}"
+      puts "--to: #{options.to}"
+      puts "--from: #{options.from}"
+      puts "aka up --of some_string --to some_string --from some_string"
+    end
   end
 
   #
@@ -245,14 +292,14 @@ class Aka < Thor
       old_path = data[value]
       data[value] = path
       writeYML("#{Dir.home}/.aka/.config", data)
-      puts "data[#{value}] has #{old_path} changed to #{path}"
+      puts "#{value} -> #{path}"
     else
       puts "error: --#{value} does not exist in #{Dir.home}/.aka/.config "
     end
   end
 
   def reload
-    system "source #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+    system "source #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
   end
 
   def readYML path
@@ -264,7 +311,7 @@ class Aka < Thor
   end
 
   def write_with array
-    File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'w') { |file|
+    File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"], 'w') { |file|
       array.each do |line|
         file.write(line)
       end
@@ -272,7 +319,7 @@ class Aka < Thor
   end
 
   def write_with_newline array
-    File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'w') { |file|
+    File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"], 'w') { |file|
       array.each do |line|
         file.write(line + "\n")
       end
@@ -322,8 +369,8 @@ class Aka < Thor
       array = input.split("=")
       full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
       print_out_command = "aka g #{array.first}='#{array[1]}'"
-      File.open(readYML("#{Dir.home}/.aka/.config")["location"], 'a') { |file| file.write("\n" +full_command) }
-      puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["location"]}"
+      File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"], 'a') { |file| file.write("\n" +full_command) }
+      puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
       return true
     else
       puts "The alias is already present."
@@ -338,7 +385,7 @@ class Aka < Thor
   end
 
   def show_alias argument
-    if content = File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
+    if content = File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       content_array.each_with_index { |line, index|
@@ -379,7 +426,7 @@ class Aka < Thor
   # end
 
   def remove input
-    if content=File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
+    if content=File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -476,17 +523,17 @@ class Aka < Thor
 
   def edit_this newcommand, this_alias
     puts "new: aka g #{this_alias}='#{newcommand}'"
-    return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
+    return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{Dir.home}/.aka/.config")["dotfile"] )
   end
 
   def edit_alias newalias, thiscommand
     puts "new: aka g #{this_alias}='#{newcommand}'"
-    return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{Dir.home}/.aka/.config")["location"] )
+    return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{Dir.home}/.aka/.config")["dotfile"] )
   end
 
   def count
     alias_count = 0
-    if content=File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
+    if content=File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
       content_array.each_with_index { |line, index|
@@ -505,9 +552,9 @@ class Aka < Thor
       append("export HISTSIZE=10000","/etc/profile")
     end
 
-    if yes? "- Do you wish to setup auto-reloading of your dot file <#{readYML("#{Dir.home}/.aka/.config")["location"]}>? (y/N)"
+    if yes? "- Do you wish to setup auto-reloading of your dot file <#{readYML("#{Dir.home}/.aka/.config")["dotfile"]}>? (y/N)"
       trap = "sigusr2() { unalias $1;}
-      sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["location"]}; history -a; echo 'reloaded dot file'; }
+      sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}; history -a; echo 'reloaded dot file'; }
       trap sigusr1 SIGUSR1
       trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
       append(trap, readYML("#{Dir.home}/.aka/.config")['location'])
@@ -541,7 +588,7 @@ class Aka < Thor
   end
 
   def showlast howmany=10
-    if content = File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
+    if content = File.open(readYML("#{Dir.home}/.aka/.config")["dotfile"]).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       #why not just call the last five lines? Because i can't be sure that they are aliases
@@ -665,7 +712,7 @@ class Aka < Thor
   end
 
   def cleanup
-    if content = File.open("#{readYML("#{Dir.home}/.aka/.config")["location"]}").read
+    if content = File.open("#{readYML("#{Dir.home}/.aka/.config")["dotfile"]}").read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
       check = false

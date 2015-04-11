@@ -36,6 +36,7 @@ Check out some of the features:
 * [Installation](#installation)
   * [Ruby Installation](#dependency-install)
   * [Manual Installation](#manual-installation)
+  * [Update aka](#update-aka)
   * [Setup the /.aka/.config file](#config)
   * [Bundle install those dependencies](#dependency)
   * [Setup auto reloading and expanded history](#setup)
@@ -69,14 +70,18 @@ bundle
 ```
 
 ## [Manual Setup](#manual-installation)
-You can execute the following by calling `./aka setup`
-1. Add the first line
-2. This line `sigusr1() { source /Users/ytbryan/.bash_profile; history -a; echo 'reloaded dot file'; }` is to make reloading after action work.
+You can execute the following steps by calling `aka init`
+1. Add this line to your .bash_profile
+This line `sigusr1() { source /Users/ytbryan/.bash_profile; history -a; echo 'reloaded dot file'; }` is to make reloading after action work.
 Add `trap sigusr1 SIGUSR1`
-3. Add this line `sigusr2() { unalias $1;}` is to make removing alias works.
-Add `trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2`
-4. Edit /etc/profile and add `export HISTSIZE=10000` at the end of the file
+if you are using ubuntu or linux, add this line to `.bashrc` or `.zshrc`
 
+2. Add this line `sigusr2() { unalias $1;}` is to make removing alias works.
+Add `trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2`
+If you are using ubuntu or linux, add this to `.bashrc` or `.zshrc` instead
+
+3. Edit /etc/profile and add `export HISTSIZE=10000` at the end of the file
+if you are using ubuntu or linux, add this to `/profile` instead
 
 [or install with a single line:](#single-line)
 ```
