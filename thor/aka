@@ -4,7 +4,6 @@ require 'net/scp'
 require 'open-uri'
 require 'colorize'
 require "safe_yaml/load"
-# require 'highline/import'
 require 'thor'
 
 class Aka < Thor
@@ -13,35 +12,48 @@ class Aka < Thor
   package_name "aka"
   default_task :list
 
+  map "dl" => "download", 
+      "g" => "generate",
+      "d" => "destroy",
+      "f" => "find",
+      "up" => "upload",
+      "u" => "usage",
+      "l" => "list",
+      "e" => "edit",
+      "c" => "clean"
+  
   #
   # DOWNLOAD
-  # aka dl --to /Desktop/folder --from 12.23.23.54 --of --port 22
-  # desc "download [path]", "download a dot file"
-  # # method_options :alias => "-dl"
-  # method_options :from => :string
-  # method_options :to => :string
-  # method_options :of => :string
-  # method_options :port => :numeric
-  # def download args
-  #   # if options.from and options.to and options.of
-  #   #   arr = split(options.to.to_s)
-  #   #   pw = ask "What's the password?"
-  #   #   result = Net::SCP.download!(arr[1], #remote
-  #   #   arr.first,#username
-  #   #   options.from.to_s, #remote_path
-  #   #   options.of.to_s, #local_path
-  #   #   :ssh => {:password => pw,
-  #   #     :port => arr[2]}) if pw
-  #   #   end
-  #   # else
-  #   #   puts "Some options are missing."
-  #   #   puts "--of: #{options.of}"
-  #   #   puts "--to: #{options.to}"
-  #   #   puts "--from: #{options.from}"
-  #   #   puts "aka dl --of some_string --to some_string --from some_string --port some_number"
-  #   # end  
-  # end
-
+  # aka download --to ~/Desktop/ --login admin@162.243.249.154:22000 --from /home/admin/hello  desc "download [path]", "download a dot file"
+  desc "download --to --from --login", "download dotfile from server"
+  method_options :from => :string
+  method_options :to => :string
+  method_options :login => :string
+  def download 
+    if options.from and options.to and options.login
+      success = true
+      arr = split(options.login)
+      pw = get_password()
+      begin
+        result = Net::SCP.download!(arr[1], #remote
+        arr.first,#username
+        options.from, #remote_path
+        options.to, #local_path
+        :ssh => {:password => pw,
+                 :port => arr[2]}) 
+      rescue Exception => e
+         puts "\n#{e}"
+         success = false
+      end
+      puts "\ndone." if success
+    else
+      puts "Some options are missing."
+      puts "--login: #{options.login}"
+      puts "--to: #{options.to}"
+      puts "--from: #{options.from}"
+      puts "aka dl --login some_login_string --to some_local_path_string --from some_remote_path_string"
+    end  
+  end
   #
   # TADA
   #
@@ -66,7 +78,7 @@ class Aka < Thor
   # GENERATE
   #
   desc "generate [name]", "generate an alias"
-  method_options :last => :boolean, :alias => :g
+  method_options :last => :boolean
   def generate args
     result = false
     if options.last?
@@ -81,12 +93,11 @@ class Aka < Thor
     reload_dot_file if result == true and !options.noreload
   end
 
-
   #
   # DESTROY
   #
   desc "destroy [name1 name2 ... ]", "destroy an alias"
-  method_options :force => :boolean, :alias => :d
+  method_options :force => :boolean
   def destroy(*args)
     args.each_with_index do |value, index|
       result = remove(value) 
@@ -100,7 +111,7 @@ class Aka < Thor
   # FIND
   #
   desc "find [name1 name2 ... ]", "find an alias"
-  method_options :force => :boolean, :alias => :f
+  method_options :force => :boolean
   def find *args
     args.each_with_index do |value, index|
       show_alias(value) 
@@ -111,7 +122,7 @@ class Aka < Thor
   # EDIT
   #
   desc "edit [name]", "edit an alias"
-  method_options :force => :boolean, :alias => :e
+  method_options :force => :boolean
   def edit args
     if args
       values = args.split("=")
@@ -157,7 +168,7 @@ class Aka < Thor
   end
 
   desc "list [number]", "list alias"
-  method_options :force => :boolean, :alias => :l
+  method_options :force => :boolean
   def list(args=nil)
     if args != nil
       showlast(args.to_i)
@@ -230,23 +241,23 @@ class Aka < Thor
   #
   # UPLOAD
   #
+  #aka upload --from ~/Desktop/TwitterAPI.rb --login admin@162.243.249.154:22000  --to /home/admin
   desc "upload", "upload a dot file"
-  # method_options :alias => :up
   method_options :from => :string
   method_options :to => :string
-  method_options :of => :string
+  method_options :login => :string
   def upload
-    if options.from and options.to and options.of
+    if options.from and options.to and options.login
       password = get_password()
  
       if File.exists?(options.from)
         success = true
         begin
-          arr = split(options.to)
+          arr = split(options.login)
           result = Net::SCP.upload!(arr[1], #remote
           arr.first, #username
-          options.from.to_s, #local_path
-          options.of.to_s, #remote_path
+          options.from, #local_path
+          options.to, #remote_path
           :ssh => {:port => arr[2], 
                    :password => password})
         rescue Exception => e
