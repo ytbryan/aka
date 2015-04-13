@@ -1,10 +1,12 @@
 # aka - alias' best friend
 
-Grow and expand those terminal shortcuts (aliases) on the fly.
+`Save time` by using aliases in your project. 
 
-Boost projects' productivity with better terminal shortcuts.
+`Grow and expand` those terminal shortcuts (aliases) on the fly.
 
-Built for your terminal's happiness and productivity.
+`Boost projects' productivity` with better terminal shortcuts.
+
+`Built for` your terminal's happiness and productivity.
 
 #### What's in the package?
 - Add, remove, edit aliases on the fly.
