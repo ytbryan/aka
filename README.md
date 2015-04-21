@@ -190,6 +190,9 @@ rm -rf ~/.aka
 #### [TODOs](#todos)
 - move the script to rubygems
 - complete the tests
+- a better usage command 
+- a migrated list of aliases
+- 
 
 #### [Contribute](#contribute)
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
@@ -218,6 +221,8 @@ Terminal producitivity is not just about more terminal shortcuts. It's about a b
 It's about making things a little easier with lesser steps to get things done. It's about removing redundent steps from the day to day workflow so that to get the end result quicker.
 
 And that's what is aka is about.
+
+
 
 
 #### [License](#license)
