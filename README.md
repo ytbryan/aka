@@ -1,38 +1,24 @@
-# aka - alias' best friend
+# aka - aliases' best friend
 
-`Save time` by using aliases in your project. 
+Aka allows you to generate/edit/destroy permanent aliases with a single command. 
 
-`Grow and expand` those terminal shortcuts (aliases) on the fly.
-
-`Boost projects' productivity` with better terminal shortcuts.
-
-`Built for` your terminal's happiness and productivity.
-
-#### What's in the package?
-- Add, remove, edit aliases on the fly.
-- Manage them without opening your text editor.
-- Auto reload your dot file after each action.
-- Expand alias history to 10,000
-- Append command into history after each action
-- Upload and download your aliases using `aka dl` and `aka upload`.
-- Manage those beloved shortcuts without breaking your workflow <3.
-
-Check out some of the features:
+Check out some of aka's features:
 
 | features                  | alias                        | aka                  |
 | :-----------------------: |:----------------------------:| :-------------------:|
-| add alias                 |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| remove alias              |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| find and show alias       |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| show last few added alias |  -                           | ![Yes](demo/yes.png) |
-| edit alias                |  -                           | ![Yes](demo/yes.png) |
-| count alias               |  -                           | ![Yes](demo/yes.png) |
-| auto reload dot file      |  -                           | ![Yes](demo/yes.png) |
-| aka usage                 |  -                           | ![Yes](demo/yes.png) |
-| upload to server          |  -                           | ![Yes](demo/yes.png) |
-| download from server      |  -                           | ![Yes](demo/yes.png) |
-| persistency               |  -                           | ![Yes](demo/yes.png) |
-| add your last command     |  -                           | ![Yes](demo/yes.png) |
+| Generate alias                 |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| Destroy alias              |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| Find and show alias       |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| Show last few added alias |  -                           | ![Yes](demo/yes.png) |
+| Edit alias                |  -                           | ![Yes](demo/yes.png) |
+| Count alias               |  -                           | ![Yes](demo/yes.png) |
+| Auto reload dot file      |  -                           | ![Yes](demo/yes.png) |
+| Show usage                |  -                           | ![Yes](demo/yes.png) |
+| Upload to server          |  -                           | ![Yes](demo/yes.png) |
+| Download from server      |  -                           | ![Yes](demo/yes.png) |
+| Persistency               |  -                           | ![Yes](demo/yes.png) |
+| Add your last command     |  -                           | ![Yes](demo/yes.png) |
+| Generate export           |  -                           | ![Yes](demo/yes.png) |
 
 #### Table of Content
 * [Installation](#installation)
@@ -56,12 +42,9 @@ Check out some of the features:
 * [Version History](#version-history)
 * [License](#license)
 
-#### You need ruby to use aka
+#### Requirement: Ruby
 
-If you are seeing `ruby: command not found`, then you need to install ruby.
-
-- I would recommend installing it using  [rbenv](https://github.com/sstephenson/rbenv).
-- Remember to add  [ruby-build](https://github.com/sstephenson/ruby-build) and use `rbenv install <ruby_version>` to get your favorite ruby version.
+You will need ruby for aka to work. You can use rbenv to install ruby.
 
 #### [Installation using Git  ](#git-installation)
 
@@ -191,8 +174,8 @@ rm -rf ~/.aka
 - move the script to rubygems
 - complete the tests
 - a better usage command 
-- a migrated list of aliases
-- 
+- a migrated list of aliases that are removed or created
+- a way to import multiple aliases
 
 #### [Contribute](#contribute)
 - Question? Please contact me at [@ytbryan](http://twitter.com/ytbryan)
