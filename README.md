@@ -1,5 +1,8 @@
 # aka - aliases' best friend
 
+~~One weekend, out of irritation, aka is created  because I wonder, Why the !@#@! do I need to open the text editor, 
+write an alias, save the dot file and source it every single time just to get a permanent terminal shortcut?~~
+
 Aka allows you to generate/edit/destroy permanent aliases with a single command. 
 
 Check out some of aka's features:
