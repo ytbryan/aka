@@ -1,7 +1,4 @@
-# aka - aliases' best friend
-
-~~One weekend, out of irritation, aka is created  because I wonder, Why the !@#@! do I need to open the text editor, 
-write an alias, save the dot file and source it every single time just to get a permanent terminal shortcut?~~
+# aka - the missing alias manager
 
 Aka allows you to generate/edit/destroy permanent aliases with a single command. 
 
@@ -9,19 +6,19 @@ Check out some of aka's features:
 
 | features                  | alias                        | aka                  |
 | :-----------------------: |:----------------------------:| :-------------------:|
-| Generate alias                 |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| Destroy alias              |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| Find and show alias       |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
-| Show last few added alias |  -                           | ![Yes](demo/yes.png) |
-| Edit alias                |  -                           | ![Yes](demo/yes.png) |
-| Count alias               |  -                           | ![Yes](demo/yes.png) |
-| Auto reload dot file      |  -                           | ![Yes](demo/yes.png) |
-| Show usage                |  -                           | ![Yes](demo/yes.png) |
-| Upload to server          |  -                           | ![Yes](demo/yes.png) |
-| Download from server      |  -                           | ![Yes](demo/yes.png) |
-| Persistency               |  -                           | ![Yes](demo/yes.png) |
-| Add your last command     |  -                           | ![Yes](demo/yes.png) |
-| Generate export           |  -                           | ![Yes](demo/yes.png) |
+| generate alias                 |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| destroy alias              |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| find and show alias       |  ![Yes](demo/yes.png)        | ![Yes](demo/yes.png) |
+| show last few added alias |  -                           | ![Yes](demo/yes.png) |
+| edit alias                |  -                           | ![Yes](demo/yes.png) |
+| count alias               |  -                           | ![Yes](demo/yes.png) |
+| auto reload dot file      |  -                           | ![Yes](demo/yes.png) |
+| show usage                |  -                           | ![Yes](demo/yes.png) |
+| upload to server          |  -                           | ![Yes](demo/yes.png) |
+| download from server      |  -                           | ![Yes](demo/yes.png) |
+| persistency               |  -                           | ![Yes](demo/yes.png) |
+| add your last command     |  -                           | ![Yes](demo/yes.png) |
+| generate export           |  -                           | ![Yes](demo/yes.png) |
 
 #### Table of Content
 * [Installation](#installation)
