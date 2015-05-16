@@ -646,12 +646,12 @@ class Aka < Thor
   
   def checkConfigFile str
     if str == ""
-      puts "dotfile is set to '#{str}'. This is wrong. Use `aka init --dotfile some_value` to set its value.".red
+      puts "Use `aka init --dotfile some_value` to set the location of your dotfile.".red
       exit()
     end
 
     if !File.exists?(str) 
-      puts "dotfile is set to '#{str}'. #{str} does not exist. Use `aka init --dotfile some_value` to set its value.".red
+      puts "#{str} does not exist. Use `aka init --dotfile some_value` to set the location of your dotfile.".red
       exit()
     end
     
