@@ -1,44 +1,121 @@
 <!-- <link rel="stylesheet" href="tomorrow.css"> -->
 <link rel="stylesheet" href="tomorrow-night.css">
+<!-- <link rel="stylesheet" href="zenburn.css"> -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<!-- <script src="http://jmblog.github.com/color-themes-for-highlightjs/js/highlight.pack.js"></script> -->
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/default.min.css">
+<script src="http://jmblog.github.com/color-themes-for-highlightjs/js/highlight.pack.js"></script>
+<!-- <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/styles/default.min.css"> -->
 <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.5/highlight.min.js"></script> -->
 <a href="https://github.com/ytbryan/aka"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png"></a>
 <link href='http://fonts.googleapis.com/css?family=Open+Sans|Oswald' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Chelsea+Market' rel='stylesheet' type='text/css'>
 <style media="screen">
 	body {
-	background: #DE6878;	
-	color:white;
-	font-family: 'Oswald', sans-serif;	}
+		background: #474646;	
+		color:white;
+		font-family: 'Oswald', sans-serif;	
+	}
+	
+	.underline {
+			text-decoration: underline;
+	}
+	
+	.title {
+		font-family: 'Chelsea Market', cursive;
+		font-size: 40px;
+	}
+	
+	.text_center {
+			text-align: center;
+	}
+	
+	ul {
+		list-style:none;
+	}
+	
+	#bigger {
+			font-size: 40px;
+	}
+	
+	.pumpkin-flat-button {
+  position: relative;
+  vertical-align: top;
+  width: 100%;
+  height: 60px;
+  padding: 0;
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #d35400;
+  border: 0;
+  border-bottom: 2px solid #c54e00;
+  cursor: pointer;
+  -webkit-box-shadow: inset 0 -2px #c54e00;
+  box-shadow: inset 0 -2px #c54e00;
+}
+.pumpkin-flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+ #button {
+		width: 210px;
+		height: 40px;
+		padding: 8px;
+ }
+	
+  .white {
+		color: white;
+	}
+	
 </style>
 
-
-
 <html>
-<body>
-	<h1>aka - The Missing Alias Manager</h1>	
-	<ol>
+<body class="text_center">
+	
+	<img width='100px' height='100px' src="logo.png" alt="" />	
+	<h2>aka</h2>
+	<h1 class="title">The Terminal's Missing Alias Manager</h1>	
+	
+	<a id="button" href="http://github.com/ytbryan/aka" class="pumpkin-flat-button">View Source Code</a>  
+	<a id="button" href="http://github.com/ytbryan/aka" class="pumpkin-flat-button">Documentation</a>  
+	<a id="button" href="http://github.com/ytbryan/aka" class="pumpkin-flat-button">Give us your feedback</a>
+
+
+	<!-- <ul>
 		<li>A delightful way to manage and grow your command shortcuts from the terminal.</li>
 		<li>Generate permanent alias with a single command.</li>
-		<li>Save your workflow.</li>
-		<li>Save your time.</li>
-	</ol>
-	<h2>Usage</h2>
+		<li>The shortcuts to generate shortcuts.</li>
+		<li>The shortest path on your terminal.</li>
+		<li>Say good bye to temporary shortcuts.</li>
+	</ul> -->
+	
+	<!-- <p>
+		aka helps you grow and manage your terminal shortcuts right from your terminal. Say goodbye to temporary aliases. 
+		Generate and edit aliases with a single command. Save your keystroke for the next project. 
+	</p> -->
+
+
+	<br>
+	<br>
+	<h1 class="underline">Usage</h1>
 	<pre>
-	<code class="html">
-	aka generate hello="echo helloworld" 
-	aka destroy hello
-	aka edit hello
-	aka find hello
-	aka usage
-	aka 
+	<code class="ruby">
+	aka generate hello='echo helloworld' #generate a permanent alias
+	aka destroy hello #destroy a permanent alias
+	aka edit hello #edit a permanent alias
+	aka find hello #find an alias
+	aka usage #show the usage
+	aka #list your aliases
 	</code>
 	</pre>
 
 
-	<h2>Install</h2>
-
+	<br>
+	<br>
+	<h1 class="underline">Install</h1>
 	<pre>
 	<code class="ruby">
 	git clone https://github.com/ytbryan/aka.git ~/.aka
@@ -47,16 +124,35 @@
 	./aka install
 	</code>
 	</pre>
+	
+	<br>
+	<br>
+	<h1 class="underline">Shorter commands? Sure. </h1>
+	<pre>
+	<code class="ruby">
+	aka g hello='echo helloworld' #generate a permanent alias
+	aka d hello #destroy a permanent alias
+	aka e hello #edit a permanent alias
+	aka f hello #find an alias
+	aka u #show the usage
+	aka #list your aliases
+	</code>
+	</pre>
 
-	<h2>License</h2>
-	<a href="#">MIT LICENSE</a>
+	<h1 class="underline">License</h1>
+	<a id="bigger" href="#">MIT</a>
 
+	<h2>Special Thanks</h2>
+	<a class="white" href="https://github.com/luugiathuy">@luugiathuy</a>
+	<a class="white" href="https://github.com/sockmister">@sockmister</a>
 
 </body>
 </html>
 
-
-
 <script>
 hljs.initHighlightingOnLoad();
+var aCodes = document.getElementsByTagName('code');
+for (var i=0; i < aCodes.length; i++) {
+    hljs.highlightBlock(aCodes[i]);
+}
 </script>
