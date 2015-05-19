@@ -79,9 +79,11 @@
 }
 
  #button {
-		width: 210px;
-		height: 40px;
-		padding: 8px;
+		padding-left: 20px;
+		padding-right: 20px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		font-size: 20px;
  }
 	
   .white {
@@ -104,9 +106,9 @@
 	<h1 id="aka_title">aka</h1>
 	<h1 class="title">The Terminal's Missing Alias Manager</h1>	
 	
-	<a id="button" href="http://github.com/ytbryan/aka" class="noline pumpkin-flat-button">View Source Code</a>  
+	<a id="button" href="http://github.com/ytbryan/aka" class="noline pumpkin-flat-button">View Code</a>  
 	<!-- <a id="button" href="http://github.com/ytbryan/aka" class="spacing noline pumpkin-flat-button">Documentation</a>   -->
-	<a id="button" href="https://github.com/ytbryan/aka/pulls" class="spacing noline pumpkin-flat-button">Send us Pull Request</a>
+	<a id="button" href="https://github.com/ytbryan/aka/pulls" class="spacing noline pumpkin-flat-button">Send Pull Request</a>
 	<a id="button" href="https://github.com/ytbryan/aka/issues" class="spacing noline pumpkin-flat-button">Submit Issues</a>
 
 
@@ -129,12 +131,12 @@
 	<h1 class="underline">Usage</h1>
 	<pre>
 	<code class="ruby">
-	aka generate hello='echo helloworld' #generate a permanent alias
-	aka destroy hello #destroy a permanent alias
-	aka edit hello #edit a permanent alias
-	aka find hello #find an alias
-	aka usage #show the usage
-	aka #list your aliases
+	aka generate hello='echo helloworld' 
+	aka destroy hello  
+	aka edit hello  
+	aka find hello  
+	aka usage  
+	aka  
 	</code>
 	</pre>
 
@@ -156,17 +158,17 @@
 	<h1 class="underline">Shorter commands? Sure. </h1>
 	<pre>
 	<code class="ruby">
-	aka g hello='echo helloworld' #generate a permanent alias
-	aka d hello #destroy a permanent alias
-	aka e hello #edit a permanent alias
-	aka f hello #find an alias
-	aka u #show the usage
-	aka #list your aliases
+	aka g hello='echo helloworld' 
+	aka d hello
+	aka e hello 
+	aka f hello 
+	aka u 
+	aka 
 	</code>
 	</pre>
 
 	<h1 class="underline">License</h1>
-	<a id="bigger" href="#">MIT</a>
+	<a id="bigger" class="white noline" href="#">MIT</a>
 
 	<h2>Special Thanks</h2>
 	<a class="white" href="https://github.com/luugiathuy">@luugiathuy</a>
