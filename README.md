@@ -37,14 +37,12 @@ Or simply type `cd ~/.aka; sudo ./aka setup`
 #Troubleshoot
 
 ```
-#error 1
 Bryans-Air:.aka ytbryan$ aka 
 Error: Type `aka init --dotfile /Users/ytbryan/.bash_profile` to set the path of your dotfile. 
 Replace .bash_profile with .bashrc or .zshrc if you are not using bash.
-
-#solution 1
-aka init --dotfile /Users/ytbryan/.bash_profile #change the path accordingly
 ```
+aka init --dotfile /Users/ytbryan/.bash_profile #change the path accordingly
+
 
 #Requirement 
 Ruby
