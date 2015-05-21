@@ -13,6 +13,18 @@ aka usage
 aka 
 ```
 
+#Manual Setup
+Paste the following code into /etc/profile. Remember to change the path /Users/___/.bash_profile
+```
+export HISTSIZE=10000
+sigusr2() { unalias $1;}
+sigusr1() { source /Users/__/.bash_profile; history -a; echo 'reloaded dot file'; }
+trap sigusr1 SIGUSR1
+trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2
+```
+Or simply type `cd ~/.aka; sudo ./aka setup`
+
+
 #Install
 ```
 git clone https://github.com/ytbryan/aka.git ~/.aka
