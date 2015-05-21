@@ -19,6 +19,9 @@
 	body {
 		background: #474646;	
 		color:white;
+	}
+	
+	.custom {
 		font-family: 'Oswald', sans-serif;	
 	}
 	
@@ -91,6 +94,14 @@
 	#logo {
 			margin-top: 40px;
 	}
+	.margin_bottom_20 {
+		margin-bottom: -20px;
+	}
+	
+	.margin_bottom_10 {
+		margin-bottom: -10px;
+	}
+
 </style>
 
 <html>
@@ -106,7 +117,7 @@
 
 	<br>
 	<br>
-	<h1 class="underline">Usage</h1>
+	<h1 class="underline margin_bottom_20">Usage</h1>
 	<pre>
 	<code class="ruby">
 aka generate hello='echo helloworld' 
@@ -118,10 +129,28 @@ aka
 	</code>
 	</pre>
 
+	<br>
+	<br>
+	<h1 class="underline margin_bottom_10">Manual Setup</h1>
+	<p class="margin_bottom_20">
+		Paste the following code into /etc/profile. 
+	</p>
+	<pre>
+	<code class="ruby">
+export HISTSIZE=10000
+sigusr2() { unalias $1;}
+sigusr1() { source /Users/__/.bash_profile; history -a; echo 'reloaded dot file'; }
+trap sigusr1 SIGUSR1
+trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2
+	</code>
+	</pre>	
+	<p>
+		Or simply type `cd ~/.aka; sudo ./aka setup`
+	</p>
 
 	<br>
 	<br>
-	<h1 class="underline">Install</h1>
+	<h1 class="underline margin_bottom_20">Install</h1>
 	<pre>
 	<code class="ruby">
 git clone https://github.com/ytbryan/aka.git ~/.aka
@@ -133,7 +162,7 @@ bundle
 	
 	<br>
 	<br>
-	<h1 class="underline">Shorter commands? Sure. </h1>
+	<h1 class="underline margin_bottom_20">Shorter commands? Sure. </h1>
 	<pre>
 	<code class="ruby">
 aka g hello='echo helloworld' 
