@@ -44,7 +44,7 @@ class Aka < Thor
          puts "\n#{e}"
          success = false
       end
-      puts "\ndone." if success
+      puts "\nDone." if success
     else
       puts "Some options are missing."
       puts "--login: #{options.login}"
@@ -107,6 +107,16 @@ class Aka < Thor
 
 
   #
+  # SETUP
+  #
+  desc "setup", "setup aka"
+  method_options :force => :boolean
+  def setup 
+    setup_aka
+  end
+
+
+  #
   # FIND
   #
   desc "find [name1 name2 ... ]", "find an alias"
@@ -138,7 +148,7 @@ class Aka < Thor
             reload_dot_file() if !options.noreload
           end
         else
-          puts "alias '#{args}' cannot be found".red
+          puts "Alias '#{args}' cannot be found".red
         end
       else
         truth, _alias, command = show_alias(args)
@@ -159,7 +169,7 @@ class Aka < Thor
             end
           end
         else
-          puts "alias '#{args}' cannot be found".red
+          puts "Alias '#{args}' cannot be found".red
         end
       end
       
@@ -187,15 +197,16 @@ class Aka < Thor
   def install
     if File.exist? "#{Dir.pwd}/aka"
       if File.exist? "/usr/local/bin/aka"
-        if  yes? "aka exists. Do you want to replace? (yN)" 
+        if  yes? "aka exists. Do you want to replace it? (yN)" 
           FileUtils.rm("/usr/local/bin/aka")
           system("ln -s #{Dir.pwd}/aka /usr/local/bin/aka")
+          puts "aka replaced."
         end
       else 
         result = system("ln -s #{Dir.pwd}/aka /usr/local/bin/aka")
       end
     else
-      puts "cannot find aka.".red
+      puts "Cannot find aka.".red
     end
   end
 
@@ -340,7 +351,7 @@ class Aka < Thor
     if File.exists? path
       return YAML.load_file(path)
     else
-      puts "#{Dir.home}/.aka/.config does not exist. You need to create one, see https://github.com/ytbryan/aka/blob/master/.config".red
+      puts "#{Dir.home}/.aka/.config does not exist. You need to create one, type `touch ~/.aka/.config` and copy https://github.com/ytbryan/aka/blob/master/.config".red
     end
   end
 
@@ -547,7 +558,7 @@ class Aka < Thor
         end
         puts "#{index+1} #{line}"
       }
-      puts "There are #{count} histories"
+      puts "There are #{count} lines of history."
     else
       puts ".bash_history is not available".red
     end
@@ -604,17 +615,17 @@ class Aka < Thor
     end
   end
 
-  def setup
+  def setup_aka
     if yes? "- Do you wish to expand your bash history? (y/N)"
-      append("export HISTSIZE=10000","/etc/profile")
+      append_with_newline("export HISTSIZE=10000","/etc/profile")
     end
 
-    if yes? "- Do you wish to setup auto-reloading of your dot file <#{readYML("#{Dir.home}/.aka/.config")["dotfile"]}>? (y/N)"
+    if yes? "- Do you wish to setup auto-reloading of your profile <#{readYML("#{Dir.home}/.aka/.config")["profile"]}>? (y/N)"
       trap = "sigusr2() { unalias $1;}
-      sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}; history -a; echo 'reloaded dot file'; }
-      trap sigusr1 SIGUSR1
-      trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
-      append(trap, readYML("#{Dir.home}/.aka/.config")['location'])
+sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}; history -a; echo 'reloaded dot file'; }
+trap sigusr1 SIGUSR1
+trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
+      append(trap, readYML("#{Dir.home}/.aka/.config")['profile'])
     end
 
     puts "Done. Please restart this shell.".red
@@ -645,13 +656,14 @@ class Aka < Thor
   end
   
   def checkConfigFile str
+    path =  "#{Dir.home}/.bash_profile"
     if str == ""
-      puts "Use `aka init --dotfile some_value` to set the location of your dotfile.".red
+      puts "Error: Type `aka init --dotfile #{path}` to set the path to your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.".red
       exit()
     end
 
     if !File.exists?(str) 
-      puts "#{str} does not exist. Use `aka init --dotfile some_value` to set the location of your dotfile.".red
+      puts "Error: Type `aka init --dotfile #{path}` to set the path of your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.".red
       exit()
     end
     
@@ -741,7 +753,7 @@ class Aka < Thor
         }
         puts ""
       else
-        puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
+        puts "Something went wrong: count_array.count = #{sorted_count_array.count}\n
         name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
       end
     else
@@ -755,7 +767,7 @@ class Aka < Thor
         }
         puts ""
       else
-        puts "something is wrong: count_array.count = #{sorted_count_array.count}\n
+        puts "Something went wrong: count_array.count = #{sorted_count_array.count}\n
               name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
       end
     end
@@ -812,16 +824,6 @@ class Aka < Thor
   ################################################
   ## Getting these babies ready for beauty contest
   ################################################
-
-  class String
-    def pretty
-      return self.gsub("\s\t\r\f", ' ').squeeze(' ')
-    end
-
-    def is_i?
-      !!(self =~ /\A[-+]?[0-9]+\z/)
-    end
-  end
 
   def showSpace word
     space = ""
@@ -908,21 +910,15 @@ class Aka < Thor
   def add_to_proj fullalias
     values = fullalias.split("=")
     yml = readYML("#{Dir.pwd}/.aka")
-    puts yml
     if yml == false
-      puts "nil"
       write_new_proj_aka_file fullalias
     else
-      puts "not nil"
       yml["proj"]["title"] = "this is title"
       yml["proj"]["summary"] = "this is summary"
       yml["proj"]["aka"][values.first] = values[1]
       writeYML("#{Dir.pwd}/.aka", yml)
     end
   end
-  #aka proj import
-  #aka add aka="echo" -p
-  #aka rm aka -p
 
   def write_new_proj_aka_file fullalias
     values = fullalias.split("=")
@@ -933,16 +929,6 @@ class Aka < Thor
                  "aliases" => {
                       "firstvalue" => ""
                             }}}
-    # thirdyml = Hash.new
-    # thirdyml["firstvalue"] = ""
-    #
-    # secondyml = Hash.new
-    # secondyml["title"] = "this is title"
-    # secondyml["summary"] = "this is title"
-    # secondyml["aliases"] = thirdyml
-    #
-    # theyml = Hash.new
-    # theyml["proj"] = secondyml
 
     writeYML("#{Dir.pwd}/.aka", theyml)
   end
@@ -950,11 +936,9 @@ class Aka < Thor
   def createShortcut(proj)
     answer = ""
     proj["shortcuts"].to_a.each_with_index do |each,index|
-      puts "hello there"
         answer += "#{each["name"]}
                     - #{each["command"]}
                     ".pretty
-                    puts "hello wow"
         answer += "\n"
     end
     return answer
@@ -966,23 +950,14 @@ class Aka < Thor
   end
 
   def find_last_command
-    
     str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["history"])
     #i think if you do history -w, you can retrieve the latest command
     if content = File.open(str).read
       count=0
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
-      # content_array.each_with_index { |line, index|
-      #   puts "#{index} #{line}"
-      # }
-
       return  content_array[content_array.count - 1]
     end
-    #go through the history
-    #take the last command
-    #take the name
-    #append together and save it
   end
   
   def parseARGS str
@@ -995,7 +970,6 @@ class Aka < Thor
 
   def add_pwd_to_the_command
     #detect #{pwd}
-
     #get the pwd and replace the the pwd
   end
 
@@ -1027,6 +1001,17 @@ class Aka < Thor
 
   def get_password
     ask("Enter Password: ", :echo => false)
+  end
+end
+
+
+class String
+  def pretty
+    return self.gsub("\s\t\r\f", ' ').squeeze(' ')
+  end
+
+  def is_i?
+    !!(self =~ /\A[-+]?[0-9]+\z/)
   end
 end
 
