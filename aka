@@ -511,7 +511,7 @@ class Aka < Thor
           if answer.first == input
             content_array.delete_at(index) and write_with_newline(content_array)
             print_out_command = "aka g #{input}=#{line.split("=")[1]}"
-            puts "removed: #{print_out_command} is removed from #{Dir.home}/.bash_profile".red
+            puts "removed: #{print_out_command} is removed from #{str}".red
             return true
           end
         end
