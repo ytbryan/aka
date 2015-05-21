@@ -393,16 +393,28 @@ class Aka < Thor
   end
 
   def reload_dot_file
-   system("kill -SIGUSR1 #{Process.ppid}")
+    if isOhMyZsh == true
+      system("exec zsh")
+    else
+      system("kill -SIGUSR1 #{Process.ppid}")    
+    end
   end
 
   def historywrite
-    system "kill -SIGUSR2 #{Process.ppid}"
+    if isOhMyZsh == true
+      system("exec zsh")
+    else
+      system "kill -SIGUSR2 #{Process.ppid}"
+    end
   end
 
   def unalias_the value
-    system "echo '#{value}' > ~/sigusr1-args;"
-    system "kill -SIGUSR2 #{Process.ppid}"
+    if isOhMyZsh == true
+      system("exec zsh")
+    else
+      system "echo '#{value}' > ~/sigusr1-args;"
+      system "kill -SIGUSR2 #{Process.ppid}"
+    end
   end
 
   def split_domain_user fulldomain
@@ -997,6 +1009,15 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
   def get_password
     ask("Enter Password: ", :echo => false)
   end
+  
+  def isOhMyZsh
+    if readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc"
+      return true
+    else 
+      return false
+    end
+  end
+
 end
 
 
