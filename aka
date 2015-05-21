@@ -617,18 +617,12 @@ class Aka < Thor
   end
 
   def setup_aka
-    if yes? "- Do you wish to expand your bash history? (y/N)"
       append_with_newline("export HISTSIZE=10000","/etc/profile")
-    end
-
-    if yes? "- Do you wish to setup auto-reloading of your profile <#{readYML("#{Dir.home}/.aka/.config")["profile"]}>? (y/N)"
       trap = "sigusr2() { unalias $1;}
 sigusr1() { source #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}; history -a; echo 'reloaded dot file'; }
 trap sigusr1 SIGUSR1
 trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
       append(trap, readYML("#{Dir.home}/.aka/.config")['profile'])
-    end
-
     puts "Done. Please restart this shell.".red
   end
 
