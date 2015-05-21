@@ -204,6 +204,7 @@ class Aka < Thor
         end
       else 
         result = system("ln -s #{Dir.pwd}/aka /usr/local/bin/aka")
+        puts "aka installed."
       end
     else
       puts "Cannot find aka.".red
