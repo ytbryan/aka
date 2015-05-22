@@ -2,6 +2,23 @@
 
 aka generate/edit/destroy/find permanent aliases with a single command. 
 
+
+| features                  | alias                        | aka                  |
+| :-----------------------: |:----------------------------:| :-------------------:|
+| Generate alias                 |  ![Yes](assets/yes.png)        | ![Yes](assets/yes.png) |
+| Destroy alias              |  ![Yes](assets/yes.png)        | ![Yes](assets/yes.png) |
+| Find and show alias       |  ![Yes](assets/yes.png)        | ![Yes](assets/yes.png) |
+| Show last few added alias |  -                           | ![Yes](assets/yes.png) |
+| Edit alias                |  -                           | ![Yes](assets/yes.png) |
+| Count alias               |  -                           | ![Yes](assets/yes.png) |
+| Auto reload dot file      |  -                           | ![Yes](assets/yes.png) |
+| Show usage                |  -                           | ![Yes](assets/yes.png) |
+| Upload to server          |  -                           | ![Yes](assets/yes.png) |
+| Download from server      |  -                           | ![Yes](assets/yes.png) |
+| Persistency               |  -                           | ![Yes](assets/yes.png) |
+| Add your last command     |  -                           | ![Yes](assets/yes.png) |
+| Generate export           |  -                           | ![Yes](assets/yes.png) |
+
 #Usage
 
 ```
