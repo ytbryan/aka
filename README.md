@@ -2,6 +2,7 @@
 
 aka generate/edit/destroy/find permanent aliases with a single command. 
 
+aka requires ruby and is built for bash and zsh users.
 
 | features                  | alias                        | aka                  |
 | :-----------------------: |:----------------------------:| :-------------------:|
@@ -54,7 +55,6 @@ Or simply type `cd ~/.aka; sudo ./aka setup`
 #Troubleshoot
 
 ```
-Bryans-Air:.aka ytbryan$ aka 
 Error: Type `aka init --dotfile /Users/ytbryan/.bash_profile` to set the path of your dotfile. 
 Replace .bash_profile with .bashrc or .zshrc if you are not using bash.
 ```

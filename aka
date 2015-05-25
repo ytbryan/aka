@@ -21,10 +21,18 @@ class Aka < Thor
       "e" => "edit",
       "c" => "clean"
   
+  #aka import from a server
+  
+  #aka export to a server
+  
+  #aka generate function 
+  
+  #aka generate export 
+  
   #
   # DOWNLOAD
   # aka download --to ~/Desktop/ --login admin@162.243.249.154:22000 --from /home/admin/hello  desc "download [path]", "download a dot file"
-  desc "download --to --from --login", "download dotfile from server"
+  desc "download", "download dotfile from server"
   method_options :from => :string
   method_options :to => :string
   method_options :login => :string
@@ -76,7 +84,7 @@ class Aka < Thor
   #
   # GENERATE
   #
-  desc "generate [name]", "generate an alias"
+  desc "generate", "generate an alias (short alias: g)"
   method_options :last => :boolean
   def generate args
     result = false
@@ -95,7 +103,7 @@ class Aka < Thor
   #
   # DESTROY
   #
-  desc "destroy [name1 name2 ... ]", "destroy an alias"
+  desc "destroy", "destroy an alias (short alias: d)"
   method_options :force => :boolean
   def destroy(*args)
     args.each_with_index do |value, index|
@@ -119,7 +127,7 @@ class Aka < Thor
   #
   # FIND
   #
-  desc "find [name1 name2 ... ]", "find an alias"
+  desc "find", "find an alias (short alias: f)"
   method_options :force => :boolean
   def find *args
     args.each_with_index do |value, index|
@@ -130,7 +138,7 @@ class Aka < Thor
   #
   # EDIT
   #
-  desc "edit [name]", "edit an alias"
+  desc "edit", "edit an alias(short alias: e)"
   method_options :force => :boolean
   def edit args
     if args
@@ -176,7 +184,7 @@ class Aka < Thor
     end #if args
   end
 
-  desc "list [number]", "list alias"
+  desc "list", "list alias (short alias: l)"
   method_options :force => :boolean
   def list(args=nil)
     if args != nil
@@ -185,7 +193,9 @@ class Aka < Thor
       value = readYML("#{Dir.home}/.aka/.config")["list"]
       showlast(value.to_i) #this is unsafe
     end
-    puts "A total of #{count()} aliases from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
+    
+    #total of #{} exports #functions 
+    puts "A total of #{count()} aliases,#{count_export} exports and #{count_function} functions from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
     reload_dot_file
   end
 
@@ -607,6 +617,42 @@ class Aka < Thor
   def edit_alias newalias, thiscommand
     puts "new: aka g #{this_alias}='#{newcommand}'"
     return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{Dir.home}/.aka/.config")["dotfile"] )
+  end
+
+  def count_function
+    function_count = 0
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+    if content=File.open(str).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array= content.split("\n")
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "function"
+          answer = value[1].split("=")
+          function_count += 1
+        end
+      }
+      return function_count
+    end
+  end
+
+
+  def count_export
+    export_count = 0
+    str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+    if content=File.open(str).read
+      content.gsub!(/\r\n?/, "\n")
+      content_array= content.split("\n")
+      content_array.each_with_index { |line, index|
+        value = line.split(" ")
+        if value.length > 1 and value.first == "export"
+          answer = value[1].split("=")
+          export_count += 1
+        end
+      }
+      return export_count
+    end
+
   end
 
   def count
