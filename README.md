@@ -1,6 +1,6 @@
 # aka - The Missing Alias Manager
 
-aka generate/edit/destroy/find permanent aliases with a single command. 
+aka generate/edit/destroy/find permanent aliases with a single command.
 
 aka requires ruby and is built for bash and zsh users.
 
@@ -20,53 +20,61 @@ aka requires ruby and is built for bash and zsh users.
 | Add your last command     |  -                           | ![Yes](assets/yes.png) |
 | Generate export           |  -                           | ![Yes](assets/yes.png) |
 
-#Usage
+## Installation
 
-```
-aka generate hello="echo helloworld" 
-aka destroy hello
-aka edit hello
-aka find hello
-aka usage
-aka 
-```
+    $ gem install aka2
+    $ aka setup
 
-#Install
-```
-git clone https://github.com/ytbryan/aka.git ~/.aka
-cd ~/.aka
-bundle
-sudo ./aka install
-sudo ./aka setup
-```
+If you wish to reinstall aka setup
 
-#Manual Setup
-Paste the following code into /etc/profile. Remember to change the path /Users/___/.bash_profile
-```
-export HISTSIZE=10000
-sigusr2() { unalias $1;}
-sigusr1() { source /Users/__/.bash_profile; history -a; echo 'reloaded dot file'; }
-trap sigusr1 SIGUSR1
-trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2
-```
-Or simply type `cd ~/.aka; sudo ./aka setup`
+    $ aka setup --reset
 
+## Usage
 
-#Troubleshoot
+To generate new aka
 
-```
-Error: Type `aka init --dotfile /Users/ytbryan/.bash_profile` to set the path of your dotfile. 
-Replace .bash_profile with .bashrc or .zshrc if you are not using bash.
-```
-aka init --dotfile /Users/ytbryan/.bash_profile #change the path accordingly
+    $ aka generate hello="echo helloworld"
+    $ aka g hello="echo helloworld"
 
+To destroy aka
 
-#Requirement 
+    $ aka destroy hello
+    $ aka d hello
+
+To edit aka command
+
+    $ aka edit hello
+
+To edit aka alias name
+
+    $ aka edit hello --name
+
+To find a aka command
+
+    $ aka find hello
+
+To list all aka created
+
+    $ aka list
+    $ aka list 20
+    $ aka list --number
+
+To list down available command
+
+    $ aka help
+
+## Requirement
+
 Ruby
 
-#[License](#license)
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/ytbryan/aka-gem
+
+## License
 
 [The MIT License (MIT)](http://www.opensource.org/licenses/MIT)
 
-#Contact 
+## Contact
+
 [@ytbryan](http://www.twitter.com/ytbryan)
