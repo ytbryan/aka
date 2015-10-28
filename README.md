@@ -1,4 +1,6 @@
-# aka - The Missing Alias Manager
+# Aka
+
+### The Shortcut Manager for your Everyday Project
 
 aka generate/edit/destroy/find permanent aliases with a single command.
 
@@ -22,46 +24,56 @@ aka requires ruby and is built for bash and zsh users.
 
 ## Installation
 
-    $ gem install aka2
-    $ aka setup
+    gem install aka2
+    aka setup
 
-If you wish to reinstall aka setup
+If you wish to setup aka again:
 
-    $ aka setup --reset
+    aka setup --reset
 
 ## Usage
 
-To generate new aka
+To generate new alias
 
-    $ aka generate hello="echo helloworld"
-    $ aka g hello="echo helloworld"
+    aka generate hello="echo helloworld"
+    aka g hello="echo helloworld"
+    aka g hello="echo helloworld" --group basic
 
-To destroy aka
+To destroy existing alias
 
-    $ aka destroy hello
-    $ aka d hello
+    aka destroy hello
+    aka d hello
 
-To edit aka command
+To edit existing alias
 
-    $ aka edit hello
+    aka edit hello
 
-To edit aka alias name
+To edit alias name
 
-    $ aka edit hello --name
+    aka edit hello --name
 
-To find a aka command
+To find an alias
 
-    $ aka find hello
+    aka find hello
 
-To list all aka created
+To list all system aliases
 
-    $ aka list
-    $ aka list 20
-    $ aka list --number
+    aka list
+    aka list 20
+    aka list --number
 
-To list down available command
 
-    $ aka help
+To export your alias into a proj.aka
+
+    aka export group_name
+
+To list project alias
+
+    aka proj
+
+To list all commands of aka
+
+    aka help
 
 ## Requirement
 

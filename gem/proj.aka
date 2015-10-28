@@ -1,3 +1,0 @@
-alias gg='build;install;' # => aka
-alias build='gem build aka.gemspec' # => aka
-alias install='gem install aka2-0.1.10.gem' # => aka

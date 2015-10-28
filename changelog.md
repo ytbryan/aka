@@ -1,8 +1,10 @@
 ## v0.1.10
 * Added [aka export] to export alias groups into a project directory
 * Added [aka proj] to show all the aliases for current project directory
+* Added .profile as setup options. Thanks
+* Remove some dependencies and set required ruby back to 2.0.0.
+* Change default list to 20 alias
 * Start using aka in your projects :)
-
 
 ## v0.1.9
 * Added -g option to add grouping to alias

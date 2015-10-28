@@ -1,0 +1,4 @@
+alias gg='build;install;' -g aka
+alias build='gem build aka.gemspec' -g aka
+alias install='gem install aka2-0.1.10.gem' -g aka
+alias test='rake test' -g aka
