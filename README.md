@@ -81,7 +81,7 @@ Ruby
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ytbryan/aka-gem
+Bug reports and pull requests are welcome on GitHub at https://github.com/ytbryan/aka
 
 ## License
 
