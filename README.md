@@ -85,7 +85,7 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/ytbrya
 
 ## License
 
-[The MIT License (MIT)](http://www.opensource.org/licenses/MIT)
+Aka is released as an open source project under the license of [The MIT License (MIT)](http://www.opensource.org/licenses/MIT)
 
 ## Contact
 
