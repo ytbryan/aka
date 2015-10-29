@@ -2,6 +2,8 @@
 
 ### The Shortcut Manager for your Everyday Project
 
+[![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
+
 aka generate/edit/destroy/find permanent aliases with a single command.
 
 aka requires ruby and is built for bash and zsh users.
