@@ -1,6 +1,6 @@
 require 'minitest'
 require 'minitest/autorun'
-require 'aka/version'
+require 'aka'
 
 class String
     def colorize(color_code)
@@ -39,7 +39,10 @@ class AkaTest < Minitest::Test
 
   #test generate
   def test_generate_functionality
+    # args = ["something"]
+    # assert_equal 10, Aka::Base.generate(args)
     assert_equal 10, 10
+
   end
   #test destroy
   def test_destroy_functionality
