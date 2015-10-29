@@ -18,6 +18,12 @@ module Aka
         "c" => "clean",
         "h" => "help"
 
+
+    desc "sync", "sync project aliases with system aliases"
+    def sync
+      puts "System Aliases <---- sync <----- Project Aliases"
+    end
+
     desc "test", "test and show that this won't work"
     def test
       system("source ~/.bash_profile")
@@ -66,7 +72,6 @@ module Aka
     desc "export", "generate proj.aka file"
     method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
     def export the_name
-      # create_proj_file(the_name)
       array = export_group_aliases(the_name)
       if File.exist?('proj.aka')
         if options.force?
@@ -94,34 +99,41 @@ module Aka
     # PROJ
     #################
     desc "proj", "list the project alias (short alias: p)"
+    method_option :group, :type => :boolean, :aliases => '-g'
     def proj
-      print_title("Project Alias")
       answer_count = 0
-      if File.exist?('proj.aka')
-        if content = File.open('proj.aka').read
-          content.gsub!(/\r\n?/, "\n")
-          content_array = content.split("\n")
-          content_array.each_with_index { |line, index|
-
-            # testLine = line
-            line = line.gsub("# =>", "-g")
-            value = line.split(" ")
-            containsCommand = line.split('=') #containsCommand[1]
-            answer = value[1].split("=") #contains the alias
-            group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
-
-            if value.length > 1 && value.first == 'alias'
-                containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-                puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
-              answer_count+= 1
-            end
-          }
-
-          puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
-          puts "\nUse 'aka -h' to see all the useful commands."
-        end
-      else
+      if options.group? && File.exist?('proj.aka')
+        print_title("Project Groups")
+        list_all_groups_in_proj_aka()
+      elsif options.group? && !File.exist?('proj.aka')
         puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
+      else
+        print_title("Project Alias")
+        if File.exist?('proj.aka')
+          if content = File.open('proj.aka').read
+            content.gsub!(/\r\n?/, "\n")
+            content_array = content.split("\n")
+            content_array.each_with_index { |line, index|
+              # testLine = line
+              line = line.gsub("# =>", "-g")
+              value = line.split(" ")
+              containsCommand = line.split('=') #containsCommand[1]
+              answer = value[1].split("=") #contains the alias
+              group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
+
+              if value.length > 1 && value.first == 'alias'
+                  containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+                  puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
+                answer_count+= 1
+              end
+            }
+
+            puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
+            puts "\nUse 'aka -h' to see all the useful commands."
+          end
+        else
+          puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
+        end
       end
     end
 
@@ -136,16 +148,9 @@ module Aka
       puts args
       result = false
       if options.last?
-        #we need to add group here.
         result = add_with_group(add_last_command(parseARGS(args))) if args
-        # result = add(add_last_command(parseARGS(args))) if args
       else
-        #we should probably phase out add()
         result = add_with_group(parseARGS(args), options.group) if args
-        # if options.proj? && result == true
-        #   FileUtils.touch("#{Dir.pwd}/.aka") #what is this for????
-        #   add_to_proj(args)
-        # end
       end
       reload_dot_file if result == true && !options.no
     end
@@ -155,11 +160,12 @@ module Aka
     #
     desc "destroy", "destroy an alias (short alias: d)"
     method_options :force => :boolean
+    method_option :no, :type => :boolean, :aliases => '-n', :desc => ''
     def destroy(*args)
       args.each_with_index do |value, index|
         result = remove(value)
         unalias_the(value) if !options.nounalias && result == true
-        reload_dot_file if result == true && !options.noreload
+        reload_dot_file if result == true && !options.no
       end
     end
 
@@ -1381,6 +1387,35 @@ module Aka
       end
       return answer
     end
+
+
+    def list_all_groups_in_proj_aka
+      str = 'proj.aka'
+      group_array = []
+      if content=File.open(str).read
+        content.gsub!(/\r\n?/, "\n")
+        content_array= content.split("\n")
+        content_array.each_with_index { |line, index|
+          value = line.split(" ")
+          if value.length > 1 && value.first == 'alias'
+
+            answer = value[1].split("=") #contains the alias
+            group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
+            if group_name != nil
+              group_array.push(group_name)
+            end
+          end
+        }
+
+        puts group_array.uniq
+
+        puts ""
+        puts "A total of #{group_array.uniq.count} groups from #{Dir.pwd}/proj.aka"
+        puts ""
+
+      end
+    end
+
 
 
     def list_all_groups
