@@ -1,5 +1,6 @@
 require 'minitest'
 require 'minitest/autorun'
+require 'minitest/spec'
 require 'aka'
 
 class String
@@ -37,30 +38,35 @@ class AkaTest < Minitest::Test
   @PASS = "\u2713 \u2713 \u2713 \u2713 \u2713".green
   @FAIL = "\u274C \u274C \u274C \u274C \u274C".red
 
-  #test generate
-  def test_generate_functionality
-    # args = ["something"]
-    # assert_equal 10, Aka::Base.generate(args)
-    assert_equal 10, 10
+  def setup
+    @aka = Aka::Base.new
+  end
 
+  # the main challenge is that aka source the shell which cause minitest to exit
+  #test generate
+  def test_generate_function
+    args = "something=echo something"
+    @aka.options =  {last: false, no: true}
+    puts @aka.generate(args)
+    assert_equal 10, 10
   end
   #test destroy
-  def test_destroy_functionality
+  def test_destroy_function
     assert_equal 10, 10
   end
 
   #test find
-  def test_find_functionality
+  def test_find_function
     assert_equal 10, 10
   end
 
   #test proj
-  def test_proj_functionality
+  def test_proj_function
     assert_equal 10, 10
   end
 
   #test export
-  def test_export_functionality
+  def test_export_function
     assert_equal 10, 10
   end
 

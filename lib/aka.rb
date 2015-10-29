@@ -131,7 +131,9 @@ module Aka
     desc "generate", "generate an alias (short alias: g)"
     method_option :last, :type => :boolean, :aliases => '-l', :desc => ''
     method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
+    method_option :no, :type => :boolean, :aliases => '-n', :desc => ''
     def generate args
+      puts args
       result = false
       if options.last?
         #we need to add group here.
@@ -145,7 +147,7 @@ module Aka
         #   add_to_proj(args)
         # end
       end
-      reload_dot_file if result == true && !options.noreload
+      reload_dot_file if result == true && !options.no
     end
 
     #
@@ -627,7 +629,7 @@ module Aka
             answer = value[1].split("=") #contains the alias
             group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
             if group_name != nil && group_name.first == name
-              results.push(line)
+              results.push(testline)
             end
           end
         }
