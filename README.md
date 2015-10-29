@@ -18,11 +18,11 @@ aka requires ruby and is built for bash and zsh users.
 | Count alias               |  -                           | ![Yes](assets/yes.png) |
 | Auto reload dot file      |  -                           | ![Yes](assets/yes.png) |
 | Show usage                |  -                           | ![Yes](assets/yes.png) |
-| Upload to server          |  -                           | ![Yes](assets/yes.png) |
-| Download from server      |  -                           | ![Yes](assets/yes.png) |
 | Persistency               |  -                           | ![Yes](assets/yes.png) |
 | Add your last command     |  -                           | ![Yes](assets/yes.png) |
-| Generate export           |  -                           | ![Yes](assets/yes.png) |
+| Export Alias              |  -                           | ![Yes](assets/yes.png) |
+| Group your Aliases        |  -                           | ![Yes](assets/yes.png) |
+| Add Alias to Project      |  -                           | ![Yes](assets/yes.png) |
 
 ## Installation
 
