@@ -18,15 +18,21 @@ module Aka
         "c" => "clean",
         "h" => "help"
 
-
     desc "sync", "sync project aliases with system aliases"
     def sync
-      puts "System Aliases <---- sync <----- Project Aliases"
+      array = get_all_aliases_from_proj_aka()
+      array.each do |line|
+        line.gsub!("\'", "\"") #need to replace ' with "
+        line = line + " -n" #do not reload :)
+        puts line
+        system(line)
+      end
     end
 
     desc "test", "test and show that this won't work"
     def test
-      system("source ~/.bash_profile")
+      # system("source ~/.bash_profile")
+      system("aka g test='echo something'")
     end
 
     #
@@ -143,9 +149,9 @@ module Aka
     desc "generate", "generate an alias (short alias: g)"
     method_option :last, :type => :boolean, :aliases => '-l', :desc => ''
     method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
-    method_option :no, :type => :boolean, :aliases => '-n', :desc => ''
+    method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
+    method_option :empty, :type => :boolean, :aliases => '-e', :desc => 'do not print anything'
     def generate args
-      puts args
       result = false
       if options.last?
         result = add_with_group(add_last_command(parseARGS(args))) if args
@@ -160,7 +166,7 @@ module Aka
     #
     desc "destroy", "destroy an alias (short alias: d)"
     method_options :force => :boolean
-    method_option :no, :type => :boolean, :aliases => '-n', :desc => ''
+    method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
     def destroy(*args)
       args.each_with_index do |value, index|
         result = remove(value)
@@ -388,6 +394,30 @@ module Aka
 
     private
 
+    def get_all_aliases_from_proj_aka
+      array = []
+      str = "proj.aka"
+      if content = File.open(str).read
+        content.gsub!(/\r\n?/, "\n")
+        content_array = content.split("\n")
+        content_array.each_with_index { |line, index|
+          testline = line
+          line = line.gsub("# =>", "-g")
+          value = testline.split(" ")
+          containsCommand = line.split('=') #containsCommand[1]
+          if value.length > 1 && value.first == "alias"
+            answer = value[1].split("=") #contains the alias
+            group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+            # if group_name != nil && group_name.first == name
+              containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+              array.push("aka g " + "#{answer.first}".red + "=#{containsCommand[1]}")
+            # end
+          end
+        }
+      end
+      return array
+    end
+
     # set path
     def setPath(path, value)
       data = readYML("#{Dir.home}/.aka/.config")
@@ -507,11 +537,9 @@ module Aka
         full_command = "alias #{array.first}='#{array[1]}' #{group_name}".gsub("\n","") #remove new line in command
         print_out_command = "aka g #{array.first}='#{array[1]}'"
         str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
         File.open(str, 'a') { |file| file.write("\n" +full_command) }
         # puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
         puts "Created: ".green +  "#{print_out_command} " + "in #{name_of_group} group."
-
         return true
       else
         puts "The alias is already present. Use 'aka -h' to see all the useful commands."
@@ -548,7 +576,6 @@ module Aka
 
     #list
     def search_alias_with_group_name name
-
       print_title("System Alias")
       group_count = 0
       if name == "group"
@@ -1550,6 +1577,7 @@ module Aka
 end
 
 class String
+
   def pretty
     return self.gsub("\s\t\r\f", ' ').squeeze(' ')
   end
