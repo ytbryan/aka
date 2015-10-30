@@ -186,13 +186,10 @@ module Aka
               end
             }
 
-            print_helpful_statement()
-            # puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
-            # puts "\nUse 'aka -h' to see all the useful commands."
+            print_helpful_statement(answer_count)
           end
         else
           print_error_statement()
-          # puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
         end
       end
     end
@@ -361,8 +358,6 @@ module Aka
       end
 
       print_all_helpful_statement
-      # puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
-      # puts "\nUse 'aka -h' to see all the useful commands.\n\n"
       reload_dot_file
     end
 
@@ -398,7 +393,7 @@ module Aka
     # method_options :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
     # method_options :clear, :type => :boolean, :aliases => '-c', :desc => 'clear the dot history file'
     def config()
-      showConfig()
+      showConfig
     end
 
     #
@@ -465,10 +460,8 @@ module Aka
           if value.length > 1 && value.first == "alias"
             answer = value[1].split("=") #contains the alias
             group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
-            # if group_name != nil && group_name.first == name
-              containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-              array.push("aka g " + "#{answer.first}" + "=#{containsCommand[1]}")
-            # end
+            containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+            array.push("aka g " + "#{answer.first}" + "=#{containsCommand[1]}")
           end
         }
       end
@@ -520,7 +513,6 @@ module Aka
     # write_with + into dotfile
     def write_with array
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
       File.open(str, 'w') { |file|
         array.each do |line|
           file.write(line)
@@ -531,7 +523,6 @@ module Aka
     # write_with_newline + into dotfile
     def write_with_newline array
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
       File.open(str, 'w') { |file|
         array.each do |line|
           file.write(line + "\n")
@@ -556,7 +547,6 @@ module Aka
 
     # reload_dot_file
     def reload_dot_file
-
       isOhMyZsh == true ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
       # if isOhMyZsh == true
       #   system("exec zsh")
@@ -623,13 +613,10 @@ module Aka
         array = input.split("=")
         full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
         print_out_command = "aka g #{array.first}='#{array[1]}'"
-
         str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
         File.open(str, 'a') { |file| file.write("\n" +full_command) }
         # puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
         puts "Created: ".green +  "#{print_out_command}"
-
         return true
       else
         puts "The alias is already present. Use 'aka -h' to see all the useful commands."
@@ -739,28 +726,19 @@ module Aka
     # show alias
     def search_alias_return_alias_tokens argument
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-      # alias something="echo something"
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
         content_array.each_with_index { |line, index|
           line = line.gsub("# =>", "-g")
           value = line.split(" ")
-          # puts "value -> #{value}"
           containsCommand = line.split('=') #containsCommand[1]
           if value.length > 1 && value.first == "alias"
-            # answer = value[1].split("=")
             answer = value[1].split("=") #contains the alias
-
-            # puts "answer -> #{answer}"
             if found?(answer.first, argument.split("=").first, line) == true
               this_alias = answer.first
               answer.slice!(0) #rmove the first
-              # puts "before ->#{containsCommand[1]}"
               containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-              # puts "before 2 ->#{containsCommand[1]}"
-
-              # puts "join ->#{containsCommand[1]}"
               return [true, this_alias, containsCommand[1]]
             end
           end
@@ -789,7 +767,6 @@ module Aka
             if answer.first == input
               content_array.delete_at(index) && write_with_newline(content_array)
               print_out_command = "aka g #{input}=#{line.split("=")[1]}"
-              # puts  "removed: #{print_out_command} is removed from #{str}".red
               puts "Removed: ".red  + "#{print_out_command}"
               return true
             end
@@ -811,9 +788,9 @@ module Aka
         content_array= content.split("\n")
         content_array.each_with_index { |line, index|
           if line == "source \"/home/ryan/.aka/autosource\""
-              content_array.delete_at(index) && write_with_newline(content_array)
-              puts "Removed: ".red + "source \"/home/ryan/.aka/autosource\""
-              return true
+            content_array.delete_at(index) && write_with_newline(content_array)
+            puts "Removed: ".red + "source \"/home/ryan/.aka/autosource\""
+            return true
           end
         }
       else
@@ -932,11 +909,9 @@ module Aka
         content_array.each_with_index { |line, index|
           value = line.split(" ")
           if value.length > 1 && value.first == 'alias'
-             answer = value[1].split("=") #contains the alias
-              group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
-              if group_name != nil
-                group_array.push(group_name)
-              end
+            answer = value[1].split("=") #contains the alias
+            group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
+            group_array.push(group_name) if group_name != nil
           end
         }
         return group_array.uniq.count
@@ -1118,8 +1093,6 @@ module Aka
     # write to location
     def write_to_location location, address
       # does_aka_directory_exists ? write(location, address) : puts ".aka not found.".red
-
-
       if does_aka_directory_exists
         write(location, address)
       else
@@ -1140,12 +1113,12 @@ module Aka
 
     # dot location exist
     def dot_location_exists? address
-      return File.exist? address
+      File.exist? address
     end
 
     # aka directory exist ?
     def does_aka_directory_exists
-      return File.directory?("#{Dir.home}/.aka")
+      File.directory?("#{Dir.home}/.aka")
     end
 
     # check config file
@@ -1372,9 +1345,7 @@ module Aka
 
     # clean up
     def cleanup
-
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
@@ -1626,7 +1597,7 @@ module Aka
     end
 
     def print_helpful_statement total_aliases
-      puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
+      puts "\nA total of  #{total_aliases} aliases in this project #{Dir.pwd}"
       puts "\nUse 'aka -h' to see all the useful commands."
     end
 
@@ -1650,7 +1621,7 @@ end
 class String
 
   def pretty
-    return self.gsub("\s\t\r\f", ' ').squeeze(' ')
+    self.gsub("\s\t\r\f", ' ').squeeze(' ')
   end
 
   def is_i?
