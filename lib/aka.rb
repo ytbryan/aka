@@ -18,15 +18,32 @@ module Aka
         "c" => "clean",
         "h" => "help"
 
+    desc "import", "import a dot aka file into your system alias"
+    method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
+    def import the_name=""
+      if the_name == ""
+        array = get_all_aliases_from_proj_aka()
+        # array.each do |line|
+        #   line.gsub!("\'", "\"") #need to replace ' with "
+        #   line = line + " -n" #do not reload :)
+        #   system(line)
+        # end
+        repeated_system_call(array)
+      else
+        array = get_all_aliases_from_proj_aka(the_name)
+        # array.each do |line|
+        #   line.gsub!("\'", "\"") #need to replace ' with "
+        #   line = line + " -n" #do not reload :)
+        #   system(line)
+        # end
+        repeated_system_call(array)
+      end
+    end
+
     desc "sync", "sync project aliases with system aliases"
     def sync
       array = get_all_aliases_from_proj_aka()
-      array.each do |line|
-        line.gsub!("\'", "\"") #need to replace ' with "
-        line = line + " -n" #do not reload :)
-        puts line
-        system(line)
-      end
+      repeated_system_call(array)
     end
 
     desc "test", "test and show that this won't work"
@@ -44,7 +61,7 @@ module Aka
       result = add_with_group(parseARGS(args), options.group) if args
       FileUtils.touch("#{Dir.pwd}/.aka")
       add_func_to_proj(args)
-      reload_dot_file if result == true && !options.noreload
+      reload_dot_file if result == true && !options.no
     end
 
     #
@@ -75,29 +92,64 @@ module Aka
     #################
     # Export
     #################
+    # desc "export", "generate proj.aka file"
+    # method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
+    # method_option :name, :type => :string, :aliases => '-n', :desc => ''
+    # def export the_name
+    #   array = export_group_aliases(the_name)
+    #   if options.name?
+    #     new_proj_aka = "#{options.name}"+".aka"
+    #     FileUtils.touch(new_proj_aka)
+    #     File.open(new_proj_aka, 'w') { |file|
+    #       array.each do |line|
+    #         file.write(line)
+    #         file.write("\n")
+    #       end
+    #     }
+    #   else
+    #     if File.exist?('proj.aka')
+    #       if options.force?
+    #         File.open('proj.aka', 'w') { |file|
+    #           array.each do |line|
+    #             file.write(line)
+    #             file.write("\n")
+    #           end
+    #         }
+    #       else
+    #         puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
+    #       end
+    #     else
+    #       FileUtils.touch('proj.aka')
+    #       File.open('proj.aka', 'w') { |file|
+    #         array.each do |line|
+    #           file.write(line)
+    #           file.write("\n")
+    #         end
+    #       }
+    #     end
+    #   end
+    # end
+
     desc "export", "generate proj.aka file"
     method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
+    method_option :name, :type => :string, :aliases => '-n', :desc => ''
     def export the_name
       array = export_group_aliases(the_name)
-      if File.exist?('proj.aka')
-        if options.force?
-          File.open('proj.aka', 'w') { |file|
-            array.each do |line|
-              file.write(line)
-              file.write("\n")
-            end
-          }
-        else
-          puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
-        end
+      if options.name?
+        new_proj_aka = "#{options.name}"+".aka"
+        FileUtils.touch(new_proj_aka)
+        write_with_array_into(new_proj_aka, array)
       else
-        FileUtils.touch('proj.aka')
-        File.open('proj.aka', 'w') { |file|
-          array.each do |line|
-            file.write(line)
-            file.write("\n")
+        if File.exist?('proj.aka')
+          if options.force?
+            write_with_array_into('proj.aka', array)
+          else
+            puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
           end
-        }
+        else
+          FileUtils.touch('proj.aka')
+          write_with_array_into('proj.aka', array)
+        end
       end
     end
 
@@ -134,14 +186,18 @@ module Aka
               end
             }
 
-            puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
-            puts "\nUse 'aka -h' to see all the useful commands."
+            print_helpful_statement()
+            # puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
+            # puts "\nUse 'aka -h' to see all the useful commands."
           end
         else
-          puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
+          print_error_statement()
+          # puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
         end
       end
     end
+
+
 
     #################
     # GENERATE
@@ -289,22 +345,24 @@ module Aka
     desc "list", "list alias (short alias: l)"
     method_options :force => :boolean
     method_options :number => :boolean
+    method_option :group, :type => :boolean, :aliases => '-g', :desc => ''
     def list(args=nil)
       print_title("System Alias")
       if args != nil
-        showlast(options.number,args.to_i) #user input
+        showlast(options.number,args.to_i, options.group) #user input
       else
         value = readYML("#{Dir.home}/.aka/.config")["list"]
         if value.class == Fixnum
-          showlast(options.number,value.to_i)
+          showlast(options.number,value.to_i,options.group)
         else
           puts "List value is not defined in #{Dir.home}/.aka/.config"
-          showlast(options.number,50)
+          showlast(options.number,50,options.group)
         end
       end
 
-      puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
-      puts "\nUse 'aka -h' to see all the useful commands.\n\n"
+      print_all_helpful_statement
+      # puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
+      # puts "\nUse 'aka -h' to see all the useful commands.\n\n"
       reload_dot_file
     end
 
@@ -394,9 +452,8 @@ module Aka
 
     private
 
-    def get_all_aliases_from_proj_aka
+    def get_all_aliases_from_proj_aka str="proj.aka"
       array = []
-      str = "proj.aka"
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
@@ -410,7 +467,7 @@ module Aka
             group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
             # if group_name != nil && group_name.first == name
               containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-              array.push("aka g " + "#{answer.first}".red + "=#{containsCommand[1]}")
+              array.push("aka g " + "#{answer.first}" + "=#{containsCommand[1]}")
             # end
           end
         }
@@ -450,7 +507,17 @@ module Aka
       File.open(path, 'w') {|f| f.write theyml.to_yaml } #Store
     end
 
-    # write_with
+    def write_with_array_into path, array
+      File.open(path, 'w') { |file|
+        array.each do |line|
+          file.write(line)
+          file.write("\n")
+        end
+      }
+    end
+
+
+    # write_with + into dotfile
     def write_with array
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
 
@@ -461,7 +528,7 @@ module Aka
       }
     end
 
-    # write_with_newline
+    # write_with_newline + into dotfile
     def write_with_newline array
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
 
@@ -489,20 +556,23 @@ module Aka
 
     # reload_dot_file
     def reload_dot_file
-      if isOhMyZsh == true
-        system("exec zsh")
-      else
-        system("kill -SIGUSR1 #{Process.ppid}")
-      end
+
+      isOhMyZsh == true ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
+      # if isOhMyZsh == true
+      #   system("exec zsh")
+      # else
+      #   system("kill -SIGUSR1 #{Process.ppid}")
+      # end
     end
 
     # history write
     def historywrite
-      if isOhMyZsh == true
-        system("exec zsh")
-      else
-        system "kill -SIGUSR2 #{Process.ppid}"
-      end
+      isOhMyZsh == true ?  system("exec zsh") :  system("kill -SIGUSR2 #{Process.ppid}")
+      # if isOhMyZsh == true
+      #   system("exec zsh")
+      # else
+      #   system "kill -SIGUSR2 #{Process.ppid}"
+      # end
     end
 
     # unalias
@@ -615,11 +685,6 @@ module Aka
           content.gsub!(/\r\n?/, "\n")
           content_array = content.split("\n")
           content_array.each_with_index { |line, index|
-
-            # value = line.split(" ")
-            # containsCommand = line.split('=') #containsCommand[1]
-
-
             testline = line
             line = line.gsub("# =>", "-g")
             value = testline.split(" ")
@@ -712,13 +777,12 @@ module Aka
     # remove
     #
     def remove input
-
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array= content.split("\n")
         content_array.each_with_index { |line, index|
+          line = line.gsub("# =>", "-g")
           value = line.split(" ")
           if value.length > 1 && value.first == "alias"
             answer = value[1].split("=")
@@ -748,7 +812,6 @@ module Aka
         content_array.each_with_index { |line, index|
           if line == "source \"/home/ryan/.aka/autosource\""
               content_array.delete_at(index) && write_with_newline(content_array)
-              # puts "---> removed: source \"/home/ryan/.aka/autosource\""
               puts "Removed: ".red + "source \"/home/ryan/.aka/autosource\""
               return true
           end
@@ -761,9 +824,7 @@ module Aka
 
     # history
     def history
-
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["history"])
-
       if content = File.open(str).read
         puts ".bash_history is available"
         count=0
@@ -843,8 +904,6 @@ module Aka
     # check found
     def found? answer, argument, line
       if answer == argument
-        # puts line.red + " - aka add #{argument}"
-        # puts line.red
         puts "Exist:  ".green + " aka g #{argument}=#{line.split('=')[1]}"
         return true
       else
@@ -880,7 +939,6 @@ module Aka
               end
           end
         }
-
         return group_array.uniq.count
       end
     end
@@ -1059,7 +1117,10 @@ module Aka
 
     # write to location
     def write_to_location location, address
-      if aka_directory_exists?
+      # does_aka_directory_exists ? write(location, address) : puts ".aka not found.".red
+
+
+      if does_aka_directory_exists
         write(location, address)
       else
         puts ".aka not found.".red
@@ -1069,10 +1130,12 @@ module Aka
     # read location
     def read location
       answer = dot_location_exists?(location)
-      if answer == true && content = File.open(location).read
-        return content
-      end
-      return ""
+      answer == true && content = File.open(location).read ? content : ""
+
+      # if answer == true && content = File.open(location).read
+      #   return content
+      # end
+      # return ""
     end
 
     # dot location exist
@@ -1081,7 +1144,7 @@ module Aka
     end
 
     # aka directory exist ?
-    def aka_directory_exists?
+    def does_aka_directory_exists
       return File.directory?("#{Dir.home}/.aka")
     end
 
@@ -1120,13 +1183,10 @@ module Aka
           total_aliases.last(howmany).each_with_index do |line, index|
             splitted= line.split('=')
             puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-            # puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
-            # puts "#{total_aliases.count - howmany + index+1}. " + splitted[0] + "=" + splitted[1].red
           end
         else
           total_aliases.last(howmany).each_with_index do |line, index|
             splitted= line.split('=')
-            # puts "#{index+1}. " + splitted[0] + "=" + splitted[1].red
             puts "#{index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
           end
         end
@@ -1136,11 +1196,9 @@ module Aka
 
     def show_last_with_group(list_number=false, howmany=10, group)
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
-
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
-
         total_aliases = []
         content_array.each_with_index { |line, index|
           value = line.split(" ")
@@ -1154,23 +1212,17 @@ module Aka
             splitted= line.split('=')
             if list_number
               puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             else
               puts "aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             end
-            # puts "#{total_aliases.count - howmany + index+1}. " + splitted[0] + "=" + splitted[1].red
           end
         else
           total_aliases.last(howmany).each_with_index do |line, index|
             splitted= line.split('=')
-            # puts "#{index+1}. " + splitted[0] + "=" + splitted[1].red
             if list_number
               puts "#{index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "#{index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             else
               puts "aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             end
           end
         end
@@ -1179,7 +1231,7 @@ module Aka
     end
 
     # show last2 - ryan - remove number
-    def showlast(list_number=false,howmany=10)
+    def showlast(list_number=false,howmany=10, showGroup)
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
 
       if content = File.open(str).read
@@ -1200,23 +1252,18 @@ module Aka
             splitted= line.split('=')
             if list_number
               puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             else
               puts "aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
             end
-            # puts "#{total_aliases.count - howmany + index+1}. " + splitted[0] + "=" + splitted[1].red
           end
         else #if there is not enough alias
           total_aliases.last(howmany).each_with_index do |line, index|
             line = line.gsub("# =>", "-g")
             splitted= line.split('=')
-            # puts "#{index+1}. " + splitted[0] + "=" + splitted[1].red
             if list_number
               puts "#{index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "#{index+1}. aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             else
               puts "aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-              # puts "aka g " + splitted[0].split(" ")[1] + "=" + splitted[1].red
             end
           end
         end
@@ -1226,9 +1273,7 @@ module Aka
 
     # show usage
     def showUsage howmany=10, least=false
-
       str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["history"])
-
       value = reload_dot_file()
       #get all aliases
       if content = File.open(str).read
@@ -1567,12 +1612,38 @@ module Aka
     end
 
     def isOhMyZsh
-      if readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc"
-        return true
-      else
-        return false
+      readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc" ? true : false
+      # if readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc"
+      #   return true
+      # else
+      #   return false
+      # end
+    end
+
+
+    def print_error_statement
+      puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
+    end
+
+    def print_helpful_statement total_aliases
+      puts "\nA total of  #{answer_count} aliases in this project #{Dir.pwd}"
+      puts "\nUse 'aka -h' to see all the useful commands."
+    end
+
+    def repeated_system_call array
+      array.each do |line|
+        line.gsub!("\'", "\"") #need to replace ' with "
+        line = line + " -n" #do not reload :)
+        system(line)
       end
     end
+
+    def print_all_helpful_statement
+      puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
+      puts "\nUse 'aka -h' to see all the useful commands.\n\n"
+    end
+
+
   end
 end
 
