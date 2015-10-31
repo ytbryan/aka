@@ -18,51 +18,41 @@ module Aka
         "c" => "clean",
         "h" => "help"
 
-    desc "import", "import a dot aka file into your system alias"
+    desc "import", "import project alias into your system alias"
     method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
     def import the_name=""
       if the_name == ""
         array = get_all_aliases_from_proj_aka()
-        # array.each do |line|
-        #   line.gsub!("\'", "\"") #need to replace ' with "
-        #   line = line + " -n" #do not reload :)
-        #   system(line)
-        # end
         repeated_system_call(array)
       else
         array = get_all_aliases_from_proj_aka(the_name)
-        # array.each do |line|
-        #   line.gsub!("\'", "\"") #need to replace ' with "
-        #   line = line + " -n" #do not reload :)
-        #   system(line)
-        # end
         repeated_system_call(array)
       end
     end
 
-    desc "sync", "sync project aliases with system aliases"
-    def sync
-      array = get_all_aliases_from_proj_aka()
-      repeated_system_call(array)
-    end
+    # desc "sync", "sync project aliases with system aliases"
+    # def sync
+    #   array = get_all_aliases_from_proj_aka()
+    #   repeated_system_call(array)
+    # end
 
-    desc "test", "test and show that this won't work"
-    def test
-      # system("source ~/.bash_profile")
-      system("aka g test='echo something'")
-    end
+    # desc "test", "test and show that this won't work"
+    # def test
+    #   # system("source ~/.bash_profile")
+    #   system("aka g test='echo something'")
+    # end
 
     #
     # Func
     #
-    desc "func", "generate function"
-    def func args
-      #generate the file
-      result = add_with_group(parseARGS(args), options.group) if args
-      FileUtils.touch("#{Dir.pwd}/.aka")
-      add_func_to_proj(args)
-      reload_dot_file if result == true && !options.no
-    end
+    # desc "func", "generate function"
+    # def func args
+    #   #generate the file
+    #   result = add_with_group(parseARGS(args), options.group) if args
+    #   FileUtils.touch("#{Dir.pwd}/.aka")
+    #   add_func_to_proj(args)
+    #   reload_dot_file if result == true && !options.no
+    # end
 
     #
     # Groups
@@ -130,7 +120,7 @@ module Aka
     #   end
     # end
 
-    desc "export", "generate proj.aka file"
+    desc "export", "export system alias into project alias"
     method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
     method_option :name, :type => :string, :aliases => '-n', :desc => ''
     def export the_name
@@ -159,7 +149,6 @@ module Aka
     desc "proj", "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
     def proj
-      answer_count = 0
       if options.group? && File.exist?('proj.aka')
         print_title("Project Groups")
         list_all_groups_in_proj_aka()
@@ -171,20 +160,22 @@ module Aka
           if content = File.open('proj.aka').read
             content.gsub!(/\r\n?/, "\n")
             content_array = content.split("\n")
-            content_array.each_with_index { |line, index|
-              # testLine = line
-              line = line.gsub("# =>", "-g")
-              value = line.split(" ")
-              containsCommand = line.split('=') #containsCommand[1]
-              answer = value[1].split("=") #contains the alias
-              group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
+            answer_count = print_the_aliases(content_array)
 
-              if value.length > 1 && value.first == 'alias'
-                  containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-                  puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
-                answer_count+= 1
-              end
-            }
+            # content_array.each_with_index { |line, index|
+            #   # testLine = line
+            #   line = line.gsub("# =>", "-g")
+            #   value = line.split(" ")
+            #   containsCommand = line.split('=') #containsCommand[1]
+            #   answer = value[1].split("=") #contains the alias
+            #   group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
+            #
+            #   if value.length > 1 && value.first == 'alias'
+            #       containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+            #       puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
+            #     answer_count+= 1
+            #   end
+            # }
 
             print_helpful_statement(answer_count)
           end
@@ -280,7 +271,7 @@ module Aka
       if options.group
           if options.group != 'default'
             puts "Editing for the following alias - "
-            answer = ask "do you want to change the group from xxxx to xxxx?"
+            answer = ask "do you want to change the group from xxxx to #{options.group}?"
             change_group_name_with(options.group) if yes?
           else
             puts "TODO: The user did not enter a new alias group"
@@ -452,18 +443,7 @@ module Aka
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
-        content_array.each_with_index { |line, index|
-          testline = line
-          line = line.gsub("# =>", "-g")
-          value = testline.split(" ")
-          containsCommand = line.split('=') #containsCommand[1]
-          if value.length > 1 && value.first == "alias"
-            answer = value[1].split("=") #contains the alias
-            group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
-            containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-            array.push("aka g " + "#{answer.first}" + "=#{containsCommand[1]}")
-          end
-        }
+        array = print_the_aliases_return_array(content_array)
       end
       return array
     end
@@ -641,21 +621,23 @@ module Aka
         if content = File.open(str).read
           content.gsub!(/\r\n?/, "\n")
           content_array = content.split("\n")
-          content_array.each_with_index { |line, index|
-            testline = line
-            line = line.gsub("# =>", "-g")
-            value = testline.split(" ")
-            containsCommand = line.split('=') #containsCommand[1]
-            if value.length > 1 && value.first == "alias"
-              answer = value[1].split("=") #contains the alias
-              group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
-              if group_name != nil && group_name.first == name
-                containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-                puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
-                group_count += 1
-              end
-            end
-          }
+          group_count = print_the_aliases(content_array)
+
+          # content_array.each_with_index { |line, index|
+          #   testline = line
+          #   line = line.gsub("# =>", "-g")
+          #   value = testline.split(" ")
+          #   containsCommand = line.split('=') #containsCommand[1]
+          #   if value.length > 1 && value.first == "alias"
+          #     answer = value[1].split("=") #contains the alias
+          #     group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+          #     if group_name != nil && group_name.first == name
+          #       containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+          #       puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
+          #       group_count += 1
+          #     end
+          #   end
+          # }
 
           if group_count == 0
             puts "No alias found in default group"
@@ -671,22 +653,24 @@ module Aka
         if content = File.open(str).read
           content.gsub!(/\r\n?/, "\n")
           content_array = content.split("\n")
-          content_array.each_with_index { |line, index|
-            testline = line
-            line = line.gsub("# =>", "-g")
-            value = testline.split(" ")
-            containsCommand = line.split('=') #containsCommand[1]
+          group_count = print_the_aliases2(content_array, name)
 
-            if value.length > 1 && value.first == "alias"
-              answer = value[1].split("=") #contains the alias
-              group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
-              if group_name != nil && group_name.first == name
-                containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-                puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
-                group_count += 1
-              end
-            end
-          }
+          # content_array.each_with_index { |line, index|
+          #   testline = line
+          #   line = line.gsub("# =>", "-g")
+          #   value = testline.split(" ")
+          #   containsCommand = line.split('=') #containsCommand[1]
+          #
+          #   if value.length > 1 && value.first == "alias"
+          #     answer = value[1].split("=") #contains the alias
+          #     group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+          #     if group_name != nil && group_name.first == name
+          #       containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+          #       puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
+          #       group_count += 1
+          #     end
+          #   end
+          # }
         end
 
         if group_count == 0
@@ -705,19 +689,20 @@ module Aka
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
-        content_array.each_with_index { |line, index|
-          testline = line
-          line = line.gsub("# =>", "-g")
-          value = testline.split(" ")
-          containsCommand = line.split('=') #containsCommand[1]
-          if value.length > 1 && value.first == "alias"
-            answer = value[1].split("=") #contains the alias
-            group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
-            if group_name != nil && group_name.first == name
-              results.push(testline)
-            end
-          end
-        }
+        results = print_the_aliases_return_array2(content_array, name)
+        # content_array.each_with_index { |line, index|
+        #   testline = line
+        #   line = line.gsub("# =>", "-g")
+        #   value = testline.split(" ")
+        #   containsCommand = line.split('=') #containsCommand[1]
+        #   if value.length > 1 && value.first == "alias"
+        #     answer = value[1].split("=") #contains the alias
+        #     group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+        #     if group_name != nil && group_name.first == name
+        #       results.push(testline)
+        #     end
+        #   end
+        # }
       end
 
       return results
@@ -729,6 +714,7 @@ module Aka
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
+
         content_array.each_with_index { |line, index|
           line = line.gsub("# =>", "-g")
           value = line.split(" ")
@@ -1615,8 +1601,87 @@ module Aka
     end
 
 
-  end
-end
+
+    def print_the_aliases_return_array2 content_array, name
+      array = []
+      content_array.each_with_index { |line, index|
+        testline = line
+        line = line.gsub("# =>", "-g")
+        value = testline.split(" ")
+        containsCommand = line.split('=') #containsCommand[1]
+        if value.length > 1 && value.first == "alias"
+          answer = value[1].split("=") #contains the alias
+          group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+          if group_name != nil && group_name.first == name
+            array.push(testline)
+          end
+        end
+      }
+      return array
+    end
+
+    def print_the_aliases_return_array content_array
+      array = []
+      content_array.each_with_index { |line, index|
+        testline = line
+        line = line.gsub("# =>", "-g")
+        value = testline.split(" ")
+        containsCommand = line.split('=') #containsCommand[1]
+        if value.length > 1 && value.first == "alias"
+          answer = value[1].split("=") #contains the alias
+          group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+          containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+          array.push("aka g " + "#{answer.first}" + "=#{containsCommand[1]}")
+        end
+      }
+      return array
+    end
+
+
+    def print_the_aliases2 content_array, name
+      answer_count= 0
+      content_array.each_with_index { |line, index|
+        testline = line
+        line = line.gsub("# =>", "-g")
+        value = testline.split(" ")
+        containsCommand = line.split('=') #containsCommand[1]
+
+        if value.length > 1 && value.first == "alias"
+          answer = value[1].split("=") #contains the alias
+          group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
+          if group_name != nil && group_name.first == name
+            containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+            puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
+            answer_count += 1
+          end
+        end
+      }
+      return answer_count
+    end
+
+
+    def print_the_aliases content_array
+      answer_count= 0
+      content_array.each_with_index { |line, index|
+        # testLine = line
+        line = line.gsub("# =>", "-g")
+        value = line.split(" ")
+        containsCommand = line.split('=') #containsCommand[1]
+        answer = value[1].split("=") #contains the alias
+        group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
+
+        if value.length > 1 && value.first == 'alias'
+            containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+            puts "aka g " + "#{answer.first}".red + "=#{containsCommand[1]}"
+          answer_count+= 1
+        end
+      }
+      return answer_count
+    end
+
+
+  end #that's all
+end #last end
 
 class String
 

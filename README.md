@@ -4,15 +4,17 @@
 
 [![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
 
+aka loves and works with alias.
+
 aka generate/edit/destroy/find permanent aliases with a single command.
 
 aka requires ruby and is built for bash and zsh users.
 
 | features                  | alias                        | aka                  |
 | :-----------------------: |:----------------------------:| :-------------------:|
-| Generate alias                 |  ![Yes](assets/yes.png)        | ![Yes](assets/yes.png) |
-| Destroy alias              |  ![Yes](assets/yes.png)        | ![Yes](assets/yes.png) |
-| Find and show alias       |  ![Yes](assets/yes.png)        | ![Yes](assets/yes.png) |
+| Generate alias            |  ![Yes](assets/yes.png)      | ![Yes](assets/yes.png) |
+| Destroy alias             |  ![Yes](assets/yes.png)      | ![Yes](assets/yes.png) |
+| Find and show alias       |  ![Yes](assets/yes.png)      | ![Yes](assets/yes.png) |
 | Show last few added alias |  -                           | ![Yes](assets/yes.png) |
 | Edit alias                |  -                           | ![Yes](assets/yes.png) |
 | Count alias               |  -                           | ![Yes](assets/yes.png) |

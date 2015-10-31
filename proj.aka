@@ -1,4 +1,7 @@
-alias gg='build;install;' # => aka
-alias build='gem build aka.gemspec' # => aka
-alias install='gem install aka2-0.1.10.gem' # => aka
-alias test='rake test' # => aka
+alias resource='rails g scaffold' # => rails
+alias contr='rails g controller' # => rails
+alias mod='rails g model' # => rails
+alias migrate='rake db:create; rake db:migrate;' # => rails
+alias unlock='rm Gemfile.lock' # => rails
+alias bundleup='bundle install' # => rails
+alias server='rails server' # => rails
