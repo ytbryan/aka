@@ -148,6 +148,8 @@ module Aka
     #################
     desc "proj", "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
+    method_option :import, :type => :string, :aliases => '-i'
+    method_option :export, :type => :string, :aliases => '-e'
     def proj
       if options.group? && File.exist?('proj.aka')
         print_title("Project Groups")
