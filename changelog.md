@@ -1,6 +1,7 @@
 ## v0.1.10
-* Added [aka export] to export alias groups into a project directory
-* Added [aka export --name ] to generate specific aka file
+* Added [aka proj --export] to export alias groups into a project directory
+* Added [aka proj --export ] to generate specific aka file
+* Added [aka proj --import ] to generate specific aka file
 * Added [aka proj] to show all the aliases for current project directory
 * Added [aka groups] to list all groups
 * Edited test_aka.rb
