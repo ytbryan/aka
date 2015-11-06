@@ -5,18 +5,22 @@ require 'shellwords'
 require 'fileutils'
 
 module Aka
+  AKA_PATH="#{Dir.home}/.aka"
+  CONFIG_PATH="#{Dir.home}/.aka/.config"
+
   class Base < Thor
     check_unknown_options!
     package_name "aka"
     default_task :list
-    map "g" => "generate",
-        "d" => "destroy",
-        "f" => "find",
-        "u" => "usage",
-        "l" => "list",
-        "e" => "edit",
-        "c" => "clean",
-        "h" => "help"
+    map "g" => :generate,
+        "d" => :destroy,
+        "f" => :find,
+        "u" => :usage,
+        "l" => :list,
+        "e" => :edit,
+        "c" => :clean,
+        "h" => :help,
+        "v" => :version
 
     desc "import", "import project alias into your system alias"
     method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
@@ -44,7 +48,7 @@ module Aka
     # aka where
     desc "where", "locate your dotfile"
     def where
-      puts readYML("#{Dir.home}/.aka/.config")["dotfile"]
+      puts readYML("#{CONFIG_PATH}")["dotfile"]
     end
 
     #
@@ -64,7 +68,7 @@ module Aka
           if options.force?
             write_with_array_into('proj.aka', array)
           else
-            puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
+            exist_statement
           end
         else
           FileUtils.touch('proj.aka')
@@ -85,7 +89,7 @@ module Aka
         print_title("Project Groups")
         list_all_groups_in_proj_aka()
       elsif options.group? && !File.exist?('proj.aka')
-        puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
+        error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
       else
         print_title("Project Alias")
         if File.exist?('proj.aka')
@@ -96,7 +100,7 @@ module Aka
             print_helpful_statement(answer_count)
           end
         else
-          print_error_statement()
+          error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
         end
       end
     end
@@ -133,20 +137,30 @@ module Aka
       end
     end
 
+
+    #
+    # show version
+    #
+    desc "version", "show version"
+    def version
+      puts Aka::VERSION
+    end
+
+
     #
     # first step: set config file
     #
     desc "setup", "Gem - Setup aka"
     method_options :reset => :boolean
     def setup
-      configDir = "#{Dir.home}/.aka"
+      configDir = "#{AKA_PATH}"
       if options.reset? && File.exist?("#{configDir}")
         remove_autosource
         FileUtils.rm_r("#{configDir}")
         puts "#{configDir} is removed"
       end
 
-      if File.exist?("#{configDir}/.config")
+      if File.exist?("#{CONFIG_PATH}")
         puts ".aka config file is exist in #{configDir}"
         puts "Please run [aka setup --reset] to remove aka file and setup again"
       else
@@ -210,7 +224,7 @@ module Aka
               reload_dot_file() if !options.noreload
             end
           else
-            puts "Alias '#{args}' cannot be found".red
+            error_statement("Alias '#{args}' cannot be found.")
           end
         else
           truth, _alias, command = search_alias_return_alias_tokens(args)
@@ -231,7 +245,7 @@ module Aka
               end
             end
           else
-            puts "Alias '#{args}' cannot be found".red
+            error_statement("Alias '#{args}' cannot be found")
           end
         end
       end #if args
@@ -249,11 +263,11 @@ module Aka
       if args != nil
         showlast(options.number,args.to_i, options.group) #user input
       else
-        value = readYML("#{Dir.home}/.aka/.config")["list"]
+        value = readYML("#{CONFIG_PATH}")["list"]
         if value.class == Fixnum
           showlast(options.number,value.to_i,options.group)
         else
-          puts "List value is not defined in #{Dir.home}/.aka/.config"
+          puts "List value is not defined in #{CONFIG_PATH}"
           showlast(options.number,50,options.group)
         end
       end
@@ -265,8 +279,6 @@ module Aka
     # USAGE - ryan - remove numbering in front
     #
     desc "usage [number]", "show commands usage based on history"
-    # method_options :least, :type => :boolean, :aliases => '-l', :desc => 'show the least used commands'
-    # method_options :clear, :type => :boolean, :aliases => '-c', :desc => 'clear the dot history file'
     def usage(args=nil)
       if args
         if options.least
@@ -276,10 +288,10 @@ module Aka
         end
       else
         if options.least
-          value = readYML("#{Dir.home}/.aka/.config")["usage"]
+          value = readYML("#{CONFIG_PATH}")["usage"]
           showlast(value.to_i, true) #this is unsafe
         else
-          value = readYML("#{Dir.home}/.aka/.config")["usage"]
+          value = readYML("#{CONFIG_PATH}")["usage"]
           showlast(value.to_i) #this is unsafe
         end
       end
@@ -360,20 +372,20 @@ module Aka
 
     # set path
     def setPath(path, value)
-      data = readYML("#{Dir.home}/.aka/.config")
+      data = readYML("#{CONFIG_PATH}")
       if data.has_key?(value) == true
         old_path = data[value]
         data[value] = path
-        writeYML("#{Dir.home}/.aka/.config", data)
+        writeYML("#{CONFIG_PATH}", data)
         puts "#{value} -> #{path}"
       else
-        puts "Error: ".red + "--#{value} does not exist in #{Dir.home}/.aka/.config "
+        error_statement("--#{value} does not exist in #{CONFIG_PATH} ")
       end
     end
 
     # reload
     def reload
-      system "source #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
+      system "source #{readYML("#{CONFIG_PATH}")["dotfile"]}"
     end
 
     # read YML
@@ -381,7 +393,7 @@ module Aka
       if File.exists? path
         return YAML.load_file(path)
       else
-        puts "#{Dir.home}/.aka/.config does not exist. Type `aka setup` to setup the config file".red
+        error_statement("#{CONFIG_PATH} does not exist. Type `aka setup` to setup the config file")
       end
     end
 
@@ -402,7 +414,7 @@ module Aka
 
     # write_with + into dotfile
     def write_with array
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'w') { |file|
         array.each do |line|
           file.write(line)
@@ -412,7 +424,7 @@ module Aka
 
     # write_with_newline + into dotfile
     def write_with_newline array
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'w') { |file|
         array.each do |line|
           file.write(line + "\n")
@@ -476,7 +488,7 @@ module Aka
         group_name = "# => #{name_of_group}"
         full_command = "alias #{array.first}='#{array[1]}' #{group_name}".gsub("\n","") #remove new line in command
         print_out_command = "aka g #{array.first}='#{array[1]}'"
-        str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+        str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
         File.open(str, 'a') { |file| file.write("\n" +full_command) }
         puts "Created: ".green +  "#{print_out_command} " + "in #{name_of_group} group."
         return true
@@ -492,7 +504,7 @@ module Aka
         array = input.split("=")
         full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
         print_out_command = "aka g #{array.first}='#{array[1]}'"
-        str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+        str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
         File.open(str, 'a') { |file| file.write("\n" +full_command) }
         puts "Created: ".green +  "#{print_out_command}"
         return true
@@ -515,7 +527,7 @@ module Aka
       group_count = 0
       if name == "group"
         name = "default"
-        str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+        str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
         if content = File.open(str).read
           content.gsub!(/\r\n?/, "\n")
           content_array = content.split("\n")
@@ -525,13 +537,13 @@ module Aka
             puts "No alias found in default group"
           else
             puts ""
-            puts "Exist: ".green + "A total of #{group_count} aliases in default group."
+            exist_statement("A total of #{group_count} aliases in default group.")
             puts ""
           end
         end
       else
 
-        str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+        str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
         if content = File.open(str).read
           content.gsub!(/\r\n?/, "\n")
           content_array = content.split("\n")
@@ -542,14 +554,14 @@ module Aka
           puts "No alias found in #{name} group"
         else
           puts ""
-          puts "Exist: ".green + "A total of #{group_count} aliases in #{name} group."
+          exist_statement("A total of #{group_count} aliases in #{name} group.")
           puts ""
         end
       end
     end
 
     def export_group_aliases name
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       results = []
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
@@ -561,7 +573,7 @@ module Aka
 
     # show alias
     def search_alias_return_alias_tokens argument
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
@@ -592,7 +604,7 @@ module Aka
     # remove
     #
     def remove input
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array= content.split("\n")
@@ -619,7 +631,7 @@ module Aka
 
     # remove autosource in dotfile
     def remove_autosource
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array= content.split("\n")
@@ -631,14 +643,14 @@ module Aka
           end
         }
       else
-        puts "Error: ".red + "autosource cannot be found in dotfile."
+        error_statement("autosource cannot be found in dotfile.")
         return false
       end
     end
 
     # history
     def history
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["history"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
       if content = File.open(str).read
         puts ".bash_history is available"
         count=0
@@ -653,7 +665,7 @@ module Aka
         }
         puts "There are #{count} lines of history."
       else
-        puts ".bash_history is not available".red
+        error_statement(".bash_history is not available")
       end
     end
 
@@ -669,7 +681,7 @@ module Aka
             end
           }
         else
-          puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
+          exist_statement
         end
       else
         FileUtils.touch('proj.aka')
@@ -693,7 +705,7 @@ module Aka
             end
           }
         else
-          puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
+          exist_statement
         end
       else
         FileUtils.touch('proj.aka')
@@ -706,19 +718,10 @@ module Aka
       end
     end
 
-
-    # check version
-    def version
-      puts ""
-      puts "aka #{program(:version)} - #{program(:last_update)}"
-      puts "#{program(:author)} - #{program(:contact)}"
-      puts "https://github.com/ytbryan/aka"
-    end
-
     # check found
     def found? answer, argument, line
       if answer == argument
-        puts "Exist:  ".green + " aka g #{argument}=#{line.split('=')[1]}"
+        exist_statement(" aka g #{argument}=#{line.split('=')[1]}")
         return true
       else
         return false
@@ -727,19 +730,19 @@ module Aka
 
     def edit_alias_command newcommand, this_alias
       puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
-      return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{Dir.home}/.aka/.config")["dotfile"] )
+      return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
     end
 
     # edit alias
     def edit_alias_name newalias, thiscommand
       puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
-      return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{Dir.home}/.aka/.config")["dotfile"] )
+      return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
     end
 
     def count_groups
       group_counts = 0
       group_array = []
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array= content.split("\n")
@@ -758,7 +761,7 @@ module Aka
     # count function
     def count_function
       function_count = 0
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array= content.split("\n")
@@ -776,7 +779,7 @@ module Aka
     #count export
     def count_export
       export_count = 0
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array= content.split("\n")
@@ -796,7 +799,7 @@ module Aka
     def count
       alias_count = 0
 
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
 
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
@@ -885,32 +888,32 @@ module Aka
 
     # setup_autosource by ryan - create source file
     def setup_autosource
-      configDir = "#{Dir.home}/.aka"
+      configDir = "#{AKA_PATH}"
 
-      if File.exist?("#{configDir}/.config")
+      if File.exist?("#{CONFIG_PATH}")
         out_file = File.new("#{configDir}/autosource", "w")
         out_file.puts("export HISTSIZE=10000")
         out_file.puts("sigusr2() { unalias $1;}")
-        out_file.puts("sigusr1() { source #{readYML("#{configDir}/.config")["dotfile"]}; history -a; echo 'reloaded dot file'; }")
+        out_file.puts("sigusr1() { source #{readYML("#{CONFIG_PATH}")["dotfile"]}; history -a; echo 'reloaded dot file'; }")
         out_file.puts("trap sigusr1 SIGUSR1")
         out_file.puts("trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2")
         out_file.close
         autosource = "\nsource \"#{configDir}/autosource\""
-        append(autosource, readYML("#{configDir}/.config")['profile'])
+        append(autosource, readYML("#{CONFIG_PATH}")['profile'])
         puts "Done. Please restart this shell.".red
       else
-        puts "Directory #{configDir}/.config doesn't exist"
+        puts "Directory #{CONFIG_PATH} doesn't exist"
       end
     end
 
     # create and setup config file
     def setup_config
-      configDir = "#{Dir.home}/.aka"
-      if File.exist?("#{configDir}/.config")
-        puts "Directory #{configDir}/.config exist"
+      configDir = "#{AKA_PATH}"
+      if File.exist?("#{CONFIG_PATH}")
+        puts "Directory #{CONFIG_PATH} exist"
       else
         FileUtils::mkdir_p("#{configDir}")
-        out_file = File.new("#{configDir}/.config", "w")
+        out_file = File.new("#{CONFIG_PATH}", "w")
         out_file.puts("---")
         out_file.puts("dotfile: \"/home/user/.bashrc\"")
         out_file.puts("history: \"/home/user/.bash_history\"")
@@ -926,11 +929,10 @@ module Aka
 
     # write to location
     def write_to_location location, address
-      # does_aka_directory_exists ? write(location, address) : puts ".aka not found.".red
       if does_aka_directory_exists
         write(location, address)
       else
-        puts ".aka not found.".red
+        error_statement(".aka not found.")
       end
     end
 
@@ -947,20 +949,21 @@ module Aka
 
     # aka directory exist ?
     def does_aka_directory_exists
-      File.directory?("#{Dir.home}/.aka")
+      # File.directory?("#{AKA_PATH}")
+      File.directory?("#{AKA_PATH}")
     end
 
     # check config file
     def is_config_file_present? str
       path =  "#{Dir.home}/.bash_profile"
       if str == ""
-        puts "Error: ".red + "Type `aka init --dotfile #{path}` to set the path to your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash."
-        exit()
+        error_statement("Type `aka init --dotfile #{path}` to set the path to your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
+        exit
       end
 
       if !File.exists?(str)
-        puts "Error: ".red + "Type `aka init --dotfile #{path}` to set the path of your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash."
-        exit()
+        error_statement("Type `aka init --dotfile #{path}` to set the path of your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
+        exit
       end
 
       return str
@@ -968,7 +971,7 @@ module Aka
 
     # show last
     def showlast_old howmany=10
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
@@ -997,7 +1000,7 @@ module Aka
     end
 
     def show_last_with_group(list_number=false, howmany=10, group)
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
@@ -1034,7 +1037,7 @@ module Aka
 
     # show last2 - ryan - remove number
     def showlast(list_number=false,howmany=10, showGroup)
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
 
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
@@ -1075,7 +1078,7 @@ module Aka
 
     # show usage
     def showUsage howmany=10, least=false
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["history"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
       value = reload_dot_file()
       #get all aliases
       if content = File.open(str).read
@@ -1141,7 +1144,7 @@ module Aka
                 name_array.count = #{sorted_name_array.count}. Please check your .bash_history.".pretty
         end
       end
-      puts "There's a total of #{array.size} lines in #{readYML("#{Dir.home}/.aka/.config")["history"]}."
+      puts "There's a total of #{array.size} lines in #{readYML("#{CONFIG_PATH}")["history"]}."
     end
 
     # sort
@@ -1174,7 +1177,7 @@ module Aka
 
     # clean up
     def cleanup
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
         content_array = content.split("\n")
@@ -1291,7 +1294,7 @@ module Aka
 
 
     def list_all_groups
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["dotfile"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       group_array = []
       if content=File.open(str).read
         content.gsub!(/\r\n?/, "\n")
@@ -1311,7 +1314,7 @@ module Aka
         puts group_array.uniq
 
         puts ""
-        puts "A total of #{group_array.uniq.count} groups from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
+        puts "A total of #{group_array.uniq.count} groups from #{readYML("#{CONFIG_PATH}")["dotfile"]}"
         puts ""
 
       end
@@ -1330,7 +1333,7 @@ module Aka
     end
 
     def find_last_command
-      str = is_config_file_present?(readYML("#{Dir.home}/.aka/.config")["history"])
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
       #i think if you do history -w, you can retrieve the latest command
       if content = File.open(str).read
         count=0
@@ -1349,7 +1352,7 @@ module Aka
     end
 
     def showConfig
-      thing = YAML.load_file("#{Dir.home}/.aka/.config")
+      thing = YAML.load_file("#{CONFIG_PATH}")
       puts ""
       thing.each do |company,details|
         puts "#{company} -> " + "#{details}".red
@@ -1378,28 +1381,28 @@ module Aka
       setPath("#{Dir.home}/.zshrc","dotfile")
       setPath("#{Dir.home}/.zsh_history","history")
       setPath("#{Dir.home}/.zshrc","profile")
-      setPath("#{Dir.home}/.aka","home")
+      setPath("#{AKA_PATH}","home")
     end
 
     def setBASHRC2 #ryan - set the right dotfile and profile
       setPath("#{Dir.home}/.bashrc","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("#{Dir.home}/.bashrc","profile")
-      setPath("#{Dir.home}/.aka","home")
+      setPath("#{AKA_PATH}","home")
     end
 
     def setBASH2 #ryan - set the right dotfile and profile
       setPath("#{Dir.home}/.bash_profile","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("/etc/profile","profile")
-      setPath("#{Dir.home}/.aka","home")
+      setPath("#{AKA_PATH}","home")
     end
 
     def setPROFILE
       setPath("#{Dir.home}/.profile","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("/etc/profile","profile")
-      setPath("#{Dir.home}/.aka","home")
+      setPath("#{AKA_PATH}","home")
     end
 
     # def get_password
@@ -1407,12 +1410,7 @@ module Aka
     # end
 
     def isOhMyZsh
-      readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc" ? true : false
-    end
-
-
-    def print_error_statement
-      puts "Error: ".red + "The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file"
+      readYML("#{CONFIG_PATH}")["dotfile"] == "#{Dir.home}/.zshrc" ? true : false
     end
 
     def print_helpful_statement total_aliases
@@ -1429,11 +1427,17 @@ module Aka
     end
 
     def print_all_helpful_statement
-      puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
+      puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{CONFIG_PATH}")["dotfile"]}"
       puts "\nUse 'aka -h' to see all the useful commands.\n\n"
     end
 
+    def error_statement(statement)
+      puts "Error: ".red + statement
+    end
 
+    def exist_statement
+      puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
+    end
 
     def print_the_aliases_return_array2 content_array, name
       array = []
