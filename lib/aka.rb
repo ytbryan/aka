@@ -87,27 +87,36 @@ module Aka
     #################
     desc :proj, "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
-    method_option :load, :type => :string, :aliases => '-i'
+    method_option :load, :type => :string, :aliases => '-i' #export
     method_option :save, :type => :string, :aliases => '-e'
+    method_option :force, :type => :boolean, :aliases => '-f'
+
     def proj
-      if options.group? && File.exist?('proj.aka')
-        print_title("Project Groups")
-        list_all_groups_in_proj_aka()
-      elsif options.group? && !File.exist?('proj.aka')
-        error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
+      if options.load
+        export(options.load, options.force)
+      elsif options.save
+        import(options.save)
       else
-        print_title("Project Alias")
-        if File.exist?('proj.aka')
-          if content = File.open('proj.aka').read
-            content.gsub!(/\r\n?/, "\n")
-            content_array = content.split("\n")
-            answer_count = print_the_aliases(content_array)
-            print_helpful_statement(answer_count)
-          end
-        else
+        if options.group? && File.exist?('proj.aka')
+          print_title("Project Groups")
+          list_all_groups_in_proj_aka()
+        elsif options.group? && !File.exist?('proj.aka')
           error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
+        else
+          print_title("Project Alias")
+          if File.exist?('proj.aka')
+            if content = File.open('proj.aka').read
+              content.gsub!(/\r\n?/, "\n")
+              content_array = content.split("\n")
+              answer_count = print_the_aliases(content_array)
+              print_helpful_statement(answer_count)
+            end
+          else
+            error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
+          end
         end
-      end
+      end #end of when
+
     end
 
     #################
@@ -364,6 +373,39 @@ module Aka
     #
 
     private
+
+
+    def import(the_name)
+      if the_name == ""
+        array = get_all_aliases_from_proj_aka()
+        repeated_system_call(array)
+      else
+        array = get_all_aliases_from_proj_aka(the_name)
+        repeated_system_call(array)
+      end
+    end
+
+
+    def export(the_name, force)
+      array = export_group_aliases(the_name)
+      if options.name?
+        new_proj_aka = "#{options.name}"+".aka"
+        FileUtils.touch(new_proj_aka)
+        write_with_array_into(new_proj_aka, array)
+      else
+        if File.exist?('proj.aka')
+          if force
+            write_with_array_into('proj.aka', array)
+          else
+            exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
+          end
+        else
+          FileUtils.touch('proj.aka')
+          write_with_array_into('proj.aka', array)
+        end
+      end
+    end
+
 
     def get_all_aliases_from_proj_aka str="proj.aka"
       array = []
