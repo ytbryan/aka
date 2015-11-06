@@ -120,10 +120,10 @@ module Aka
     method_option :empty, :type => :boolean, :aliases => '-e', :desc => 'do not print anything'
     def generate args
       result = false
-      if options.last?
-        result = add_with_group(add_last_command(parseARGS(args))) if args
+      if options.last? && args
+        result = add_with_group(add_last_command(parseARGS(args)))
       else
-        result = add_with_group(parseARGS(args), options.group) if args
+        result = add_with_group(parseARGS(args), options.group)
       end
       reload_dot_file if result == true && !options.no
     end
@@ -286,10 +286,10 @@ module Aka
     desc "usage [number]", "show commands usage based on history"
     def usage(args=nil)
       if args
-        if options.least
-          showUsage(args.to_i, true) if args
+        if options.least && args
+          showUsage(args.to_i, true)
         else
-          showUsage(args.to_i) if args
+          showUsage(args.to_i)
         end
       else
         if options.least
