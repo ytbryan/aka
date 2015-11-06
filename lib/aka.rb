@@ -66,10 +66,10 @@ module Aka
     #
     # Install
     #
-    desc "install", "This will run the install script for git, rbenv, latest ruby"
-    def install
-      system("~/.aka/install.sh")
-    end
+    # desc "install", "This will run the install script for git, rbenv, latest ruby"
+    # def install
+    #   system("~/.aka/install.sh")
+    # end
 
     #
     # Where is your dotfile

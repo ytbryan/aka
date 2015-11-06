@@ -5,7 +5,7 @@
 * Added [aka proj] to show all the aliases for current project directory
 * Added [aka groups] to list all groups
 * Edited test_aka.rb
-* Added .profile as setup options. Thanks
+* Added .profile as setup options. Thanks fgperianez
 * Remove some dependencies and set required ruby back to 2.0.0.
 * Change default list to 20 aliases
 * Start using aka in your projects :)
