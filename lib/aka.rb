@@ -7,7 +7,11 @@ require 'fileutils'
 module Aka
   AKA_PATH="#{Dir.home}/.aka"
   CONFIG_PATH="#{Dir.home}/.aka/.config"
-
+  BASH_PROFILE_PATH="#{Dir.home}/.bash_profile"
+  PROFILE_PATH="#{Dir.home}/.profile"
+  BASHRC_PATH="#{Dir.home}/.bashrc"
+  ZSHRC_PATH="#{Dir.home}/.zshrc"
+  
   class Base < Thor
     check_unknown_options!
     package_name "aka"
@@ -153,7 +157,7 @@ module Aka
     desc "setup", "Gem - Setup aka"
     method_options :reset => :boolean
     def setup
-      configDir = "#{AKA_PATH}"
+
       if options.reset? && File.exist?("#{configDir}")
         remove_autosource
         FileUtils.rm_r("#{configDir}")
@@ -819,16 +823,16 @@ module Aka
     def setup_aka
       userBash = []
       # 1. check for each type of file without setting anything.
-      if File.exist?("#{Dir.home}/.zshrc") #if zshrc exist
+      if File.exist?("#{ZSHRC_PATH}") #if zshrc exist
         userBash.push(".zshrc")
       end
-      if File.exist?("#{Dir.home}/.bashrc") #if bashrc exist
+      if File.exist?("#{BASHRC_PATH}") #if bashrc exist
         userBash.push(".bashrc")
       end
-      if File.exist?("#{Dir.home}/.bash_profile") #if bash_profile exist
+      if File.exist?("#{BASH_PROFILE_PATH}") #if bash_profile exist
         userBash.push(".bash_profile")
       end
-      if File.exist?("#{Dir.home}/.profile") #if .profile exist
+      if File.exist?("#{PROFILE_PATH}") #if .profile exist
         userBash.push(".profile")
       end
 
@@ -861,11 +865,11 @@ module Aka
         end
       end #if userBash > 1
 
-        # if File.exist?("#{Dir.home}/.zshrc") #if zshec exist
+        # if File.exist?("#{ZSHRC_PATH}") #if zshec exist
         #   setZSHRC2
-        # elsif File.exist?("#{Dir.home}/.bashrc") #if bashrc exist
+        # elsif File.exist?("#{BASHRC_PATH}") #if bashrc exist
         #   setBASHRC2
-        # elsif File.exist?("#{Dir.home}/.bash_profile") #if bash_profile exist
+        # elsif File.exist?("#{BASH_PROFILE_PATH}") #if bash_profile exist
         #   setBASH2
         # else
         #   puts "Aka2 only supports zshrc, bashrc and bash_profile"
@@ -888,7 +892,7 @@ module Aka
 
     # setup_autosource by ryan - create source file
     def setup_autosource
-      configDir = "#{AKA_PATH}"
+
 
       if File.exist?("#{CONFIG_PATH}")
         out_file = File.new("#{configDir}/autosource", "w")
@@ -908,7 +912,7 @@ module Aka
 
     # create and setup config file
     def setup_config
-      configDir = "#{AKA_PATH}"
+
       if File.exist?("#{CONFIG_PATH}")
         puts "Directory #{CONFIG_PATH} exist"
       else
@@ -955,7 +959,7 @@ module Aka
 
     # check config file
     def is_config_file_present? str
-      path =  "#{Dir.home}/.bash_profile"
+      path =  "#{BASH_PROFILE_PATH}"
       if str == ""
         error_statement("Type `aka init --dotfile #{path}` to set the path to your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
         exit
@@ -1360,46 +1364,46 @@ module Aka
     end
 
     def setZSHRC
-      setPath("#{Dir.home}/.zshrc","dotfile")
+      setPath("#{ZSHRC_PATH}","dotfile")
       setPath("#{Dir.home}/.zsh_history","history")
       setPath("/etc/zprofile","profile")
     end
 
     def setBASHRC
-      setPath("#{Dir.home}/.bashrc","dotfile")
+      setPath("#{BASHRC_PATH}","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("/etc/profile","profile")
     end
 
     def setBASH
-      setPath("#{Dir.home}/.bash_profile","dotfile")
+      setPath("#{BASH_PROFILE_PATH}","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("/etc/profile","profile")
     end
 
     def setZSHRC2 #ryan - set the right dotfile and profile
-      setPath("#{Dir.home}/.zshrc","dotfile")
+      setPath("#{ZSHRC_PATH}","dotfile")
       setPath("#{Dir.home}/.zsh_history","history")
-      setPath("#{Dir.home}/.zshrc","profile")
+      setPath("#{ZSHRC_PATH}","profile")
       setPath("#{AKA_PATH}","home")
     end
 
     def setBASHRC2 #ryan - set the right dotfile and profile
-      setPath("#{Dir.home}/.bashrc","dotfile")
+      setPath("#{BASHRC_PATH}","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
-      setPath("#{Dir.home}/.bashrc","profile")
+      setPath("#{BASHRC_PATH}","profile")
       setPath("#{AKA_PATH}","home")
     end
 
     def setBASH2 #ryan - set the right dotfile and profile
-      setPath("#{Dir.home}/.bash_profile","dotfile")
+      setPath("#{BASH_PROFILE_PATH}","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("/etc/profile","profile")
       setPath("#{AKA_PATH}","home")
     end
 
     def setPROFILE
-      setPath("#{Dir.home}/.profile","dotfile")
+      setPath("#{PROFILE_PATH}","dotfile")
       setPath("#{Dir.home}/.bash_history","history")
       setPath("/etc/profile","profile")
       setPath("#{AKA_PATH}","home")
@@ -1410,7 +1414,7 @@ module Aka
     # end
 
     def isOhMyZsh
-      readYML("#{CONFIG_PATH}")["dotfile"] == "#{Dir.home}/.zshrc" ? true : false
+      readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? true : false
     end
 
     def print_helpful_statement total_aliases
