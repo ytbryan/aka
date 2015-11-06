@@ -5,6 +5,7 @@ require 'shellwords'
 require 'fileutils'
 
 module Aka
+
   AKA_PATH="#{Dir.home}/.aka"
   CONFIG_PATH="#{Dir.home}/.aka/.config"
   BASH_PROFILE_PATH="#{Dir.home}/.bash_profile"
@@ -72,7 +73,7 @@ module Aka
           if options.force?
             write_with_array_into('proj.aka', array)
           else
-            exist_statement
+            exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
           end
         else
           FileUtils.touch('proj.aka')
@@ -685,7 +686,7 @@ module Aka
             end
           }
         else
-          exist_statement
+          exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
         end
       else
         FileUtils.touch('proj.aka')
@@ -709,7 +710,7 @@ module Aka
             end
           }
         else
-          exist_statement
+          exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
         end
       else
         FileUtils.touch('proj.aka')
