@@ -68,7 +68,7 @@ module Aka
     # aka where
     desc "where", "locate your dotfile"
     def where
-      puts readYML("#{Dir.pwd}/.aka/.config")["dotfile"]
+      puts readYML("#{Dir.home}/.aka/.config")["dotfile"]
     end
 
     #
