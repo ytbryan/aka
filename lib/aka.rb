@@ -30,30 +30,6 @@ module Aka
       end
     end
 
-    # desc "sync", "sync project aliases with system aliases"
-    # def sync
-    #   array = get_all_aliases_from_proj_aka()
-    #   repeated_system_call(array)
-    # end
-
-    # desc "test", "test and show that this won't work"
-    # def test
-    #   # system("source ~/.bash_profile")
-    #   system("aka g test='echo something'")
-    # end
-
-    #
-    # Func
-    #
-    # desc "func", "generate function"
-    # def func args
-    #   #generate the file
-    #   result = add_with_group(parseARGS(args), options.group) if args
-    #   FileUtils.touch("#{Dir.pwd}/.aka")
-    #   add_func_to_proj(args)
-    #   reload_dot_file if result == true && !options.no
-    # end
-
     #
     # Groups
     #
@@ -64,19 +40,11 @@ module Aka
     end
 
     #
-    # Install
-    #
-    # desc "install", "This will run the install script for git, rbenv, latest ruby"
-    # def install
-    #   system("~/.aka/install.sh")
-    # end
-
-    #
     # Where is your dotfile
     # aka where
     desc "where", "locate your dotfile"
     def where
-      puts readYML("#{Dir.pwd}/.aka/.config")["dotfile"]
+      puts readYML("#{Dir.home}/.aka/.config")["dotfile"]
     end
 
     #
@@ -844,8 +812,6 @@ module Aka
       end
     end
 
-
-
     # setup_aka by ryan - set value in config file
     def setup_aka
       userBash = []
@@ -1589,3 +1555,27 @@ class String
 end
 
 __END__
+
+# desc "sync", "sync project aliases with system aliases"
+# def sync
+#   array = get_all_aliases_from_proj_aka()
+#   repeated_system_call(array)
+# end
+
+# desc "test", "test and show that this won't work"
+# def test
+#   # system("source ~/.bash_profile")
+#   system("aka g test='echo something'")
+# end
+
+#
+# Func
+#
+# desc "func", "generate function"
+# def func args
+#   #generate the file
+#   result = add_with_group(parseARGS(args), options.group) if args
+#   FileUtils.touch("#{Dir.pwd}/.aka")
+#   add_func_to_proj(args)
+#   reload_dot_file if result == true && !options.no
+# end
