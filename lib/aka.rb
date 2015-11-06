@@ -11,7 +11,7 @@ module Aka
   PROFILE_PATH="#{Dir.home}/.profile"
   BASHRC_PATH="#{Dir.home}/.bashrc"
   ZSHRC_PATH="#{Dir.home}/.zshrc"
-  
+
   class Base < Thor
     check_unknown_options!
     package_name "aka"
@@ -26,7 +26,7 @@ module Aka
         "h" => :help,
         "v" => :version
 
-    desc "import", "import project alias into your system alias"
+    desc :import, "import project alias into your system alias"
     method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
     def import the_name=""
       if the_name == ""
@@ -41,7 +41,7 @@ module Aka
     #
     # Groups
     #
-    desc "groups", "list all the groups"
+    desc :groups, "list all the groups"
     def groups
       print_title("System Groups")
       list_all_groups()
@@ -50,7 +50,7 @@ module Aka
     #
     # Where is your dotfile
     # aka where
-    desc "where", "locate your dotfile"
+    desc :where, "locate your dotfile"
     def where
       puts readYML("#{CONFIG_PATH}")["dotfile"]
     end
@@ -58,7 +58,7 @@ module Aka
     #
     # Export
     #
-    desc "export", "export system alias into project alias"
+    desc :export, "export system alias into project alias"
     method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
     method_option :name, :type => :string, :aliases => '-n', :desc => ''
     def export the_name
@@ -84,7 +84,7 @@ module Aka
     #################
     # PROJ
     #################
-    desc "proj", "list the project alias (short alias: p)"
+    desc :proj, "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
     method_option :load, :type => :string, :aliases => '-i'
     method_option :save, :type => :string, :aliases => '-e'
@@ -112,7 +112,7 @@ module Aka
     #################
     # GENERATE
     #################
-    desc "generate", "generate an alias (short alias: g)"
+    desc :generate, "generate an alias (short alias: g)"
     method_option :last, :type => :boolean, :aliases => '-l', :desc => ''
     method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
     method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
@@ -130,7 +130,7 @@ module Aka
     #
     # DESTROY
     #
-    desc "destroy", "destroy an alias (short alias: d)"
+    desc :destroy, "destroy an alias (short alias: d)"
     method_options :force => :boolean
     method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
     def destroy(*args)
@@ -145,7 +145,7 @@ module Aka
     #
     # show version
     #
-    desc "version", "show version"
+    desc :version, "show version"
     def version
       puts Aka::VERSION
     end
@@ -154,32 +154,32 @@ module Aka
     #
     # first step: set config file
     #
-    desc "setup", "Gem - Setup aka"
+    desc :setup, "Gem - Setup aka"
     method_options :reset => :boolean
     def setup
 
-      if options.reset? && File.exist?("#{configDir}")
+      if options.reset? && File.exist?("#{CONFIG_PATH}")
         remove_autosource
-        FileUtils.rm_r("#{configDir}")
-        puts "#{configDir} is removed"
+        FileUtils.rm_r("#{CONFIG_PATH}")
+        puts "#{CONFIG_PATH} is removed"
       end
 
       if File.exist?("#{CONFIG_PATH}")
-        puts ".aka config file is exist in #{configDir}"
+        puts ".aka config file is exist in #{CONFIG_PATH}"
         puts "Please run [aka setup --reset] to remove aka file and setup again"
       else
         setup_config      # create and setup .config file
         setup_aka         # put value in .config file
         puts "setting up autosource"
         setup_autosource  # create, link source file
-        puts "Congratulation, aka is setup in #{configDir}"
+        puts "Congratulation, aka is setup in #{CONFIG_PATH}"
       end
     end
 
     #
     # FIND
     #
-    desc "find", "find an alias (short alias: f)"
+    desc :find, "find an alias (short alias: f)"
     method_options :force => :boolean
     method_option :group, :type => :string, :aliases => '-g', :desc => ''
     def find *args
@@ -195,7 +195,7 @@ module Aka
     #
     # EDIT
     #
-    desc "edit", "edit an alias(short alias: e)"
+    desc :edit, "edit an alias(short alias: e)"
     method_options :force => :boolean
     method_options :name => :boolean #--name
     method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
@@ -258,7 +258,7 @@ module Aka
     #
     # LIST OUT - ryan - remove numbering
     #
-    desc "list", "list alias (short alias: l)"
+    desc :list, "list alias (short alias: l)"
     method_options :force => :boolean
     method_options :number => :boolean
     method_option :group, :type => :boolean, :aliases => '-g', :desc => ''
@@ -308,7 +308,7 @@ module Aka
     #
     # Config
     #
-    desc "config", "show config"
+    desc :config, "show config"
     def config()
       showConfig
     end
@@ -316,7 +316,7 @@ module Aka
     #
     # INIT
     #
-    desc "init", "setup aka"
+    desc :init, "setup aka"
     method_options :dotfile => :string
     method_options :history => :string
     method_options :home => :string
@@ -353,7 +353,7 @@ module Aka
     #
     # CLEAN
     #
-    desc "clean", "perform cleanup on your dot file"
+    desc :clean, "perform cleanup on your dot file"
     def clean
       cleanup
     end
@@ -895,14 +895,14 @@ module Aka
 
 
       if File.exist?("#{CONFIG_PATH}")
-        out_file = File.new("#{configDir}/autosource", "w")
+        out_file = File.new("#{CONFIG_PATH}/autosource", "w")
         out_file.puts("export HISTSIZE=10000")
         out_file.puts("sigusr2() { unalias $1;}")
         out_file.puts("sigusr1() { source #{readYML("#{CONFIG_PATH}")["dotfile"]}; history -a; echo 'reloaded dot file'; }")
         out_file.puts("trap sigusr1 SIGUSR1")
         out_file.puts("trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2")
         out_file.close
-        autosource = "\nsource \"#{configDir}/autosource\""
+        autosource = "\nsource \"#{CONFIG_PATH}/autosource\""
         append(autosource, readYML("#{CONFIG_PATH}")['profile'])
         puts "Done. Please restart this shell.".red
       else
@@ -916,7 +916,7 @@ module Aka
       if File.exist?("#{CONFIG_PATH}")
         puts "Directory #{CONFIG_PATH} exist"
       else
-        FileUtils::mkdir_p("#{configDir}")
+        FileUtils::mkdir_p("#{CONFIG_PATH}")
         out_file = File.new("#{CONFIG_PATH}", "w")
         out_file.puts("---")
         out_file.puts("dotfile: \"/home/user/.bashrc\"")
@@ -1439,8 +1439,8 @@ module Aka
       puts "Error: ".red + statement
     end
 
-    def exist_statement
-      puts "Exists: ".green + "proj.aka already exists. Use -f to recreate a proj.aka"
+    def exist_statement(statement)
+      puts "Exists: ".green + statement
     end
 
     def print_the_aliases_return_array2 content_array, name
