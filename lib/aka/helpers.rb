@@ -1,11 +1,14 @@
+require 'aka/constants'
 
-def product_content_array(content)
+module Aka
+
+def self.product_content_array(content)
   content.gsub!(/\r\n?/, "\n")
   return content_array = content.split("\n")
 end
 
 
-def import(the_name)
+def self.import(the_name)
   if the_name == ""
     array = get_all_aliases_from_proj_aka
     repeated_system_call(array)
@@ -16,7 +19,7 @@ def import(the_name)
 end
 
 
-def export(the_name, force)
+def self.export(the_name, force)
   array = export_group_aliases(the_name)
   if options.name?
     new_proj_aka = "#{options.name}"+".aka"
@@ -37,7 +40,7 @@ def export(the_name, force)
 end
 
 
-def get_all_aliases_from_proj_aka str="proj.aka"
+def self.get_all_aliases_from_proj_aka str="proj.aka"
   array = []
   if content = File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -48,7 +51,7 @@ def get_all_aliases_from_proj_aka str="proj.aka"
 end
 
 # set path
-def setPath(path, value)
+def self.setPath(path, value)
   data = readYML("#{CONFIG_PATH}")
   if data.has_key?(value) == true
     old_path = data[value]
@@ -61,12 +64,12 @@ def setPath(path, value)
 end
 
 # reload
-def reload
+def self.reload
   system "source #{readYML("#{CONFIG_PATH}")["dotfile"]}"
 end
 
 # read YML
-def readYML path
+def self.readYML path
   if File.exists? path
     return YAML.load_file(path)
   else
@@ -75,11 +78,11 @@ def readYML path
 end
 
 # write YML
-def writeYML path, theyml
+def self.writeYML path, theyml
   File.open(path, 'w') {|f| f.write theyml.to_yaml } #Store
 end
 
-def write_with_array_into path, array
+def self.write_with_array_into path, array
   File.open(path, 'w') { |file|
     array.each do |line|
       file.write(line)
@@ -90,7 +93,7 @@ end
 
 
 # write_with + into dotfile
-def write_with array
+def self.write_with array
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   File.open(str, 'w') { |file|
     array.each do |line|
@@ -100,7 +103,7 @@ def write_with array
 end
 
 # write_with_newline + into dotfile
-def write_with_newline array
+def self.write_with_newline array
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   File.open(str, 'w') { |file|
     array.each do |line|
@@ -110,32 +113,32 @@ def write_with_newline array
 end
 
 # write
-def write str, path
+def self.write str, path
   File.open(path, 'w') { |file| file.write(str) }
 end
 
 # append
-def append str, path
+def self.append str, path
   File.open(path, 'a') { |file| file.write(str) }
 end
 
 #append_with_newline
-def append_with_newline str, path
+def self.append_with_newline str, path
   File.open(path, 'a') { |file| file.write(str + "\n") }
 end
 
 # reload_dot_file
-def reload_dot_file
+def self.reload_dot_file
   isOhMyZsh == true ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
 end
 
 # history write
-def historywrite
+def self.historywrite
   isOhMyZsh == true ?  system("exec zsh") :  system("kill -SIGUSR2 #{Process.ppid}")
 end
 
 # unalias
-def unalias_the value
+def self.unalias_the value
   if isOhMyZsh == true
     system("exec zsh")
   else
@@ -145,21 +148,21 @@ def unalias_the value
 end
 
 #split domain user
-def split_domain_user fulldomain
+def self.split_domain_user fulldomain
   username = fulldomain.split("@").first
   domain = fulldomain.split("@")[1]
   return [username, domain]
 end
 
 # split
-def split fulldomain
+def self.split fulldomain
   username = fulldomain.split("@").first
   domain = fulldomain.split("@")[1].split(":").first
   port = fulldomain.split("@")[1].split(":")[1]
   return [username, domain, port]
 end
 
-def add_with_group input, name_of_group
+def self.add_with_group input, name_of_group
   if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
     array = input.split("=")
     group_name = "# => #{name_of_group}"
@@ -176,7 +179,7 @@ def add_with_group input, name_of_group
 end
 
 # add
-def add input
+def self.add input
   if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
     array = input.split("=")
     full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
@@ -192,14 +195,14 @@ def add input
 end
 
 # not empty alias
-def not_empty_alias input
+def self.not_empty_alias input
   array = input.split("=")
   return true if array.count < 2
   return array[1].strip == ""
 end
 
 #list
-def search_alias_with_group_name name
+def self.search_alias_with_group_name name
   print_title("System Alias")
   group_count = 0
   if name == "group"
@@ -237,7 +240,7 @@ def search_alias_with_group_name name
   end
 end
 
-def export_group_aliases name
+def self.export_group_aliases name
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   results = []
   if content = File.open(str).read
@@ -249,7 +252,7 @@ def export_group_aliases name
 end
 
 # show alias
-def search_alias_return_alias_tokens argument
+def self.search_alias_return_alias_tokens argument
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content = File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -280,7 +283,7 @@ end
 #
 # remove
 #
-def remove input
+def self.remove input
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content=File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -307,7 +310,7 @@ def remove input
 end
 
 # remove autosource in dotfile
-def remove_autosource
+def self.remove_autosource
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content=File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -326,7 +329,7 @@ def remove_autosource
 end
 
 # history
-def history
+def self.history
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
   if content = File.open(str).read
     puts ".bash_history is available"
@@ -347,7 +350,7 @@ def history
 end
 
 
-def  create_proj_file the_name
+def self. create_proj_file the_name
   array = export_group_aliases(the_name)
   if File.exist?('proj.aka')
     if options.force?
@@ -371,7 +374,7 @@ def  create_proj_file the_name
   end
 end
 
-def generate_proj_aka_file the_name
+def self.generate_proj_aka_file the_name
   array = export_group_aliases(the_name)
   if File.exist?('proj.aka')
     if options.force?
@@ -396,7 +399,7 @@ def generate_proj_aka_file the_name
 end
 
 # check found
-def found? answer, argument, line
+def self.found? answer, argument, line
   if answer == argument
     exist_statement(" aka g #{argument}=#{line.split('=')[1]}")
     return true
@@ -405,18 +408,18 @@ def found? answer, argument, line
   end
 end
 
-def edit_alias_command newcommand, this_alias
+def self.edit_alias_command newcommand, this_alias
   puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
   return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
 end
 
 # edit alias
-def edit_alias_name newalias, thiscommand
+def self.edit_alias_name newalias, thiscommand
   puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
   return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
 end
 
-def count_groups
+def self.count_groups
   group_counts = 0
   group_array = []
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
@@ -436,7 +439,7 @@ def count_groups
 end
 
 # count function
-def count_function
+def self.count_function
   function_count = 0
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content=File.open(str).read
@@ -454,7 +457,7 @@ def count_function
 end
 
 #count export
-def count_export
+def self.count_export
   export_count = 0
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content=File.open(str).read
@@ -473,7 +476,7 @@ def count_export
 end
 
 # count
-def count
+def self.count
   alias_count = 0
 
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
@@ -493,7 +496,7 @@ def count
 end
 
 # setup_aka by ryan - set value in config file
-def setup_aka
+def self.setup_aka
   userBash = []
   # 1. check for each type of file without setting anything.
   if File.exist?("#{ZSHRC_PATH}") #if zshrc exist
@@ -550,7 +553,7 @@ def setup_aka
     # end
 end
 
-def set_to_dotfile(filename)
+def self.set_to_dotfile(filename)
   if filename == ".zshrc"
     setZSHRC2
   elsif filename == ".bashrc"
@@ -564,7 +567,7 @@ end
 
 
 # setup_autosource by ryan - create source file
-def setup_autosource
+def self.setup_autosource
 
 
   if File.exist?("#{CONFIG_PATH}")
@@ -584,7 +587,7 @@ def setup_autosource
 end
 
 # create and setup config file
-def setup_config
+def self.setup_config
 
   if File.exist?("#{CONFIG_PATH}")
     puts "Directory #{CONFIG_PATH} exist"
@@ -605,7 +608,7 @@ def setup_config
 end
 
 # write to location
-def write_to_location location, address
+def self.write_to_location location, address
   if does_aka_directory_exists
     write(location, address)
   else
@@ -614,24 +617,24 @@ def write_to_location location, address
 end
 
 # read location
-def read location
+def self.read location
   answer = dot_location_exists?(location)
   answer == true && content = File.open(location).read ? content : ""
 end
 
 # dot location exist
-def dot_location_exists? address
+def self.dot_location_exists? address
   File.exist? address
 end
 
 # aka directory exist ?
-def does_aka_directory_exists
+def self.does_aka_directory_exists
   # File.directory?("#{AKA_PATH}")
   File.directory?("#{AKA_PATH}")
 end
 
 # check config file
-def is_config_file_present? str
+def self.is_config_file_present? str
   path =  "#{BASH_PROFILE_PATH}"
   if str == ""
     error_statement("Type `aka init --dotfile #{path}` to set the path to your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
@@ -647,7 +650,7 @@ def is_config_file_present? str
 end
 
 # show last
-def showlast_old howmany=10
+def self.showlast_old howmany=10
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content = File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -676,7 +679,7 @@ def showlast_old howmany=10
   end
 end
 
-def show_last_with_group(list_number=false, howmany=10, group)
+def self.show_last_with_group(list_number=false, howmany=10, group)
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content = File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -713,7 +716,7 @@ def show_last_with_group(list_number=false, howmany=10, group)
 end
 
 # show last2 - ryan - remove number
-def showlast(list_number=false,howmany=10, showGroup)
+def self.showlast(list_number=false,howmany=10, showGroup)
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
 
   if content = File.open(str).read
@@ -754,7 +757,7 @@ def showlast(list_number=false,howmany=10, showGroup)
 end
 
 # show usage
-def showUsage howmany=10, least=false
+def self.showUsage howmany=10, least=false
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
   value = reload_dot_file
   #get all aliases
@@ -771,7 +774,7 @@ def showUsage howmany=10, least=false
 end
 
 # count aliases
-def count_aliases array, howmany, least=false
+def self.count_aliases array, howmany, least=false
   name_array,count_array = [], []
   #find the unique value
   array.each_with_index { |value, index|
@@ -825,7 +828,7 @@ def count_aliases array, howmany, least=false
 end
 
 # sort
-def sort(countarray, namearray) #highest first. decscending.
+def self.sort(countarray, namearray) #highest first. decscending.
   temp = 0, temp2 = ""
   countarray.each_with_index { |count, index|
     countarray[0..countarray.size-index].each_with_index { |x, thisindex|  #always one less than total
@@ -848,12 +851,12 @@ def sort(countarray, namearray) #highest first. decscending.
 end
 
 # get history file
-def get_latest_history_file
+def self.get_latest_history_file
   system("history -a")
 end
 
 # clean up
-def cleanup
+def self.cleanup
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   if content = File.open(str).read
     content.gsub!(/\r\n?/, "\n")
@@ -876,7 +879,7 @@ end
 ## Getting these babies ready for beauty contest
 ################################################
 
-def showSpace word
+def self.showSpace word
   space = ""
   val = 20 - word.size
   val = 20 if val < 0
@@ -886,7 +889,7 @@ def showSpace word
   return space
 end
 
-def showBar percent
+def self.showBar percent
   result = ""
   val = percent/100 * 50
   val = 2 if val > 1 && val < 2
@@ -903,7 +906,7 @@ def showBar percent
   return result + " #{percent.round(2)}%"
 end
 
-def add_to_proj fullalias
+def self.add_to_proj fullalias
   values = fullalias.split("=")
   yml = readYML("#{Dir.pwd}/.aka")
   if yml == false
@@ -916,7 +919,7 @@ def add_to_proj fullalias
   end
 end
 
-def write_new_proj_aka_file fullalias
+def self.write_new_proj_aka_file fullalias
   values = fullalias.split("=")
 
   theyml = {"proj" => {
@@ -929,7 +932,7 @@ def write_new_proj_aka_file fullalias
   writeYML("#{Dir.pwd}/.aka", theyml)
 end
 
-def createShortcut(proj)
+def self.createShortcut(proj)
   answer = ""
   proj["shortcuts"].to_a.each_with_index do |each,index|
       answer += "#{each["name"]}
@@ -941,7 +944,7 @@ def createShortcut(proj)
 end
 
 
-def list_all_groups_in_proj_aka
+def self.list_all_groups_in_proj_aka
   str = 'proj.aka'
   group_array = []
   if content=File.open(str).read
@@ -970,7 +973,7 @@ end
 
 
 
-def list_all_groups
+def self.list_all_groups
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   group_array = []
   if content=File.open(str).read
@@ -998,18 +1001,18 @@ def list_all_groups
 end
 
 
-def print_title(with_these)
+def self.print_title(with_these)
   puts ""
   puts "*** #{with_these} ***"
   puts ""
 end
 
-def add_last_command name
+def self.add_last_command name
   command= find_last_command
   return str = name + "=" + "#{command}"
 end
 
-def find_last_command
+def self.find_last_command
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
   #i think if you do history -w, you can retrieve the latest command
   if content = File.open(str).read
@@ -1020,7 +1023,7 @@ def find_last_command
   end
 end
 
-def parseARGS str
+def self.parseARGS str
   array =  str.split(" ")
   array.each_with_index do |line, value|
     array[value] = line.gsub('#{pwd}', Shellwords.escape(Dir.pwd))
@@ -1028,7 +1031,7 @@ def parseARGS str
   return array.join(" ")
 end
 
-def showConfig
+def self.showConfig
   thing = YAML.load_file("#{CONFIG_PATH}")
   puts ""
   thing.each do |company,details|
@@ -1036,66 +1039,62 @@ def showConfig
   end
 end
 
-def setZSHRC
+def self.setZSHRC
   setPath("#{ZSHRC_PATH}","dotfile")
   setPath("#{Dir.home}/.zsh_history","history")
   setPath("/etc/zprofile","profile")
 end
 
-def setBASHRC
+def self.setBASHRC
   setPath("#{BASHRC_PATH}","dotfile")
   setPath("#{Dir.home}/.bash_history","history")
   setPath("/etc/profile","profile")
 end
 
-def setBASH
+def self.setBASH
   setPath("#{BASH_PROFILE_PATH}","dotfile")
   setPath("#{Dir.home}/.bash_history","history")
   setPath("/etc/profile","profile")
 end
 
-def setZSHRC2 #ryan - set the right dotfile and profile
+def self.setZSHRC2 #ryan - set the right dotfile and profile
   setPath("#{ZSHRC_PATH}","dotfile")
   setPath("#{Dir.home}/.zsh_history","history")
   setPath("#{ZSHRC_PATH}","profile")
   setPath("#{AKA_PATH}","home")
 end
 
-def setBASHRC2 #ryan - set the right dotfile and profile
+def self.setBASHRC2 #ryan - set the right dotfile and profile
   setPath("#{BASHRC_PATH}","dotfile")
   setPath("#{Dir.home}/.bash_history","history")
   setPath("#{BASHRC_PATH}","profile")
   setPath("#{AKA_PATH}","home")
 end
 
-def setBASH2 #ryan - set the right dotfile and profile
+def self.setBASH2 #ryan - set the right dotfile and profile
   setPath("#{BASH_PROFILE_PATH}","dotfile")
   setPath("#{Dir.home}/.bash_history","history")
   setPath("/etc/profile","profile")
   setPath("#{AKA_PATH}","home")
 end
 
-def setPROFILE
+def self.setPROFILE
   setPath("#{PROFILE_PATH}","dotfile")
   setPath("#{Dir.home}/.bash_history","history")
   setPath("/etc/profile","profile")
   setPath("#{AKA_PATH}","home")
 end
 
-# def get_password
-#   ask("Enter Password: ", :echo => false)
-# end
-
-def isOhMyZsh
+def self.isOhMyZsh
   readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? true : false
 end
 
-def print_helpful_statement total_aliases
+def self.print_helpful_statement total_aliases
   puts "\nA total of  #{total_aliases} aliases in this project #{Dir.pwd}"
   puts "\nUse 'aka -h' to see all the useful commands."
 end
 
-def repeated_system_call array
+def self.repeated_system_call array
   array.each do |line|
     line.gsub!("\'", "\"") #need to replace ' with "
     line = line + " -n" #do not reload :)
@@ -1103,20 +1102,20 @@ def repeated_system_call array
   end
 end
 
-def print_all_helpful_statement
+def self.print_all_helpful_statement
   puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{CONFIG_PATH}")["dotfile"]}"
   puts "\nUse 'aka -h' to see all the useful commands.\n\n"
 end
 
-def error_statement(statement)
+def self.error_statement(statement)
   puts "Error: ".red + statement
 end
 
-def exist_statement(statement)
+def self.exist_statement(statement)
   puts "Exists: ".green + statement
 end
 
-def print_the_aliases_return_array2 content_array, name
+def self.print_the_aliases_return_array2 content_array, name
   array = []
   content_array.each_with_index { |line, index|
     testline = line
@@ -1134,7 +1133,7 @@ def print_the_aliases_return_array2 content_array, name
   return array
 end
 
-def print_the_aliases_return_array content_array
+def self.print_the_aliases_return_array content_array
   array = []
   content_array.each_with_index { |line, index|
     testline = line
@@ -1152,7 +1151,7 @@ def print_the_aliases_return_array content_array
 end
 
 
-def print_the_aliases2 content_array, name
+def self.print_the_aliases2 content_array, name
   answer_count= 0
   content_array.each_with_index { |line, index|
     testline = line
@@ -1174,7 +1173,7 @@ def print_the_aliases2 content_array, name
 end
 
 
-def print_the_aliases content_array
+def self.print_the_aliases content_array
   answer_count= 0
   content_array.each_with_index { |line, index|
     # testLine = line
@@ -1193,42 +1192,45 @@ def print_the_aliases content_array
   return answer_count
 end
 
+end
+
+
+
+
 class String
+    def pretty
+    self.gsub("\s\t\r\f", ' ').squeeze(' ')
+    end
 
-  def pretty
-  self.gsub("\s\t\r\f", ' ').squeeze(' ')
-  end
+    def is_i?
+    !!(self =~ /\A[-+]?[0-9]+\z/)
+    end
 
-  def is_i?
-  !!(self =~ /\A[-+]?[0-9]+\z/)
-  end
+    def colorize(color_code)
+     "\e[#{color_code}m#{self}\e[0m"
+    end
 
-  def colorize(color_code)
-   "\e[#{color_code}m#{self}\e[0m"
-  end
+    def red
+     colorize(31)
+    end
 
-  def red
-   colorize(31)
-  end
+    def green
+     colorize(32)
+    end
 
-  def green
-   colorize(32)
-  end
+    def yellow
+     colorize(33)
+    end
 
-  def yellow
-   colorize(33)
-  end
+    def blue
+     colorize(34)
+    end
 
-  def blue
-   colorize(34)
-  end
+    def pink
+     colorize(35)
+    end
 
-  def pink
-   colorize(35)
-  end
-
-  def light_blue
-   colorize(36)
-  end
-
+    def light_blue
+     colorize(36)
+    end
 end
