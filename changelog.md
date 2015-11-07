@@ -6,6 +6,7 @@
 * Added [aka groups] to list all groups in the system
 * Added .profile as setup options. Thanks to fgperianez
 * Edited test_aka.rb
+* Refactor the aka code
 * Remove some dependencies and set required ruby back to 2.0.0.
 * Change default list to 20 aliases
 * Start using aka in your projects :)
