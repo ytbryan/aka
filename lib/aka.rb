@@ -21,73 +21,12 @@ module Aka
         "h" => :help,
         "v" => :version
 
-
-    desc "test", "test and show that this won't work"
-    def test
-      # Something.boo
-    end
-
-    # desc :import, "import project alias into your system alias"
-    # method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
-    # def import the_name=""
-    #   if the_name == ""
-    #     array = get_all_aliases_from_proj_aka
-    #     repeated_system_call(array)
-    #   else
-    #     array = get_all_aliases_from_proj_aka(the_name)
-    #     repeated_system_call(array)
-    #   end
-    # end
-
-    #
-    # Groups
-    #
-    desc :groups, "list all the groups"
-    def groups
-      Aka.print_title("System Groups")
-      Aka.list_all_groups
-    end
-
-    #
-    # Where is your dotfile
-    # aka where
-    desc :where, "locate your dotfile"
-    def where
-      puts Aka.readYML("#{CONFIG_PATH}")["dotfile"]
-    end
-
-    #
-    # Export
-    #
-    # desc :export, "export system alias into project alias"
-    # method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
-    # method_option :name, :type => :string, :aliases => '-n', :desc => ''
-    # def export the_name
-    #   array = export_group_aliases(the_name)
-    #   if options.name?
-    #     new_proj_aka = "#{options.name}"+".aka"
-    #     FileUtils.touch(new_proj_aka)
-    #     write_with_array_into(new_proj_aka, array)
-    #   else
-    #     if File.exist?('proj.aka')
-    #       if options.force?
-    #         write_with_array_into('proj.aka', array)
-    #       else
-    #         exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
-    #       end
-    #     else
-    #       FileUtils.touch('proj.aka')
-    #       write_with_array_into('proj.aka', array)
-    #     end
-    #   end
-    # end
-
     #################
     # PROJ
     #################
     desc :proj, "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
-    method_option :load, :type => :string, :aliases => '-i' #export
+    method_option :load, :type => :string, :aliases => '-i' 
     method_option :save, :type => :string, :aliases => '-e'
     method_option :force, :type => :boolean, :aliases => '-f'
 
@@ -149,16 +88,6 @@ module Aka
         Aka.reload_dot_file if result == true && !options.no
       end
     end
-
-
-    #
-    # show version
-    #
-    desc :version, "show version"
-    def version
-      puts Aka::VERSION
-    end
-
 
     #
     # first step: set config file
@@ -316,15 +245,6 @@ module Aka
     end
 
     #
-    # Config
-    #
-    desc :config, "show config"
-    def config
-      Aka.showConfig
-    end
-
-
-    #
     # INIT
     #
     desc :init, "setup aka"
@@ -369,6 +289,82 @@ module Aka
       Aka.cleanup
     end
 
+    #
+    # Config
+    #
+    desc :config, "show config"
+    def config
+      Aka.showConfig
+    end
+
+    #
+    # Groups
+    #
+    desc :groups, "list all the groups"
+    def groups
+      Aka.print_title("System Groups")
+      Aka.list_all_groups
+    end
+
+    #
+    # Where is your dotfile
+    # aka where
+    desc :where, "locate your dotfile"
+    def where
+      puts Aka.readYML("#{CONFIG_PATH}")["dotfile"]
+    end
+
+    #
+    # show version
+    #
+    desc :version, "show version"
+    def version
+      puts Aka::VERSION
+    end
+
+
 
   end #that's all
 end #last end
+
+
+
+# desc :import, "import project alias into your system alias"
+# method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
+# def import the_name=""
+#   if the_name == ""
+#     array = get_all_aliases_from_proj_aka
+#     repeated_system_call(array)
+#   else
+#     array = get_all_aliases_from_proj_aka(the_name)
+#     repeated_system_call(array)
+#   end
+# end
+
+
+
+#
+# Export
+#
+# desc :export, "export system alias into project alias"
+# method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
+# method_option :name, :type => :string, :aliases => '-n', :desc => ''
+# def export the_name
+#   array = export_group_aliases(the_name)
+#   if options.name?
+#     new_proj_aka = "#{options.name}"+".aka"
+#     FileUtils.touch(new_proj_aka)
+#     write_with_array_into(new_proj_aka, array)
+#   else
+#     if File.exist?('proj.aka')
+#       if options.force?
+#         write_with_array_into('proj.aka', array)
+#       else
+#         exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
+#       end
+#     else
+#       FileUtils.touch('proj.aka')
+#       write_with_array_into('proj.aka', array)
+#     end
+#   end
+# end
