@@ -27,17 +27,17 @@ module Aka
         "h" => :help,
         "v" => :version
 
-    desc :import, "import project alias into your system alias"
-    method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
-    def import the_name=""
-      if the_name == ""
-        array = get_all_aliases_from_proj_aka()
-        repeated_system_call(array)
-      else
-        array = get_all_aliases_from_proj_aka(the_name)
-        repeated_system_call(array)
-      end
-    end
+    # desc :import, "import project alias into your system alias"
+    # method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
+    # def import the_name=""
+    #   if the_name == ""
+    #     array = get_all_aliases_from_proj_aka
+    #     repeated_system_call(array)
+    #   else
+    #     array = get_all_aliases_from_proj_aka(the_name)
+    #     repeated_system_call(array)
+    #   end
+    # end
 
     #
     # Groups
@@ -45,7 +45,7 @@ module Aka
     desc :groups, "list all the groups"
     def groups
       print_title("System Groups")
-      list_all_groups()
+      list_all_groups
     end
 
     #
@@ -59,28 +59,28 @@ module Aka
     #
     # Export
     #
-    desc :export, "export system alias into project alias"
-    method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
-    method_option :name, :type => :string, :aliases => '-n', :desc => ''
-    def export the_name
-      array = export_group_aliases(the_name)
-      if options.name?
-        new_proj_aka = "#{options.name}"+".aka"
-        FileUtils.touch(new_proj_aka)
-        write_with_array_into(new_proj_aka, array)
-      else
-        if File.exist?('proj.aka')
-          if options.force?
-            write_with_array_into('proj.aka', array)
-          else
-            exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
-          end
-        else
-          FileUtils.touch('proj.aka')
-          write_with_array_into('proj.aka', array)
-        end
-      end
-    end
+    # desc :export, "export system alias into project alias"
+    # method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
+    # method_option :name, :type => :string, :aliases => '-n', :desc => ''
+    # def export the_name
+    #   array = export_group_aliases(the_name)
+    #   if options.name?
+    #     new_proj_aka = "#{options.name}"+".aka"
+    #     FileUtils.touch(new_proj_aka)
+    #     write_with_array_into(new_proj_aka, array)
+    #   else
+    #     if File.exist?('proj.aka')
+    #       if options.force?
+    #         write_with_array_into('proj.aka', array)
+    #       else
+    #         exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
+    #       end
+    #     else
+    #       FileUtils.touch('proj.aka')
+    #       write_with_array_into('proj.aka', array)
+    #     end
+    #   end
+    # end
 
     #################
     # PROJ
@@ -99,15 +99,14 @@ module Aka
       else
         if options.group? && File.exist?('proj.aka')
           print_title("Project Groups")
-          list_all_groups_in_proj_aka()
+          list_all_groups_in_proj_aka
         elsif options.group? && !File.exist?('proj.aka')
           error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
         else
           print_title("Project Alias")
           if File.exist?('proj.aka')
             if content = File.open('proj.aka').read
-              content.gsub!(/\r\n?/, "\n")
-              content_array = content.split("\n")
+              content_array = product_content_array(content)
               answer_count = print_the_aliases(content_array)
               print_helpful_statement(answer_count)
             end
@@ -231,11 +230,11 @@ module Aka
             if options.name
               remove(_alias) #remove that alias
               edit_alias_name(values[1], _alias) #edit that alias
-              reload_dot_file() if !options.noreload
+              reload_dot_file if !options.noreload
             else
               remove(_alias) #remove that alias
               edit_alias_command(values[1], _alias) #edit that alias
-              reload_dot_file() if !options.noreload
+              reload_dot_file if !options.noreload
             end
           else
             error_statement("Alias '#{args}' cannot be found.")
@@ -248,14 +247,14 @@ module Aka
               if yes? "Please confirm the new alias? (y/N)"
                 remove(_alias) #remove that alias
                 edit_alias_name(input, command) #edit that alias
-                reload_dot_file() if !options.noreload
+                reload_dot_file if !options.noreload
               end
             else
               input = ask "Enter a new command for alias '#{args}'?\n"
               if yes? "Please confirm the new command? (y/N)"
                 remove(_alias) #remove that alias
                 edit_alias_command(input, _alias) #edit that alias
-                reload_dot_file() if !options.noreload
+                reload_dot_file if !options.noreload
               end
             end
           else
@@ -271,6 +270,7 @@ module Aka
     desc :list, "list alias (short alias: l)"
     method_options :force => :boolean
     method_options :number => :boolean
+    method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
     method_option :group, :type => :boolean, :aliases => '-g', :desc => ''
     def list(args=nil)
       print_title("System Alias")
@@ -286,7 +286,7 @@ module Aka
         end
       end
       print_all_helpful_statement
-      reload_dot_file
+      reload_dot_file if !options.no
     end
 
     #
@@ -319,8 +319,13 @@ module Aka
     # Config
     #
     desc :config, "show config"
-    def config()
+    def config
       showConfig
+    end
+
+    desc "test", "test and show that this won't work"
+    def test
+      Something::test()
     end
 
     #
@@ -374,10 +379,15 @@ module Aka
 
     private
 
+    def product_content_array(content)
+      content.gsub!(/\r\n?/, "\n")
+      return content_array = content.split("\n")
+    end
+
 
     def import(the_name)
       if the_name == ""
-        array = get_all_aliases_from_proj_aka()
+        array = get_all_aliases_from_proj_aka
         repeated_system_call(array)
       else
         array = get_all_aliases_from_proj_aka(the_name)
@@ -1126,7 +1136,7 @@ module Aka
     # show usage
     def showUsage howmany=10, least=false
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
-      value = reload_dot_file()
+      value = reload_dot_file
       #get all aliases
       if content = File.open(str).read
         content.gsub!(/\r\n?/, "\n")
@@ -1375,7 +1385,7 @@ module Aka
     end
 
     def add_last_command name
-      command= find_last_command()
+      command= find_last_command
       return str = name + "=" + "#{command}"
     end
 
@@ -1613,11 +1623,7 @@ __END__
 #   repeated_system_call(array)
 # end
 
-# desc "test", "test and show that this won't work"
-# def test
-#   # system("source ~/.bash_profile")
-#   system("aka g test='echo something'")
-# end
+
 
 #
 # Func
