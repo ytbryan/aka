@@ -240,6 +240,34 @@ def self.search_alias_with_group_name name
   end
 end
 
+#change alias group name
+def self.change_alias_group_name_with input, new_group_name
+  str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
+  if content = File.open(str).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 && value.first == "alias"
+        aliasWithoutGroup = line.split("# =>").first.strip
+        answer = value[1].split("=") #contains the alias
+        if input == answer.first
+          alias_n_command = aliasWithoutGroup.split(" ").drop(1).join(" ")
+          containsCommand = alias_n_command.split('=') #containsCommand[1]
+          containsCommand[1].slice!(0) && containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+          alias_n_command = answer.first+"="+containsCommand[1]
+          remove(answer.first)
+          result = add_with_group(alias_n_command,new_group_name)
+          reload_dot_file if result
+        end
+      end
+    }
+  else
+    puts "#{@pwd} cannot be found.".red
+  end
+end
+
 def self.export_group_aliases name
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   results = []
