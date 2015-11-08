@@ -152,47 +152,48 @@ module Aka
       else
         puts "TODO: this should simply call the usual function"
         puts "no group is used"
-        if args
-          values = args.split("=")
-          if values.size > 1
-            truth, _alias = Aka.search_alias_return_alias_tokens(args)
-            if truth == true
-              if options.name
-                Aka.remove(_alias) #remove that alias
-                Aka.edit_alias_name(values[1], _alias) #edit that alias
-                Aka.reload_dot_file if !options.noreload
-              else
-                Aka.remove(_alias) #remove that alias
-                Aka.edit_alias_command(values[1], _alias) #edit that alias
-                Aka.reload_dot_file if !options.noreload
-              end
+      end # end else no group option
+
+      if args
+        values = args.split("=")
+        if values.size > 1
+          truth, _alias = Aka.search_alias_return_alias_tokens(args)
+          if truth == true
+            if options.name
+              Aka.remove(_alias) #remove that alias
+              Aka.edit_alias_name(values[1], _alias) #edit that alias
+              Aka.reload_dot_file if !options.noreload
             else
-              Aka.error_statement("Alias '#{args}' cannot be found.")
+              Aka.remove(_alias) #remove that alias
+              Aka.edit_alias_command(values[1], _alias) #edit that alias
+              Aka.reload_dot_file if !options.noreload
             end
           else
-            truth, _alias, command = Aka.search_alias_return_alias_tokens(args)
-            if truth == true
-              if options.name
-                input = ask "Enter a new alias for command '#{command}'?\n"
-                if yes? "Please confirm the new alias? (y/N)"
-                  Aka.remove(_alias) #remove that alias
-                  Aka.edit_alias_name(input, command) #edit that alias
-                  Aka.reload_dot_file if !options.noreload
-                end
-              else
-                input = ask "Enter a new command for alias '#{args}'?\n"
-                if yes? "Please confirm the new command? (y/N)"
-                  Aka.remove(_alias) #remove that alias
-                  Aka.edit_alias_command(input, _alias) #edit that alias
-                  Aka.reload_dot_file if !options.noreload
-                end
+            Aka.error_statement("Alias '#{args}' cannot be found.")
+          end
+        else
+          truth, _alias, command, group = Aka.search_alias_return_alias_tokens_with_group(args)
+          if truth == true
+            if options.name
+              input = ask "Enter a new alias for command '#{command}'?\n"
+              if yes? "Please confirm the new alias? (y/N)"
+                Aka.remove(_alias) #remove that alias
+                Aka.edit_alias_name_with_group(input, command, group) #edit that alias
+                Aka.reload_dot_file if !options.noreload
               end
             else
-              Aka.error_statement("Alias '#{args}' cannot be found")
+              input = ask "Enter a new command for alias '#{args}'?\n"
+              if yes? "Please confirm the new command? (y/N)"
+                Aka.remove(_alias) #remove that alias
+                Aka.edit_alias_command_with_group(input, _alias, group) #edit that alias
+                Aka.reload_dot_file if !options.noreload
+              end
             end
+          else
+            Aka.error_statement("Alias '#{args}' cannot be found")
           end
-        end #if args
-      end # end else no group option
+        end
+      end #if args
     end
 
     #

@@ -268,6 +268,19 @@ def self.change_alias_group_name_with input, new_group_name
   end
 end
 
+#change alias group name
+def self.get_group_name input
+  if input
+    if input.include? "# =>"
+      return input.split("# =>").last.strip
+    else
+      return nil
+    end
+  else
+    puts "There is no input"
+  end
+end
+
 def self.export_group_aliases name
   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
   results = []
@@ -306,6 +319,37 @@ def self.search_alias_return_alias_tokens argument
   end
   return [false, nil, nil]
 
+end
+
+# show alias with group
+def self.search_alias_return_alias_tokens_with_group argument
+  str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
+  if content = File.open(str).read
+    content.gsub!(/\r\n?/, "\n")
+    content_array = content.split("\n")
+
+    content_array.each_with_index { |line, index|
+      value = line.split(" ")
+      if value.length > 1 && value.first == "alias"
+        # templine = line.gsub("# =>", "-g")
+        templine = line.split("# =>").first
+        containsCommand = templine.split('=') #containsCommand[1]
+        group_name = get_group_name(line)
+        answer = value[1].split("=") #contains the alias
+        if found?(answer.first, argument.split("=").first, templine) == true
+          this_alias = answer.first
+          answer.slice!(0) #rmove the first
+          containsCommand[1].strip!
+          containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
+          return [true, this_alias, containsCommand[1], group_name]
+        end
+      end
+    }
+  else
+    puts "#{@pwd} cannot be found.".red
+    return [false, nil, nil, nil]
+  end
+  return [false, nil, nil, nil]
 end
 
 #
@@ -441,10 +485,31 @@ def self.edit_alias_command newcommand, this_alias
   return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
 end
 
+def self.edit_alias_command_with_group newcommand, this_alias, group
+  if !group.nil? || !group.empty?
+    puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}' -g #{group}"
+    return append("alias " + this_alias + "='" + newcommand + "' # => " + group, readYML("#{CONFIG_PATH}")["dotfile"] )
+  else
+    puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
+    return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
+  end
+end
+
 # edit alias
 def self.edit_alias_name newalias, thiscommand
   puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
   return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
+end
+
+# edit alias with group
+def self.edit_alias_name_with_group newalias, thiscommand, group
+  if !group.nil? || !group.empty?
+    puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}' -g #{group}"
+    return append("alias " + newalias + "='" + thiscommand + "' # => " + group, readYML("#{CONFIG_PATH}")["dotfile"] )
+  else
+    puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
+    return append("alias " + newalias + "=" + thiscommand, readYML("#{CONFIG_PATH}")["dotfile"] )
+  end
 end
 
 def self.count_groups
