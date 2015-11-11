@@ -1,6 +1,5 @@
-module Post
+module Log
   MESSAGE = "
-
 
   █████╗ ██╗  ██╗ █████╗
  ██╔══██╗██║ ██╔╝██╔══██╗
@@ -22,10 +21,6 @@ module Post
   * Added .profile as setup options. Thanks to fgperianez
 
   For full changelog, check https://github.com/ytbryan/aka/blob/master/changelog.md
-
-  For feedback, please email me at ytbryan@gmail.com
-
-  For bugs/issues, please submit one-> https://github.com/ytbryan/aka/issues
 
   For contributors, send us a pull request ->  https://github.com/ytbryan/aka/pulls
   "
