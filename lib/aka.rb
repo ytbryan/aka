@@ -1,6 +1,7 @@
 require 'aka/version' #required for the test to work
 require 'aka/constants'
 require 'aka/helpers'
+
 require 'yaml'
 require 'thor'
 require 'shellwords'
@@ -26,21 +27,28 @@ module Aka
     #################
     desc :proj, "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
-    method_option :load, :type => :string, :aliases => '-i'
-    method_option :save, :type => :string, :aliases => '-e'
+    method_option :load, :type => :string, :aliases => '-l'
+    method_option :save, :type => :string, :aliases => '-s'
     method_option :force, :type => :boolean, :aliases => '-f'
 
-    def proj
-      if options.load
-        Aka.export(options.load, options.force)
-      elsif options.save
+    def proj arg=nil
+      if options.load?
+        puts "there's load"
+        Aka.export(arg, options.load, options.force)
+      elsif options.save?
+        puts "there's save"
+
         Aka.import(options.save)
       else
+
+
+        puts "there's nothing"
+
         if options.group? && File.exist?('proj.aka')
           Aka.print_title("Project Groups")
           Aka.list_all_groups_in_proj_aka
         elsif options.group? && !File.exist?('proj.aka')
-          Aka.error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
+          Aka.error_statement("The proj.aka is missing. Please run [aka proj --load <name_of_group>] to generate proj.aka file")
         else
           Aka.print_title("Project Alias")
           if File.exist?('proj.aka')
@@ -50,7 +58,7 @@ module Aka
               Aka.print_helpful_statement(answer_count)
             end
           else
-            Aka.error_statement("The proj.aka is missing. Please run [aka export <name_of_group>] to generate proj.aka file")
+            Aka.error_statement("The proj.aka is missing. Please run [aka proj --load <name_of_group>] to generate proj.aka file")
           end
         end
       end #end of when
@@ -72,7 +80,7 @@ module Aka
       else
         result = Aka.add_with_group(Aka.parseARGS(args), options.group)
       end
-      Aka.reload_dot_file if result == true && !options.no
+      Aka.reload_dot_file if result == TRUE && !options.no
     end
 
     #
@@ -84,8 +92,8 @@ module Aka
     def destroy(*args)
       args.each_with_index do |value, index|
         result = Aka.remove(value)
-        Aka.unalias_the(value) if !options.nounalias && result == true
-        Aka.reload_dot_file if result == true && !options.no
+        Aka.unalias_the(value) if !options.nounalias && result == TRUE
+        Aka.reload_dot_file if result == TRUE && !options.no
       end
     end
 
@@ -95,7 +103,6 @@ module Aka
     desc :setup, "Gem - Setup aka"
     method_options :reset => :boolean
     def setup
-
       if options.reset? && File.exist?("#{CONFIG_PATH}")
         Aka.remove_autosource
         FileUtils.rm_r("#{CONFIG_PATH}")
@@ -145,7 +152,7 @@ module Aka
           values = args.split("=")
           if values.size > 1
             truth, _alias = Aka.search_alias_return_alias_tokens(args)
-            if truth == true
+            if truth == TRUE
               if options.name
                 Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_name(values[1], _alias) #edit that alias
@@ -160,7 +167,7 @@ module Aka
             end
           else
             truth, _alias, command, group = Aka.search_alias_return_alias_tokens_with_group(args)
-            if truth == true
+            if truth == TRUE
               if options.name
                 input = ask "Enter a new alias for command '#{command}'?\n"
                 if yes? "Please confirm the new alias? (y/N)"
@@ -216,14 +223,14 @@ module Aka
     def usage(args=nil)
       if args
         if options.least && args
-          Aka.showUsage(args.to_i, true)
+          Aka.showUsage(args.to_i, TRUE)
         else
           Aka.showUsage(args.to_i)
         end
       else
         if options.least
           value = Aka.readYML("#{CONFIG_PATH}")["usage"]
-          Aka.showlast(value.to_i, true) #this is unsafe
+          Aka.showlast(value.to_i, TRUE) #this is unsafe
         else
           value = Aka.readYML("#{CONFIG_PATH}")["usage"]
           Aka.howlast(value.to_i) #this is unsafe

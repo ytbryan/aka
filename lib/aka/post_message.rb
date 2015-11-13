@@ -20,8 +20,8 @@ module Log
   * Added [aka groups] to list all groups in the system
   * Added .profile as setup options. Thanks to fgperianez
 
-  For full changelog, check https://github.com/ytbryan/aka/blob/master/changelog.md
+  Full changelog, check https://github.com/ytbryan/aka/blob/master/changelog.md
 
-  For contributors, send us a pull request ->  https://github.com/ytbryan/aka/pulls
+  Contributors, send us a pull request ->  https://github.com/ytbryan/aka/pulls
   "
 end

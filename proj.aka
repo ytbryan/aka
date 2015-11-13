@@ -3,4 +3,7 @@ alias build='gem build aka.gemspec' # => aka
 alias install='gem install aka2-0.1.10.gem' # => aka
 alias test='rake test' # => aka
 alias proj='aka proj' # => aka
-alias zz='gg;aka;test' # => aka
+alias xx='gg;aka test' # => aka
+alias find='aka find' # => aka
+alias group='aka groups' # => aka
+alias clean='aka clean' # => aka

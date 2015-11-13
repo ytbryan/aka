@@ -38,7 +38,7 @@ class Aka < Thor
   method_options :login => :string
   def download 
     if options.from and options.to and options.login
-      success = true
+      success = TRUE
       arr = split(options.login)
       pw = get_password()
       begin
@@ -92,12 +92,12 @@ class Aka < Thor
       result = add(add_last_command(parseARGS(args))) if args
     else
       result = add(parseARGS(args)) if args
-      if options.proj? and result == true
+      if options.proj? and result == TRUE
         FileUtils.touch("#{Dir.pwd}/.aka")
         add_to_proj(args)
       end
     end
-    reload_dot_file if result == true and !options.noreload
+    reload_dot_file if result == TRUE and !options.noreload
   end
 
   #
@@ -108,8 +108,8 @@ class Aka < Thor
   def destroy(*args)
     args.each_with_index do |value, index|
       result = remove(value) 
-      unalias_the(value) if !options.nounalias and result == true
-      reload_dot_file if result == true and !options.noreload
+      unalias_the(value) if !options.nounalias and result == TRUE
+      reload_dot_file if result == TRUE and !options.noreload
     end
   end
 
@@ -145,7 +145,7 @@ class Aka < Thor
       values = args.split("=")
       if values.size > 1
         truth, _alias = show_alias(args)
-        if truth == true
+        if truth == TRUE
           if options.name
             remove(_alias) #remove that alias
             edit_alias(values[1], _alias) #edit that alias
@@ -160,7 +160,7 @@ class Aka < Thor
         end
       else
         truth, _alias, command = show_alias(args)
-        if truth == true
+        if truth == TRUE
           if options.name
             input = ask "Enter a new alias for command '#{command}'?\n"
             if yes? "Please confirm the new alias? (y/N)"
@@ -272,7 +272,7 @@ class Aka < Thor
       password = get_password()
  
       if File.exists?(options.from)
-        success = true
+        success = TRUE
         begin
           arr = split(options.login)
           result = Net::SCP.upload!(arr[1], #remote
@@ -308,14 +308,14 @@ class Aka < Thor
   def usage(args=nil)    
     if args
       if options.least
-        showUsage(args.to_i, true) if args
+        showUsage(args.to_i, TRUE) if args
       else
         showUsage(args.to_i) if args
       end
     else
       if options.least
         value = readYML("#{Dir.home}/.aka/.config")["usage"]
-        showlast(value.to_i, true) #this is unsafe
+        showlast(value.to_i, TRUE) #this is unsafe
       else
         value = readYML("#{Dir.home}/.aka/.config")["usage"]
         showlast(value.to_i) #this is unsafe
@@ -344,7 +344,7 @@ class Aka < Thor
 
   def setPath(path, value)
     data = readYML("#{Dir.home}/.aka/.config")
-    if data.has_key?(value) == true
+    if data.has_key?(value) == TRUE
       old_path = data[value]
       data[value] = path
       writeYML("#{Dir.home}/.aka/.config", data)
@@ -403,7 +403,7 @@ class Aka < Thor
   end
 
   def reload_dot_file
-    if isOhMyZsh == true
+    if isOhMyZsh == TRUE
       system("exec zsh")
     else
       system("kill -SIGUSR1 #{Process.ppid}")    
@@ -411,7 +411,7 @@ class Aka < Thor
   end
 
   def historywrite
-    if isOhMyZsh == true
+    if isOhMyZsh == TRUE
       system("exec zsh")
     else
       system "kill -SIGUSR2 #{Process.ppid}"
@@ -419,7 +419,7 @@ class Aka < Thor
   end
 
   def unalias_the value
-    if isOhMyZsh == true
+    if isOhMyZsh == TRUE
       system("exec zsh")
     else
       system "echo '#{value}' > ~/sigusr1-args;"
@@ -450,7 +450,7 @@ class Aka < Thor
 
       File.open(str, 'a') { |file| file.write("\n" +full_command) }
       puts "#{print_out_command} is added to #{readYML("#{Dir.home}/.aka/.config")["dotfile"]}"
-      return true
+      return TRUE
     else
       puts "The alias is already present."
       return false
@@ -459,7 +459,7 @@ class Aka < Thor
 
   def not_empty_alias input
     array = input.split("=")
-    return true if array.count < 2
+    return TRUE if array.count < 2
     return array[1].strip == ""
   end
 
@@ -473,8 +473,8 @@ class Aka < Thor
         value = line.split(" ")
         if value.length > 1 and value.first == "alias"
           answer = value[1].split("=")
-          if found?(answer.first, argument.split("=").first, line) == true
-            return [true, answer.first, answer[1]]
+          if found?(answer.first, argument.split("=").first, line) == TRUE
+            return [TRUE, answer.first, answer[1]]
           end
         end
       }
@@ -495,7 +495,7 @@ class Aka < Thor
   #       if value.length > 1 and value.first == "alias"
   #         answer = value[1].split("=")
   #         if found?(answer.first, argument, line)
-  #           return true
+  #           return TRUE
   #         end
   #       end
   #     }
@@ -522,7 +522,7 @@ class Aka < Thor
             content_array.delete_at(index) and write_with_newline(content_array)
             print_out_command = "aka g #{input}=#{line.split("=")[1]}"
             puts "removed: #{print_out_command} is removed from #{str}".red
-            return true
+            return TRUE
           end
         end
       }
@@ -551,8 +551,8 @@ class Aka < Thor
   #       value = line.split(" ")
   #       if value.length > 1 and value.first == "alias"
   #         answer = value[1].split("=")
-  #         if found?(answer.first, input, line) == true
-  #           founded = true
+  #         if found?(answer.first, input, line) == TRUE
+  #           founded = TRUE
   #         end
   #       end
   #     }
@@ -599,7 +599,7 @@ class Aka < Thor
       # puts line.red + " - aka add #{argument}"
       # puts line.red
       puts "found: aka g #{argument}=#{line.split('=')[1]}".red
-      return true
+      return TRUE
     else
       return false
     end
@@ -694,7 +694,7 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
 
   def read location
     answer = dot_location_exists?(location)
-    if answer == true and content = File.open(location).read
+    if answer == TRUE and content = File.open(location).read
       return content
     end
     return ""
@@ -796,7 +796,7 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
     sorted_count_array, sorted_name_array = sort(count_array, name_array)
 
     #display the least used aliases
-    if least == true
+    if least == TRUE
       if sorted_count_array.count == sorted_name_array.count
         puts ""
         sorted_name_array.last(howmany).each_with_index { |value, index|
@@ -862,7 +862,7 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
       content_array = content.split("\n")
       check = false
       while check == false
-        check = true
+        check = TRUE
         content_array.each_with_index { |line, index|
           if line == "" or line == "\n"
             content_array.delete_at(index)
@@ -946,8 +946,8 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
   #   c.summary = 'copy a local copy of aka to /usr/local/bin'
   #   c.action do |args, options|
   #     result = system("sudo cp aka /usr/local/bin")
-  #     puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == true
-  #     puts "" if result == true
+  #     puts "Installed aka #{program(:version)} into /usr/local/bin (#{Time.now.strftime("%I:%M%p,%a,%d %b %Y")}).".red if result == TRUE
+  #     puts "" if result == TRUE
   #   end
   # end
   #
@@ -1058,7 +1058,7 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
   
   def isOhMyZsh
     if readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc"
-      return true
+      return TRUE
     else 
       return false
     end

@@ -46,7 +46,7 @@ class AkaTest < Minitest::Test
   #test generate
   def test_generate_function
     # args = "something=echo something"
-    # @aka.options =  {last: false, no: true}
+    # @aka.options =  {last: false, no: TRUE}
     # puts @aka.generate(args)
     assert_equal 10, 10
   end
@@ -80,15 +80,15 @@ class AkaTest < Minitest::Test
   end
 
   def test_is_aka_dir_present
-    assert_equal true, Dir.exist?("#{Dir.home}/.aka")
+    assert_equal TRUE, Dir.exist?("#{Dir.home}/.aka")
   end
 
   def test_is_dotconfig_present
-    assert_equal true, File.exist?("#{Dir.home}/.aka/.config")
+    assert_equal TRUE, File.exist?("#{Dir.home}/.aka/.config")
   end
 
   def test_is_autosource_present
-    assert_equal true, File.exist?("#{Dir.home}/.aka/autosource")
+    assert_equal TRUE, File.exist?("#{Dir.home}/.aka/autosource")
   end
 
   def test_does_autosource_have_five_configurations
