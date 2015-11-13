@@ -33,17 +33,10 @@ module Aka
 
     def proj arg=nil
       if options.load?
-        puts "there's load"
         Aka.export(arg, options.load, options.force)
       elsif options.save?
-        puts "there's save"
-
         Aka.import(options.save)
       else
-
-
-        puts "there's nothing"
-
         if options.group? && File.exist?('proj.aka')
           Aka.print_title("Project Groups")
           Aka.list_all_groups_in_proj_aka
@@ -74,7 +67,7 @@ module Aka
     method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
     method_option :empty, :type => :boolean, :aliases => '-e', :desc => 'do not print anything'
     def generate args
-      result = false
+      result = FALSE
       if options.last? && args
         result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
       else

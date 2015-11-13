@@ -50,7 +50,7 @@ class Aka < Thor
                  :port => arr[2]}) 
       rescue Exception => e
          puts "\n#{e}"
-         success = false
+         success = FALSE
       end
       puts "\nDone." if success
     else
@@ -87,7 +87,7 @@ class Aka < Thor
   desc "generate", "generate an alias (short alias: g)"
   method_options :last => :boolean
   def generate args
-    result = false
+    result = FALSE
     if options.last?
       result = add(add_last_command(parseARGS(args))) if args
     else
@@ -283,7 +283,7 @@ class Aka < Thor
                    :password => password})
         rescue Exception => e
           puts "\n#{e}"
-          success = false
+          success = FALSE
         end
       
         puts "\nDone." if success
@@ -441,7 +441,7 @@ class Aka < Thor
   end
 
   def add input
-    if input and show_alias(input).first == false and not_empty_alias(input) == false
+    if input and show_alias(input).first == FALSE and not_empty_alias(input) == FALSE
       array = input.split("=")
       full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
       print_out_command = "aka g #{array.first}='#{array[1]}'"
@@ -453,7 +453,7 @@ class Aka < Thor
       return TRUE
     else
       puts "The alias is already present."
-      return false
+      return FALSE
     end
   end
 
@@ -480,9 +480,9 @@ class Aka < Thor
       }
     else
       puts "#{@pwd} cannot be found.".red
-      return [false, nil, nil]
+      return [FALSE, nil, nil]
     end
-    return [false, nil, nil]
+    return [FALSE, nil, nil]
   
   end
 
@@ -501,10 +501,10 @@ class Aka < Thor
   #     }
   #   else
   #     puts "#{@pwd} cannot be found.".red
-  #     return false
+  #     return FALSE
   #   end
   #   puts "No alias is found.".red
-  #   return false
+  #   return FALSE
   # end
 
   def remove input
@@ -530,7 +530,7 @@ class Aka < Thor
       puts "#{input} cannot be found.".red
     else
       puts "#{@pwd} cannot be found.".red
-      return false
+      return FALSE
     end
   end
 
@@ -543,7 +543,7 @@ class Aka < Thor
   #     end
   #   end
   #
-  #   founded = false
+  #   founded = FALSE
   #   if content=File.open(readYML("#{Dir.home}/.aka/.config")["location"]).read
   #     content.gsub!(/\r\n?/, "\n")
   #     content_array = content.split("\n")
@@ -556,7 +556,7 @@ class Aka < Thor
   #         end
   #       end
   #     }
-  #     puts "nothing is found." if founded == false
+  #     puts "nothing is found." if founded == FALSE
   #   end
   # end
 
@@ -601,7 +601,7 @@ class Aka < Thor
       puts "found: aka g #{argument}=#{line.split('=')[1]}".red
       return TRUE
     else
-      return false
+      return FALSE
     end
   end
 
@@ -756,7 +756,7 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
     end
   end
 
-  def showUsage howmany=10, least=false
+  def showUsage howmany=10, least=FALSE
     
     str = checkConfigFile(readYML("#{Dir.home}/.aka/.config")["history"])
 
@@ -774,11 +774,11 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
     end
   end
 
-  def count_aliases array, howmany, least=false
+  def count_aliases array, howmany, least=FALSE
     name_array,count_array = [], []
     #find the unique value
     array.each_with_index { |value, index|
-      if name_array.include?(value) == false
+      if name_array.include?(value) == FALSE
         name_array.push(value)
       end
     }
@@ -860,13 +860,13 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
     if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
-      check = false
-      while check == false
+      check = FALSE
+      while check == FALSE
         check = TRUE
         content_array.each_with_index { |line, index|
           if line == "" or line == "\n"
             content_array.delete_at(index)
-            check = false
+            check = FALSE
           end
         }
       end
@@ -963,7 +963,7 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
   def add_to_proj fullalias
     values = fullalias.split("=")
     yml = readYML("#{Dir.pwd}/.aka")
-    if yml == false
+    if yml == FALSE
       write_new_proj_aka_file fullalias
     else
       yml["proj"]["title"] = "this is title"
@@ -1053,14 +1053,14 @@ trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2\n".pretty
   end
 
   def get_password
-    ask("Enter Password: ", :echo => false)
+    ask("Enter Password: ", :echo => FALSE)
   end
   
   def isOhMyZsh
     if readYML("#{Dir.home}/.aka/.config")["dotfile"] == "#{Dir.home}/.zshrc"
       return TRUE
     else 
-      return false
+      return FALSE
     end
   end
 

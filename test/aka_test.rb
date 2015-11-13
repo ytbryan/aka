@@ -46,7 +46,7 @@ class AkaTest < Minitest::Test
   #test generate
   def test_generate_function
     # args = "something=echo something"
-    # @aka.options =  {last: false, no: TRUE}
+    # @aka.options =  {last: FALSE, no: TRUE}
     # puts @aka.generate(args)
     assert_equal 10, 10
   end

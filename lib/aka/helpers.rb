@@ -7,7 +7,6 @@ module Aka
     return content_array = content.split("\n")
   end
 
-
   def self.import(the_name)
     if the_name == ""
       array = get_all_aliases_from_proj_aka
@@ -162,7 +161,7 @@ module Aka
   end
 
   def self.add_with_group input, name_of_group
-    if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
+    if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
       array = input.split("=")
       group_name = "# => #{name_of_group}"
       full_command = "alias #{array.first}='#{array[1]}' #{group_name}".gsub("\n","") #remove new line in command
@@ -173,13 +172,13 @@ module Aka
       return TRUE
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
-      return false
+      return FALSE
     end
   end
 
   # add
   def self.add input
-    if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
+    if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
       array = input.split("=")
       full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
       print_out_command = "aka g #{array.first}='#{array[1]}'"
@@ -189,7 +188,7 @@ module Aka
       return TRUE
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
-      return false
+      return FALSE
     end
   end
 
@@ -314,9 +313,9 @@ module Aka
       }
     else
       puts "#{@pwd} cannot be found.".red
-      return [false, nil, nil]
+      return [FALSE, nil, nil]
     end
-    return [false, nil, nil]
+    return [FALSE, nil, nil]
 
   end
 
@@ -346,9 +345,9 @@ module Aka
       }
     else
       puts "#{@pwd} cannot be found.".red
-      return [false, nil, nil, nil]
+      return [FALSE, nil, nil, nil]
     end
-    return [false, nil, nil, nil]
+    return [FALSE, nil, nil, nil]
   end
 
   #
@@ -376,7 +375,7 @@ module Aka
       puts "#{input} cannot be found.".red
     else
       puts "#{@pwd} cannot be found.".red
-      return false
+      return FALSE
     end
   end
 
@@ -395,7 +394,7 @@ module Aka
       }
     else
       error_statement("autosource cannot be found in dotfile.")
-      return false
+      return FALSE
     end
   end
 
@@ -475,7 +474,7 @@ module Aka
       exist_statement(" aka g #{argument}=#{line.split('=')[1]}")
       return TRUE
     else
-      return false
+      return FALSE
     end
   end
 
@@ -771,7 +770,7 @@ module Aka
     end
   end
 
-  def self.show_last_with_group(list_number=false, howmany=10, group)
+  def self.show_last_with_group(list_number=FALSE, howmany=10, group)
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
@@ -808,7 +807,7 @@ module Aka
   end
 
   # show last2 - ryan - remove number
-  def self.showlast(list_number=false,howmany=10, showGroup)
+  def self.showlast(list_number=FALSE,howmany=10, showGroup)
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
 
     if content = File.open(str).read
@@ -849,7 +848,7 @@ module Aka
   end
 
   # show usage
-  def self.showUsage howmany=10, least=false
+  def self.showUsage howmany=10, least=FALSE
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
     value = reload_dot_file
     #get all aliases
@@ -866,11 +865,11 @@ module Aka
   end
 
   # count aliases
-  def self.count_aliases array, howmany, least=false
+  def self.count_aliases array, howmany, least=FALSE
     name_array,count_array = [], []
     #find the unique value
     array.each_with_index { |value, index|
-      if name_array.include?(value) == false
+      if name_array.include?(value) == FALSE
         name_array.push(value)
       end
     }
@@ -953,13 +952,13 @@ module Aka
     if content = File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
-      check = false
-      while check == false
+      check = FALSE
+      while check == FALSE
         check = TRUE
         content_array.each_with_index { |line, index|
           if line == "" || line == "\n"
             content_array.delete_at(index)
-            check = false
+            check = FALSE
           end
         }
       end
@@ -1001,7 +1000,7 @@ module Aka
   def self.add_to_proj fullalias
     values = fullalias.split("=")
     yml = readYML("#{Dir.pwd}/.aka")
-    if yml == false
+    if yml == FALSE
       write_new_proj_aka_file fullalias
     else
       yml["proj"]["title"] = "this is title"
@@ -1178,7 +1177,7 @@ module Aka
   end
 
   def self.isOhMyZsh
-    readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? TRUE : false
+    readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? TRUE : FALSE
   end
 
   def self.print_helpful_statement total_aliases
