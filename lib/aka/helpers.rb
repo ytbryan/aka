@@ -37,7 +37,6 @@ module Aka
     end
   end
 
-
   def self.get_all_aliases_from_proj_aka str="proj.aka"
     array = []
     if content = File.open(str).read
@@ -48,7 +47,6 @@ module Aka
     return array
   end
 
-  # set path
   def self.setPath(path, value)
     data = readYML("#{CONFIG_PATH}")
     if data.has_key?(value) == TRUE
@@ -61,12 +59,10 @@ module Aka
     end
   end
 
-  # reload
-  def self.reload
+  def self.reload_with_source
     system "source #{readYML("#{CONFIG_PATH}")["dotfile"]}"
   end
 
-  # read YML
   def self.readYML path
     if File.exists? path
       return YAML.load_file(path)
@@ -75,7 +71,6 @@ module Aka
     end
   end
 
-  # write YML
   def self.writeYML path, theyml
     File.open(path, 'w') {|f| f.write theyml.to_yaml } #Store
   end
@@ -89,18 +84,15 @@ module Aka
     }
   end
 
+  # def self.write_with array
+  #   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
+  #   File.open(str, 'w') { |file|
+  #     array.each do |line|
+  #       file.write(line)
+  #     end
+  #   }
+  # end
 
-  # write_with + into dotfile
-  def self.write_with array
-    str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
-    File.open(str, 'w') { |file|
-      array.each do |line|
-        file.write(line)
-      end
-    }
-  end
-
-  # write_with_newline + into dotfile
   def self.write_with_newline array
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     File.open(str, 'w') { |file|
@@ -110,32 +102,27 @@ module Aka
     }
   end
 
-  # write
   def self.write str, path
     File.open(path, 'w') { |file| file.write(str) }
   end
 
-  # append
   def self.append str, path
     File.open(path, 'a') { |file| file.write(str) }
   end
 
-  #append_with_newline
-  def self.append_with_newline str, path
-    File.open(path, 'a') { |file| file.write(str + "\n") }
-  end
+  # def self.append_with_newline str, path
+  #   File.open(path, 'a') { |file| file.write(str + "\n") }
+  # end
 
-  # reload_dot_file
   def self.reload_dot_file
     isOhMyZsh == TRUE ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
   end
 
   # history write
-  def self.historywrite
-    isOhMyZsh == TRUE ?  system("exec zsh") :  system("kill -SIGUSR2 #{Process.ppid}")
-  end
+  # def self.historywrite
+  #   isOhMyZsh == TRUE ?  system("exec zsh") :  system("kill -SIGUSR2 #{Process.ppid}")
+  # end
 
-  # unalias
   def self.unalias_the value
     if isOhMyZsh == TRUE
       system("exec zsh")
@@ -145,14 +132,12 @@ module Aka
     end
   end
 
-  #split domain user
-  def self.split_domain_user fulldomain
-    username = fulldomain.split("@").first
-    domain = fulldomain.split("@")[1]
-    return [username, domain]
-  end
+  # def self.split_domain_user fulldomain
+  #   username = fulldomain.split("@").first
+  #   domain = fulldomain.split("@")[1]
+  #   return [username, domain]
+  # end
 
-  # split
   def self.split fulldomain
     username = fulldomain.split("@").first
     domain = fulldomain.split("@")[1].split(":").first
@@ -176,7 +161,6 @@ module Aka
     end
   end
 
-  # add
   def self.add input
     if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
       array = input.split("=")
@@ -192,14 +176,12 @@ module Aka
     end
   end
 
-  # not empty alias
   def self.not_empty_alias input
     array = input.split("=")
     return TRUE if array.count < 2
     return array[1].strip == ""
   end
 
-  #list
   def self.search_alias_with_group_name name
     print_title("System Alias")
     group_count = 0
@@ -238,7 +220,6 @@ module Aka
     end
   end
 
-  #change alias group name
   def self.change_alias_group_name_with input, new_group_name
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
@@ -266,7 +247,6 @@ module Aka
     end
   end
 
-  #change alias group name
   def self.get_group_name input
     if input
       if input.include? "# =>"
@@ -290,7 +270,6 @@ module Aka
     return results
   end
 
-  # show alias
   def self.search_alias_return_alias_tokens argument
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
@@ -319,7 +298,6 @@ module Aka
 
   end
 
-  # show alias with group
   def self.search_alias_return_alias_tokens_with_group argument
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
@@ -379,7 +357,6 @@ module Aka
     end
   end
 
-  # remove autosource in dotfile
   def self.remove_autosource
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
@@ -398,7 +375,6 @@ module Aka
     end
   end
 
-  # history
   def self.history
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
     if content = File.open(str).read
@@ -419,56 +395,6 @@ module Aka
     end
   end
 
-
-  # def self.create_proj_file the_name
-  #   array = export_group_aliases(the_name)
-  #   if File.exist?('proj.aka')
-  #     if options.force?
-  #       File.open('proj.aka', 'w') { |file|
-  #         array.each do |line|
-  #           file.write(line)
-  #           file.write("\n")
-  #         end
-  #       }
-  #     else
-  #       exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
-  #     end
-  #   else
-  #     FileUtils.touch('proj.aka')
-  #     File.open('proj.aka', 'w') { |file|
-  #       array.each do |line|
-  #         file.write(line)
-  #         file.write('\n')
-  #       end
-  #     }
-  #   end
-  # end
-
-  # def self.generate_proj_aka_file the_name
-  #   array = export_group_aliases(the_name)
-  #   if File.exist?('proj.aka')
-  #     if options.force?
-  #       File.open('proj.aka', 'w') { |file|
-  #         array.each do |line|
-  #           file.write(line)
-  #           file.write("\n")
-  #         end
-  #       }
-  #     else
-  #       exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
-  #     end
-  #   else
-  #     FileUtils.touch('proj.aka')
-  #     File.open('proj.aka', 'w') { |file|
-  #       array.each do |line|
-  #         file.write(line)
-  #         file.write('\n')
-  #       end
-  #     }
-  #   end
-  # end
-
-  # check found
   def self.found? answer, argument, line
     if answer == argument
       exist_statement(" aka g #{argument}=#{line.split('=')[1]}")
@@ -493,13 +419,11 @@ module Aka
     end
   end
 
-  # edit alias
   def self.edit_alias_name newalias, thiscommand
     puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
     return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
 
-  # edit alias with group
   def self.edit_alias_name_with_group newalias, thiscommand, group
     if !group.nil? || !group.empty?
       puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}' -g #{group}"
@@ -529,7 +453,6 @@ module Aka
     end
   end
 
-  # count function
   def self.count_function
     function_count = 0
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
@@ -547,7 +470,6 @@ module Aka
     end
   end
 
-  #count export
   def self.count_export
     export_count = 0
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
@@ -563,15 +485,11 @@ module Aka
       }
       return export_count
     end
-
   end
 
-  # count
   def self.count
     alias_count = 0
-
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
-
     if content=File.open(str).read
       content.gsub!(/\r\n?/, "\n")
       content_array= content.split("\n")
@@ -586,7 +504,6 @@ module Aka
     end
   end
 
-  # setup_aka by ryan - set value in config file
   def self.setup_aka
     userBash = []
     # 1. check for each type of file without setting anything.
@@ -656,11 +573,7 @@ module Aka
     end
   end
 
-
-  # setup_autosource by ryan - create source file
   def self.setup_autosource
-
-
     if File.exist?("#{CONFIG_PATH}")
       out_file = File.new("#{CONFIG_PATH}/autosource", "w")
       out_file.puts("export HISTSIZE=10000")
@@ -677,9 +590,7 @@ module Aka
     end
   end
 
-  # create and setup config file
   def self.setup_config
-
     if File.exist?("#{CONFIG_PATH}")
       puts "Directory #{CONFIG_PATH} exist"
     else
@@ -698,33 +609,11 @@ module Aka
     end
   end
 
-  # write to location
-  def self.write_to_location location, address
-    if does_aka_directory_exists
-      write(location, address)
-    else
-      error_statement(".aka not found.")
-    end
-  end
-
-  # read location
   def self.read location
-    answer = dot_location_exists?(location)
+    answer = File.exist?(location)
     answer == TRUE && content = File.open(location).read ? content : ""
   end
 
-  # dot location exist
-  def self.dot_location_exists? address
-    File.exist? address
-  end
-
-  # aka directory exist ?
-  def self.does_aka_directory_exists
-    # File.directory?("#{AKA_PATH}")
-    File.directory?("#{AKA_PATH}")
-  end
-
-  # check config file
   def self.is_config_file_present? str
     path =  "#{BASH_PROFILE_PATH}"
     if str == ""
@@ -736,77 +625,9 @@ module Aka
       error_statement("Type `aka init --dotfile #{path}` to set the path of your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
       exit
     end
-
     return str
   end
 
-  # show last
-  def self.showlast_old howmany=10
-    str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
-    if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-      #why not just call the last five lines? Because i can't be sure that they are aliases
-      total_aliases = []
-      content_array.each_with_index { |line, index|
-        value = line.split(" ")
-        if value.length > 1 && value.first == "alias"
-          total_aliases.push(line)
-        end
-      }
-      puts ""
-      if total_aliases.count > howmany
-        total_aliases.last(howmany).each_with_index do |line, index|
-          splitted= line.split('=')
-          puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-        end
-      else
-        total_aliases.last(howmany).each_with_index do |line, index|
-          splitted= line.split('=')
-          puts "#{index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-        end
-      end
-      puts ""
-    end
-  end
-
-  def self.show_last_with_group(list_number=FALSE, howmany=10, group)
-    str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
-    if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-      total_aliases = []
-      content_array.each_with_index { |line, index|
-        value = line.split(" ")
-        if value.length > 1 && value.first == "alias"
-          total_aliases.push(line)
-        end
-      }
-      puts ""
-      if total_aliases.count > howmany
-        total_aliases.last(howmany).each_with_index do |line, index|
-          splitted= line.split('=')
-          if list_number
-            puts "#{total_aliases.count - howmany + index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-          else
-            puts "aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-          end
-        end
-      else
-        total_aliases.last(howmany).each_with_index do |line, index|
-          splitted= line.split('=')
-          if list_number
-            puts "#{index+1}. aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-          else
-            puts "aka g " + splitted[0].split(" ")[1].red + "=" + splitted[1]
-          end
-        end
-      end
-      puts ""
-    end
-  end
-
-  # show last2 - ryan - remove number
   def self.showlast(list_number=FALSE,howmany=10, showGroup)
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
 
@@ -847,7 +668,6 @@ module Aka
     end
   end
 
-  # show usage
   def self.showUsage howmany=10, least=FALSE
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
     value = reload_dot_file
@@ -864,10 +684,8 @@ module Aka
     end
   end
 
-  # count aliases
   def self.count_aliases array, howmany, least=FALSE
     name_array,count_array = [], []
-    #find the unique value
     array.each_with_index { |value, index|
       if name_array.include?(value) == FALSE
         name_array.push(value)
@@ -918,7 +736,6 @@ module Aka
     puts "There's a total of #{array.size} lines in #{readYML("#{CONFIG_PATH}")["history"]}."
   end
 
-  # sort
   def self.sort(countarray, namearray) #highest first. decscending.
     temp = 0, temp2 = ""
     countarray.each_with_index { |count, index|
@@ -941,12 +758,6 @@ module Aka
     return countarray, namearray
   end
 
-  # get history file
-  def self.get_latest_history_file
-    system("history -a")
-  end
-
-  # clean up
   def self.cleanup
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
@@ -997,44 +808,6 @@ module Aka
     return result + " #{percent.round(2)}%"
   end
 
-  def self.add_to_proj fullalias
-    values = fullalias.split("=")
-    yml = readYML("#{Dir.pwd}/.aka")
-    if yml == FALSE
-      write_new_proj_aka_file fullalias
-    else
-      yml["proj"]["title"] = "this is title"
-      yml["proj"]["summary"] = "this is summary"
-      yml["proj"]["aka"][values.first] = values[1]
-      writeYML("#{Dir.pwd}/.aka", yml)
-    end
-  end
-
-  def self.write_new_proj_aka_file fullalias
-    values = fullalias.split("=")
-
-    theyml = {"proj" => {
-                "title" => "",
-                 "summary" => "",
-                 "aliases" => {
-                      "firstvalue" => ""
-                            }}}
-
-    writeYML("#{Dir.pwd}/.aka", theyml)
-  end
-
-  def self.createShortcut(proj)
-    answer = ""
-    proj["shortcuts"].to_a.each_with_index do |each,index|
-        answer += "#{each["name"]}
-                    - #{each["command"]}
-                    ".pretty
-        answer += "\n"
-    end
-    return answer
-  end
-
-
   def self.list_all_groups_in_proj_aka
     str = 'proj.aka'
     group_array = []
@@ -1061,8 +834,6 @@ module Aka
 
     end
   end
-
-
 
   def self.list_all_groups
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
@@ -1099,19 +870,16 @@ module Aka
   end
 
   def self.add_last_command name
-    command= find_last_command
-    return str = name + "=" + "#{command}"
-  end
-
-  def self.find_last_command
+    command = ""
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
     #i think if you do history -w, you can retrieve the latest command
     if content = File.open(str).read
       count=0
       content.gsub!(/\r\n?/, "\n")
       content_array = content.split("\n")
-      return  content_array[content_array.count - 1]
+      command =  content_array[content_array.count - 1]
     end
+    return str = name + "=" + "#{command}"
   end
 
   def self.parseARGS str
@@ -1263,7 +1031,6 @@ module Aka
     return answer_count
   end
 
-
   def self.print_the_aliases content_array
     answer_count= 0
     content_array.each_with_index { |line, index|
@@ -1282,11 +1049,7 @@ module Aka
     }
     return answer_count
   end
-
 end
-
-
-
 
 class String
     def pretty
