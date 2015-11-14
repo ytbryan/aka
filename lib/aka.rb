@@ -139,9 +139,9 @@ module Aka
     method_options :name => :boolean #--name
     method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
     def edit args
-      if options.group
-        Aka.change_alias_group_name_with(Aka.parseARGS(args),options.group)
-      else
+      # if options.group?
+      #   Aka.change_alias_group_name_with(Aka.parseARGS(args),options.group)
+      # else
         if args
           values = args.split("=")
           if values.size > 1
@@ -182,7 +182,7 @@ module Aka
             end
           end
         end #if args
-      end # end else no group option
+      # end # end else no group option
     end
 
     #
