@@ -1,7 +1,4 @@
-require 'aka/constants'
-
 module Aka
-
   def self.product_content_array(content)
     content.gsub!(/\r\n?/, "\n")
     return content_array = content.split("\n")
@@ -431,7 +428,6 @@ module Aka
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
       content_array = product_content_array(content)
-
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == "alias"
@@ -729,7 +725,6 @@ module Aka
       line = line.gsub("# =>", "-g")
       value = testline.split(" ")
       containsCommand = line.split('=') #containsCommand[1]
-
       if value.length > 1 && value.first == "alias"
         answer = value[1].split("=") #contains the alias
         group_name = testline.scan(/# => ([a-zA-z]*)/).first if testline.scan(/# => ([a-zA-z]*)/)
