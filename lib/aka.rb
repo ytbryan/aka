@@ -4,6 +4,7 @@ require 'aka/helpers'
 require 'aka/printing'
 require 'aka/core'
 require 'aka/string'
+require 'aka/config'
 
 require 'yaml'
 require 'thor'
