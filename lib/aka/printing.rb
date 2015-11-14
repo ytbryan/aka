@@ -1,8 +1,6 @@
 module Aka
   def self.exist_statement(statement)
-    puts ""
     puts "Exists: ".green + statement
-    puts ""
   end
 
   def self.print_all_helpful_statement
@@ -11,9 +9,7 @@ module Aka
   end
 
   def self.error_statement(statement)
-    puts ""
     puts "Error: ".red + statement
-    puts ""
   end
 
   def self.print_helpful_statement total_aliases
@@ -28,9 +24,7 @@ module Aka
   end
 
   def self.edit_statement(statement)
-    puts ""
     puts "Edited:  ".yellow + statement
-    puts ""
   end
 
   def self.create_statement(statement)

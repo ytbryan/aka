@@ -40,8 +40,7 @@ module Aka
   def self.get_all_aliases_from_proj_aka str="proj.aka"
     array = []
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       array = print_the_aliases_return_array(content_array)
     end
     return array
@@ -152,10 +151,8 @@ module Aka
       name = "default"
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content = File.open(str).read
-        content.gsub!(/\r\n?/, "\n")
-        content_array = content.split("\n")
+        content_array = product_content_array(content)
         group_count = print_the_aliases(content_array)
-
         if group_count == 0
           puts "No alias found in default group"
         else
@@ -166,8 +163,7 @@ module Aka
 
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       if content = File.open(str).read
-        content.gsub!(/\r\n?/, "\n")
-        content_array = content.split("\n")
+        content_array = product_content_array(content)
         group_count = print_the_aliases2(content_array, name)
       end
 
@@ -182,9 +178,7 @@ module Aka
   def self.change_alias_group_name_with input, new_group_name
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == "alias"
@@ -222,8 +216,7 @@ module Aka
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     results = []
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       results = print_the_aliases_return_array2(content_array, name)
     end
     return results
@@ -232,9 +225,7 @@ module Aka
   def self.search_alias_return_alias_tokens argument
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         line = line.gsub("# =>", "-g")
         value = line.split(" ")
@@ -260,9 +251,7 @@ module Aka
   def self.search_alias_return_alias_tokens_with_group argument
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
-
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == "alias"
@@ -290,8 +279,7 @@ module Aka
   def self.remove input
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         line = line.gsub("# =>", "-g")
         value = line.split(" ")
@@ -316,8 +304,7 @@ module Aka
   def self.remove_autosource
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         if line == "source \"/home/ryan/.aka/autosource\""
           content_array.delete_at(index) && write_with_newline(content_array)
@@ -336,8 +323,7 @@ module Aka
     if content = File.open(str).read
       puts ".bash_history is available"
       count=0
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         array = line.split(" ")
         if array.first == "alias"
@@ -395,8 +381,7 @@ module Aka
     group_array = []
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == 'alias'
@@ -413,8 +398,7 @@ module Aka
     function_count = 0
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == "function"
@@ -430,8 +414,7 @@ module Aka
     export_count = 0
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == "export"
@@ -447,8 +430,8 @@ module Aka
     alias_count = 0
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
+
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == "alias"
@@ -586,10 +569,8 @@ module Aka
 
   def self.showlast(list_number=FALSE,howmany=10, showGroup)
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
-
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       #why not just call the last five lines? Because i can't be sure that they are aliases
       total_aliases = []
       content_array.each_with_index { |line, index|
@@ -629,8 +610,7 @@ module Aka
     value = reload_dot_file
     #get all aliases
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       total_aliases = []
       content_array.each_with_index { |line, index|
         value = line.split(" ")
@@ -717,8 +697,7 @@ module Aka
   def self.cleanup
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       check = FALSE
       while check == FALSE
         check = TRUE
@@ -768,12 +747,10 @@ module Aka
     str = 'proj.aka'
     group_array = []
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == 'alias'
-
           answer = value[1].split("=") #contains the alias
           group_name = line.scan(/# => ([a-zA-z]*)/).first if line.scan(/# => ([a-zA-z]*)/)
           if group_name != nil
@@ -795,8 +772,7 @@ module Aka
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     group_array = []
     if content=File.open(str).read
-      content.gsub!(/\r\n?/, "\n")
-      content_array= content.split("\n")
+      content_array = product_content_array(content)
       content_array.each_with_index { |line, index|
         value = line.split(" ")
         if value.length > 1 && value.first == 'alias'
@@ -824,8 +800,7 @@ module Aka
     #i think if you do history -w, you can retrieve the latest command
     if content = File.open(str).read
       count=0
-      content.gsub!(/\r\n?/, "\n")
-      content_array = content.split("\n")
+      content_array = product_content_array(content)
       command =  content_array[content_array.count - 1]
     end
     return str = name + "=" + "#{command}"

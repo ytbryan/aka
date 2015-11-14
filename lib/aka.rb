@@ -25,6 +25,12 @@ module Aka
         "h" => :help,
         "v" => :version
 
+
+    desc :test, "this is where we test our code"
+    def test
+      Aka.import("")
+    end
+
     #
     # PROJ
     #
