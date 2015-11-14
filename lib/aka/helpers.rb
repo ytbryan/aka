@@ -84,15 +84,6 @@ module Aka
     }
   end
 
-  # def self.write_with array
-  #   str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
-  #   File.open(str, 'w') { |file|
-  #     array.each do |line|
-  #       file.write(line)
-  #     end
-  #   }
-  # end
-
   def self.write_with_newline array
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     File.open(str, 'w') { |file|
@@ -110,18 +101,9 @@ module Aka
     File.open(path, 'a') { |file| file.write(str) }
   end
 
-  # def self.append_with_newline str, path
-  #   File.open(path, 'a') { |file| file.write(str + "\n") }
-  # end
-
   def self.reload_dot_file
     isOhMyZsh == TRUE ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
   end
-
-  # history write
-  # def self.historywrite
-  #   isOhMyZsh == TRUE ?  system("exec zsh") :  system("kill -SIGUSR2 #{Process.ppid}")
-  # end
 
   def self.unalias_the value
     if isOhMyZsh == TRUE
@@ -131,12 +113,6 @@ module Aka
       system "kill -SIGUSR2 #{Process.ppid}"
     end
   end
-
-  # def self.split_domain_user fulldomain
-  #   username = fulldomain.split("@").first
-  #   domain = fulldomain.split("@")[1]
-  #   return [username, domain]
-  # end
 
   def self.split fulldomain
     username = fulldomain.split("@").first
@@ -328,9 +304,6 @@ module Aka
     return [FALSE, nil, nil, nil]
   end
 
-  #
-  # remove
-  #
   def self.remove input
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content=File.open(str).read
@@ -970,10 +943,6 @@ module Aka
     puts "Error: ".red + statement
   end
 
-  def self.exist_statement(statement)
-    puts "Exists: ".green + statement
-  end
-
   def self.print_the_aliases_return_array2 content_array, name
     array = []
     content_array.each_with_index { |line, index|
@@ -1009,7 +978,6 @@ module Aka
     return array
   end
 
-
   def self.print_the_aliases2 content_array, name
     answer_count= 0
     content_array.each_with_index { |line, index|
@@ -1034,7 +1002,6 @@ module Aka
   def self.print_the_aliases content_array
     answer_count= 0
     content_array.each_with_index { |line, index|
-      # testLine = line
       line = line.gsub("# =>", "-g")
       value = line.split(" ")
       containsCommand = line.split('=') #containsCommand[1]
