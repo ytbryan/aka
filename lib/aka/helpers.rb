@@ -835,13 +835,6 @@ module Aka
     end
   end
 
-
-  def self.print_title(with_these)
-    puts ""
-    puts "*** #{with_these} ***"
-    puts ""
-  end
-
   def self.add_last_command name
     command = ""
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
@@ -921,26 +914,12 @@ module Aka
     readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? TRUE : FALSE
   end
 
-  def self.print_helpful_statement total_aliases
-    puts "\nA total of  #{total_aliases} aliases in this project #{Dir.pwd}"
-    puts "\nUse 'aka -h' to see all the useful commands."
-  end
-
   def self.repeated_system_call array
     array.each do |line|
       line.gsub!("\'", "\"") #need to replace ' with "
       line = line + " -n" #do not reload :)
       system(line)
     end
-  end
-
-  def self.print_all_helpful_statement
-    puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{readYML("#{CONFIG_PATH}")["dotfile"]}"
-    puts "\nUse 'aka -h' to see all the useful commands.\n\n"
-  end
-
-  def self.error_statement(statement)
-    puts "Error: ".red + statement
   end
 
   def self.print_the_aliases_return_array2 content_array, name
