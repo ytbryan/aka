@@ -378,31 +378,34 @@ module Aka
   end
 
   def self.edit_alias_command newcommand, this_alias
-    puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
+    edit_statement "aka g #{this_alias}='#{newcommand}'"
     return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
 
   def self.edit_alias_command_with_group newcommand, this_alias, group
     if !group.nil? || !group.empty?
-      puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}' -g #{group}"
+      edit_statement("aka g #{this_alias}='#{newcommand}' -g #{group}")
+      # puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}' -g #{group}"
       return append("alias " + this_alias + "='" + newcommand + "' # => " + group, readYML("#{CONFIG_PATH}")["dotfile"] )
     else
-      puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
+      edit_statement("aka g #{this_alias}='#{newcommand}'")
+      # puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
       return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
     end
   end
 
   def self.edit_alias_name newalias, thiscommand
-    puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
+    edit_statement("aka g #{newalias}='#{thiscommand}'")
+    # puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
     return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
 
   def self.edit_alias_name_with_group newalias, thiscommand, group
     if !group.nil? || !group.empty?
-      puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}' -g #{group}"
+      edit_statement "aka g #{newalias}='#{thiscommand}' -g #{group}"
       return append("alias " + newalias + "='" + thiscommand + "' # => " + group, readYML("#{CONFIG_PATH}")["dotfile"] )
     else
-      puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
+      edit_statement "aka g #{newalias}='#{thiscommand}'"
       return append("alias " + newalias + "=" + thiscommand, readYML("#{CONFIG_PATH}")["dotfile"] )
     end
   end

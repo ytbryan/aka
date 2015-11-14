@@ -1,7 +1,7 @@
 require 'aka/version' #required for the test to work
 require 'aka/constants'
 require 'aka/helpers'
-require 'aka/print_statements'
+require 'aka/printing_statements'
 
 require 'yaml'
 require 'thor'
@@ -23,9 +23,9 @@ module Aka
         "h" => :help,
         "v" => :version
 
-    #################
+    #
     # PROJ
-    #################
+    #
     desc :proj, "list the project alias (short alias: p)"
     method_option :group, :type => :boolean, :aliases => '-g'
     method_option :load, :type => :string, :aliases => '-l'
@@ -59,9 +59,9 @@ module Aka
 
     end
 
-    #################
+    #
     # GENERATE
-    #################
+    #
     desc :generate, "generate an alias (short alias: g)"
     method_option :last, :type => :boolean, :aliases => '-l', :desc => ''
     method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
@@ -300,7 +300,7 @@ module Aka
 
     #
     # Where is your dotfile
-    # aka where
+    # 
     desc :where, "locate your dotfile"
     def where
       puts Aka.readYML("#{CONFIG_PATH}")["dotfile"]
@@ -314,49 +314,5 @@ module Aka
       puts Aka::VERSION
     end
 
-
-
   end #that's all
 end #last end
-
-
-
-# desc :import, "import project alias into your system alias"
-# method_option :all, :type => :boolean, :aliases => '-a', :desc => 'import all .aka'
-# def import the_name=""
-#   if the_name == ""
-#     array = get_all_aliases_from_proj_aka
-#     repeated_system_call(array)
-#   else
-#     array = get_all_aliases_from_proj_aka(the_name)
-#     repeated_system_call(array)
-#   end
-# end
-
-
-
-#
-# Export
-#
-# desc :export, "export system alias into project alias"
-# method_option :force, :type => :boolean, :aliases => '-f', :desc => ''
-# method_option :name, :type => :string, :aliases => '-n', :desc => ''
-# def export the_name
-#   array = export_group_aliases(the_name)
-#   if options.name?
-#     new_proj_aka = "#{options.name}"+".aka"
-#     FileUtils.touch(new_proj_aka)
-#     write_with_array_into(new_proj_aka, array)
-#   else
-#     if File.exist?('proj.aka')
-#       if options.force?
-#         write_with_array_into('proj.aka', array)
-#       else
-#         exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
-#       end
-#     else
-#       FileUtils.touch('proj.aka')
-#       write_with_array_into('proj.aka', array)
-#     end
-#   end
-# end

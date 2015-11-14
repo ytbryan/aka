@@ -22,4 +22,9 @@ module Aka
     puts "*** #{with_these} ***"
     puts ""
   end
+
+
+  def self.edit_statement(statement)
+    puts "Edited:  ".yellow + statement
+  end
 end
