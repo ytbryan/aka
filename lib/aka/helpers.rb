@@ -101,19 +101,6 @@ module Aka
     File.open(path, 'a') { |file| file.write(str) }
   end
 
-  # def self.reload_dot_file
-  #   isOhMyZsh == TRUE ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
-  # end
-  #
-  # def self.unalias_the value
-  #   if isOhMyZsh == TRUE
-  #     system("exec zsh")
-  #   else
-  #     system "echo '#{value}' > ~/sigusr1-args;"
-  #     system "kill -SIGUSR2 #{Process.ppid}"
-  #   end
-  # end
-
   def self.split fulldomain
     username = fulldomain.split("@").first
     domain = fulldomain.split("@")[1].split(":").first
@@ -129,7 +116,7 @@ module Aka
       print_out_command = "aka g #{array.first}='#{array[1]}'"
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'a') { |file| file.write("\n" +full_command) }
-      puts "Created: ".green +  "#{print_out_command} " + "in #{name_of_group} group."
+      create_statement "#{print_out_command} " + "in #{name_of_group} group."
       return TRUE
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
@@ -144,7 +131,7 @@ module Aka
       print_out_command = "aka g #{array.first}='#{array[1]}'"
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'a') { |file| file.write("\n" +full_command) }
-      puts "Created: ".green +  "#{print_out_command}"
+      create_statement "#{print_out_command}"
       return TRUE
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
@@ -172,9 +159,7 @@ module Aka
         if group_count == 0
           puts "No alias found in default group"
         else
-          puts ""
           exist_statement("A total of #{group_count} aliases in default group.")
-          puts ""
         end
       end
     else
@@ -189,9 +174,7 @@ module Aka
       if group_count == 0
         puts "No alias found in #{name} group"
       else
-        puts ""
         exist_statement("A total of #{group_count} aliases in #{name} group.")
-        puts ""
       end
     end
   end
@@ -385,18 +368,15 @@ module Aka
   def self.edit_alias_command_with_group newcommand, this_alias, group
     if !group.nil? || !group.empty?
       edit_statement("aka g #{this_alias}='#{newcommand}' -g #{group}")
-      # puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}' -g #{group}"
       return append("alias " + this_alias + "='" + newcommand + "' # => " + group, readYML("#{CONFIG_PATH}")["dotfile"] )
     else
       edit_statement("aka g #{this_alias}='#{newcommand}'")
-      # puts "Edited:  ".yellow + "aka g #{this_alias}='#{newcommand}'"
       return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
     end
   end
 
   def self.edit_alias_name newalias, thiscommand
     edit_statement("aka g #{newalias}='#{thiscommand}'")
-    # puts "Edited:  ". yellow + "aka g #{newalias}='#{thiscommand}'"
     return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
 
@@ -998,42 +978,4 @@ module Aka
     }
     return answer_count
   end
-end
-
-class String
-    def pretty
-    self.gsub("\s\t\r\f", ' ').squeeze(' ')
-    end
-
-    def is_i?
-    !!(self =~ /\A[-+]?[0-9]+\z/)
-    end
-
-    def colorize(color_code)
-     "\e[#{color_code}m#{self}\e[0m"
-    end
-
-    def red
-     colorize(31)
-    end
-
-    def green
-     colorize(32)
-    end
-
-    def yellow
-     colorize(33)
-    end
-
-    def blue
-     colorize(34)
-    end
-
-    def pink
-     colorize(35)
-    end
-
-    def light_blue
-     colorize(36)
-    end
 end

@@ -3,6 +3,7 @@ require 'aka/constants'
 require 'aka/helpers'
 require 'aka/printing'
 require 'aka/core'
+require 'aka/string'
 
 require 'yaml'
 require 'thor'

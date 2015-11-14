@@ -11,5 +11,4 @@ module Aka
       system "kill -SIGUSR2 #{Process.ppid}"
     end
   end
-
 end
