@@ -4,7 +4,6 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'aka/version'
 require 'aka/post_message'
 
-
 Gem::Specification.new do |spec|
   spec.name          = "aka2"
   spec.version       = Aka::VERSION
