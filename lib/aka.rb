@@ -2,6 +2,7 @@ require 'aka/version' #required for the test to work
 require 'aka/constants'
 require 'aka/helpers'
 require 'aka/printing'
+require 'aka/core'
 
 require 'yaml'
 require 'thor'
