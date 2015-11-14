@@ -23,7 +23,6 @@ module Aka
     puts ""
   end
 
-
   def self.edit_statement(statement)
     puts "Edited:  ".yellow + statement
   end

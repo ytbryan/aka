@@ -1,7 +1,7 @@
 require 'aka/version' #required for the test to work
 require 'aka/constants'
 require 'aka/helpers'
-require 'aka/printing_statements'
+require 'aka/printing'
 
 require 'yaml'
 require 'thor'
@@ -300,7 +300,7 @@ module Aka
 
     #
     # Where is your dotfile
-    # 
+    #
     desc :where, "locate your dotfile"
     def where
       puts Aka.readYML("#{CONFIG_PATH}")["dotfile"]
