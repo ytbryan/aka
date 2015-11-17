@@ -4,7 +4,7 @@ require 'minitest/spec'
 require 'aka'
 
 class String
-    def colorize(color_code)
+   def colorize(color_code)
      "\e[#{color_code}m#{self}\e[0m"
    end
 
@@ -40,40 +40,81 @@ class AkaTest < Minitest::Test
 
   def setup
     @aka = Aka::Base.new
+    @random_number = rand(2**32..2**64-1)
+
+    @aka.options =  {no: TRUE, nounalias: TRUE}
+
+    @name = "generate-#{@random_number}"
+    @filename = "test/tmp/generate-#{@random_number}.aka.test"
+    @command = "touch #{@filename}"
+    @args = "#{@name}=#{@command}"
+
+    @name_for_destroy = "destroy-#{@random_number}"
+    @filename_for_destroy = "test/tmp/destroy-#{@random_number}.aka.test"
+    @command_for_destroy = "touch #{@filename_for_destroy}"
+    @args_for_destroy = "#{@name_for_destroy}=#{@command_for_destroy}"
+
+    @name_for_find = "find-#{@random_number}"
+    @filename_for_find = "test/tmp/find-#{@random_number}.aka.test"
+    @command_for_find = "touch #{@filename_for_find}"
+    @args_for_find = "#{@name_for_find}=#{@command_for_find}"
+
   end
 
-  # the main challenge is that aka source the shell which cause minitest to exit
-  #test generate
+  def teardown
+    #remove generated files. Comment out these lines if you want to see generated files
+    # system %(zsh -c "source ~/.zshrc; rm -rf #{Dir.pwd}/test/tmp/*")
+  end
+
+  def invoke_command command
+    system %(zsh -c "source ~/.zshrc; command")
+  end
+
+  def invoke_alias name, filename
+    system %(zsh -c 'source ~/.zshrc; ${=aliases[#{name}]}')
+    return File.exist?(filename)
+  end
+
+  def fail
+    assert_equal TRUE, FALSE
+  end
+
   def test_generate_function
-    # args = "something=echo something"
-    # @aka.options =  {last: FALSE, no: TRUE}
-    # puts @aka.generate(args)
-    assert_equal 10, 10
+    value = @aka.generate(@args)
+    assert_equal TRUE, invoke_alias(@name, @filename)
   end
-  #test destroy
+
   def test_destroy_function
-    assert_equal 10, 10
+    value = @aka.generate(@args_for_destroy)
+    if TRUE == invoke_alias(@name_for_destroy, @filename_for_destroy)
+      @aka.destroy(@name_for_destroy)
+      assert_equal TRUE, invoke_alias(@args_for_destroy, @filename_for_destroy)
+    end
+    fail
   end
 
-  #test find
   def test_find_function
-    assert_equal 10, 10
+    value = @aka.generate(@args_for_find)
+    if TRUE == invoke_alias(@name_for_find, @filename_for_find)
+      @aka.destroy(@name_for_find)
+      assert_equal TRUE, @aka.find(@name_for_find)
+    end
+    fail
   end
 
-  #test proj
-  def test_proj_function
-    assert_equal 10, 10
-  end
+  # def test_proj_function
+  #   assert_equal 10, 10
+  # end
 
-  #test export
-  def test_export_function
-    assert_equal 10, 10
-  end
-
-  #test edit
-  def test_edit_functionality
-    assert_equal 10, 10
-  end
+  # def test_edit_functionality
+  #   value = @aka.generate(@args_for_edit)
+  #   if TRUE == invoke_alias(@name_for_edit, @filename_for_edit)
+  #     @aka.edit(@name_for_edit)
+  #     assert_equal TRUE, @aka.find(@name_for_edit)
+  #   else
+  #     assert_equal TRUE, FALSE
+  #   end
+  # end
 
   def test_aka_version
     refute_nil ::Aka::VERSION
@@ -102,5 +143,4 @@ class AkaTest < Minitest::Test
       assert_equal 9, f.count
     end
   end
-
 end

@@ -6,6 +6,7 @@ require 'aka/core'
 require 'aka/string'
 require 'aka/config'
 
+
 require 'yaml'
 require 'thor'
 require 'shellwords'
@@ -27,9 +28,13 @@ module Aka
         "v" => :version
 
 
+    desc :testing, "testing"
+    def testing name, number
+    end
+
     desc :test, "this is where we test our code"
     def test
-      Aka.import("")
+      system %(zsh -c 'source ~/.zshrc; aka generate something=\"echo well well\"')
     end
 
     #
@@ -78,12 +83,13 @@ module Aka
     method_option :empty, :type => :boolean, :aliases => '-e', :desc => 'do not print anything'
     def generate args
       result = FALSE
-      if options.last? && args
+      if options[:last] && args
         result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
       else
-        result = Aka.add_with_group(Aka.parseARGS(args), options.group)
+        result = Aka.add_with_group(Aka.parseARGS(args), options[:group])
       end
-      Aka.reload_dot_file if result == TRUE && !options.no
+      Aka.reload_dot_file if result == TRUE && !options[:no]
+      return TRUE
     end
 
     #
@@ -92,11 +98,12 @@ module Aka
     desc :destroy, "destroy an alias (short alias: d)"
     method_options :force => :boolean
     method_option :no, :type => :boolean, :aliases => '-n', :desc => '--no means do not reload'
+    method_option :nounalias, :type => :boolean, :aliases => '-u', :desc => '--nounalias means do not remove the alias from current shell'
     def destroy(*args)
       args.each_with_index do |value, index|
         result = Aka.remove(value)
-        Aka.unalias_the(value) if !options.nounalias && result == TRUE
-        Aka.reload_dot_file if result == TRUE && !options.no
+        Aka.unalias_the(value) if !options[:nounalias] && result == TRUE
+        Aka.reload_dot_file if result == TRUE && !options[:no]
       end
     end
 
@@ -131,13 +138,14 @@ module Aka
     method_options :force => :boolean
     method_option :group, :type => :string, :aliases => '-g', :desc => ''
     def find *args
-      if options.group
-        Aka.search_alias_with_group_name(options.group)
+      if options[:group]
+        Aka.search_alias_with_group_name(options[:group])
       else
         args.each_with_index do |value, index|
           Aka.search_alias_return_alias_tokens(value)
         end
       end
+      return TRUE
     end
 
     #
@@ -156,14 +164,14 @@ module Aka
           if values.size > 1
             truth, _alias = Aka.search_alias_return_alias_tokens(args)
             if truth == TRUE
-              if options.name
+              if options[:name]
                 Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_name(values[1], _alias) #edit that alias
-                Aka.reload_dot_file if !options.noreload
+                Aka.reload_dot_file if !options[:noreload]
               else
                 Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_command(values[1], _alias) #edit that alias
-                Aka.reload_dot_file if !options.noreload
+                Aka.reload_dot_file if !options[:noreload]
               end
             else
               Aka.error_statement("Alias '#{args}' cannot be found.")
@@ -176,14 +184,14 @@ module Aka
                 if yes? "Please confirm the new alias? (y/N)"
                   Aka.remove(_alias) #remove that alias
                   Aka.edit_alias_name_with_group(input, command, group) #edit that alias
-                  Aka.reload_dot_file if !options.noreload
+                  Aka.reload_dot_file if !options[:noreload]
                 end
               else
                 input = ask "Enter a new command for alias '#{args}'?\n"
                 if yes? "Please confirm the new command? (y/N)"
                   Aka.remove(_alias) #remove that alias
                   Aka.edit_alias_command_with_group(input, _alias, group) #edit that alias
-                  Aka.reload_dot_file if !options.noreload
+                  Aka.reload_dot_file if !options[:noreload]
                 end
               end
             else
@@ -205,18 +213,18 @@ module Aka
     def list(args=nil)
       Aka.print_title("System Alias")
       if args != nil
-        Aka.showlast(options.number,args.to_i, options.group) #user input
+        Aka.showlast(options[:number],args.to_i, options[:group]) #user input
       else
         value = Aka.readYML("#{CONFIG_PATH}")["list"]
         if value.class == Fixnum
-          Aka.showlast(options.number,value.to_i,options.group)
+          Aka.showlast(options[:number],value.to_i,options[:group])
         else
           puts "List value is not defined in #{CONFIG_PATH}"
-          Aka.showlast(options.number,50,options.group)
+          Aka.showlast(options[:number],50,options[:group])
         end
       end
       Aka.print_all_helpful_statement
-      Aka.reload_dot_file if !options.no
+      Aka.reload_dot_file if !options[:no]
     end
 
     #
