@@ -75,8 +75,7 @@ class AkaTest < Minitest::Test
     #remove generated files. Comment out these lines if you want to see generated files
     # system %(zsh -c "source ~/.zshrc; rm -rf #{Dir.pwd}/test/tmp/*")
     # system %(zsh -c "source ~/.zshrc; aka destroy #{@name} --no")
-    @aka.destroy(@name)
-
+    #
   end
 
   def invoke_command command
@@ -95,6 +94,7 @@ class AkaTest < Minitest::Test
   def test_generate_function
     value = @aka.generate(@args)
     assert_equal TRUE, invoke_alias(@name, @filename)
+    @aka.destroy(@name)
   end
 
   def test_destroy_function

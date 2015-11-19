@@ -127,7 +127,7 @@ module Aka
     desc :setup, "Gem - Setup aka"
     method_options :reset => :boolean
     def setup
-      if options[:setup] && File.exist?("#{CONFIG_PATH}")
+      if options[:reset] && File.exist?("#{CONFIG_PATH}")
         Aka.remove_autosource
         FileUtils.rm_r("#{CONFIG_PATH}")
         puts "#{CONFIG_PATH} is removed"
@@ -179,9 +179,11 @@ module Aka
             truth, _alias = Aka.search_alias_return_alias_tokens(args)
             if truth == TRUE
               if options[:name]
+                # Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_name(values[1], _alias) #edit that alias
                 Aka.reload_dot_file if !options[:noreload]
               else
+                # Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_command(values[1], _alias) #edit that alias
                 Aka.reload_dot_file if !options[:noreload]
               end
@@ -246,7 +248,7 @@ module Aka
     desc "usage [number]", "show commands usage based on history"
     def usage(args=nil)
       if args
-        if options[:list] && args
+        if options[:least] && args
           Aka.showUsage(args.to_i, TRUE)
         else
           Aka.showUsage(args.to_i)

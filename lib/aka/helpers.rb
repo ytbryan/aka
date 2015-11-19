@@ -345,6 +345,7 @@ module Aka
 
   def self.edit_alias_command newcommand, this_alias
     Aka.remove(this_alias) #remove that alias
+
     edit_statement "aka g #{this_alias}='#{newcommand}'"
     return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
