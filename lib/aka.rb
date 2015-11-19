@@ -6,7 +6,6 @@ require 'aka/core'
 require 'aka/string'
 require 'aka/config'
 
-
 require 'yaml'
 require 'thor'
 require 'shellwords'
@@ -27,14 +26,30 @@ module Aka
         "h" => :help,
         "v" => :version
 
+    desc :open, "open my dotfile for development"
+    def open
+      system("atom #{Aka.readYML("#{CONFIG_PATH}")["dotfile"]}")
+    end
 
     desc :testing, "testing"
     def testing name, number
+      inp = $stdin.read
+      puts inp
     end
 
     desc :test, "this is where we test our code"
     def test
-      system %(zsh -c 'source ~/.zshrc; aka generate something=\"echo well well\"')
+      output = []
+      r, io = IO.pipe
+      fork do
+        # system (%(zsh -c 'source ~/.zshrc; aka generate something=\"echo well well\" --no'), out: io, err: :out)
+        system("zsh -c 'source ~/.zshrc; aka generate something=\"echo well well\" --no; ${=aliases[something]}'", out: io, err: :out)
+        # system("ruby", "-e 3.times{|i| p i; sleep 1}", out: io, err: :out)
+      end
+      io.close
+      r.each_line{|l| puts l; output << l.chomp}
+      p output
+      puts "boo"
     end
 
     #
@@ -47,20 +62,19 @@ module Aka
     method_option :force, :type => :boolean, :aliases => '-f'
 
     def proj arg=nil
-      if options.load?
-        Aka.export(arg, options.load, options.force)
-      elsif options.save?
-        Aka.import(options.save)
+      if options[:load]
+        Aka.export(arg, options[:load], options[:force])
+      elsif options[:save]
+        Aka.import(options[:save])
       else
-        if options.group? && File.exist?('proj.aka')
-          Aka.print_title("Project Groups")
+        if options[:group] && File.exist?('proj.aka')
           Aka.list_all_groups_in_proj_aka
-        elsif options.group? && !File.exist?('proj.aka')
+        elsif options[:group] && !File.exist?('proj.aka')
           Aka.error_statement("The proj.aka is missing. Please run [aka proj --load <name_of_group>] to generate proj.aka file")
         else
-          Aka.print_title("Project Alias")
           if File.exist?('proj.aka')
             if content = File.open('proj.aka').read
+              Aka.print_title("Project Alias")
               content_array = Aka.product_content_array(content)
               answer_count = Aka.print_the_aliases(content_array)
               Aka.print_helpful_statement(answer_count)
@@ -70,7 +84,6 @@ module Aka
           end
         end
       end #end of when
-
     end
 
     #
@@ -105,6 +118,7 @@ module Aka
         Aka.unalias_the(value) if !options[:nounalias] && result == TRUE
         Aka.reload_dot_file if result == TRUE && !options[:no]
       end
+      return TRUE
     end
 
     #
@@ -113,7 +127,7 @@ module Aka
     desc :setup, "Gem - Setup aka"
     method_options :reset => :boolean
     def setup
-      if options.reset? && File.exist?("#{CONFIG_PATH}")
+      if options[:setup] && File.exist?("#{CONFIG_PATH}")
         Aka.remove_autosource
         FileUtils.rm_r("#{CONFIG_PATH}")
         puts "#{CONFIG_PATH} is removed"
@@ -154,22 +168,20 @@ module Aka
     desc :edit, "edit an alias(short alias: e)"
     method_options :force => :boolean
     method_options :name => :boolean #--name
-    method_option :group, :type => :string, :aliases => '-g', :desc => '', :default => 'default'
+    method_option :group, :type => :string, :aliases => '-g', :desc => ''
     def edit args
-      # if options.group?
-      #   Aka.change_alias_group_name_with(Aka.parseARGS(args),options.group)
-      # else
+      if options[:group]
+        Aka.change_alias_group_name_with(Aka.parseARGS(args),options[:group])
+      else
         if args
           values = args.split("=")
           if values.size > 1
             truth, _alias = Aka.search_alias_return_alias_tokens(args)
             if truth == TRUE
               if options[:name]
-                Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_name(values[1], _alias) #edit that alias
                 Aka.reload_dot_file if !options[:noreload]
               else
-                Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_command(values[1], _alias) #edit that alias
                 Aka.reload_dot_file if !options[:noreload]
               end
@@ -177,9 +189,10 @@ module Aka
               Aka.error_statement("Alias '#{args}' cannot be found.")
             end
           else
+            puts "this is passed in #{args}"
             truth, _alias, command, group = Aka.search_alias_return_alias_tokens_with_group(args)
             if truth == TRUE
-              if options.name
+              if options[:name]
                 input = ask "Enter a new alias for command '#{command}'?\n"
                 if yes? "Please confirm the new alias? (y/N)"
                   Aka.remove(_alias) #remove that alias
@@ -199,7 +212,7 @@ module Aka
             end
           end
         end #if args
-      # end # end else no group option
+      end # end else no group option
     end
 
     #
@@ -233,13 +246,13 @@ module Aka
     desc "usage [number]", "show commands usage based on history"
     def usage(args=nil)
       if args
-        if options.least && args
+        if options[:list] && args
           Aka.showUsage(args.to_i, TRUE)
         else
           Aka.showUsage(args.to_i)
         end
       else
-        if options.least
+        if options[:least]
           value = Aka.readYML("#{CONFIG_PATH}")["usage"]
           Aka.showlast(value.to_i, TRUE) #this is unsafe
         else
@@ -259,19 +272,19 @@ module Aka
     desc :init, "setup aka"
     method_options :dotfile => :string
     method_options :history => :string
-    method_options :home => :string
     method_options :install => :string
     method_options :profile => :string
-    method_options :list => :numeric
-    method_options :usage => :numeric
     method_options :remote => :string
     method_options :config => :boolean
-    method_options :zshrc => :boolean
     method_options :bashrc => :boolean
+    method_options :usage => :numeric
+    method_options :zshrc => :boolean
     method_options :bash => :boolean
+    method_options :home => :string
+    method_options :list => :numeric
 
     def init
-      if options.count < 1
+      if options[:count] && options[:count] < 1
         Aka.setup
       else
         Aka.setZSHRC if options[:zshrc]
@@ -311,7 +324,6 @@ module Aka
     #
     desc :groups, "list all the groups"
     def groups
-      Aka.print_title("System Groups")
       Aka.list_all_groups
     end
 

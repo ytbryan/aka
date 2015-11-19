@@ -344,6 +344,7 @@ module Aka
   end
 
   def self.edit_alias_command newcommand, this_alias
+    Aka.remove(this_alias) #remove that alias
     edit_statement "aka g #{this_alias}='#{newcommand}'"
     return append("alias " + this_alias + "='" + newcommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
@@ -359,6 +360,7 @@ module Aka
   end
 
   def self.edit_alias_name newalias, thiscommand
+    Aka.remove(thiscommand) #remove that alias
     edit_statement("aka g #{newalias}='#{thiscommand}'")
     return append("alias " + newalias + "='" + thiscommand + "'", readYML("#{CONFIG_PATH}")["dotfile"] )
   end
@@ -604,6 +606,7 @@ module Aka
   end
 
   def self.list_all_groups_in_proj_aka
+    Aka.print_title("Project Groups")
     str = 'proj.aka'
     group_array = []
     if content=File.open(str).read
@@ -629,6 +632,7 @@ module Aka
   end
 
   def self.list_all_groups
+    Aka.print_title("System Groups")
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     group_array = []
     if content=File.open(str).read

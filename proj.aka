@@ -7,3 +7,4 @@ alias xx='gg;aka test' # => aka
 alias find='aka find' # => aka
 alias group='aka groups' # => aka
 alias clean='aka clean' # => aka
+alias clear='rm -rf test/tmp/*' # => aka

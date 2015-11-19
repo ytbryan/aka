@@ -59,11 +59,24 @@ class AkaTest < Minitest::Test
     @command_for_find = "touch #{@filename_for_find}"
     @args_for_find = "#{@name_for_find}=#{@command_for_find}"
 
+    @name_for_edit_command = "find-#{@random_number}"
+    @filename_for_edit_command = "test/tmp/edit-command-#{@random_number}.aka.test"
+    @command_for_edit_command = "touch #{@filename_for_edit_command}"
+    @args_for_edit_command = "#{@name_for_edit_command}=#{@command_for_edit_command}"
+
+    @name_for_edit_name = "find-#{@random_number}"
+    @filename_for_edit_name = "test/tmp/edit-name-#{@random_number}.aka.test"
+    @command_for_edit_name = "touch #{@filename_for_edit_name}"
+    @args_for_edit_name = "#{@name_for_edit_name}=#{@command_for_edit_name}"
+
   end
 
   def teardown
     #remove generated files. Comment out these lines if you want to see generated files
     # system %(zsh -c "source ~/.zshrc; rm -rf #{Dir.pwd}/test/tmp/*")
+    # system %(zsh -c "source ~/.zshrc; aka destroy #{@name} --no")
+    @aka.destroy(@name)
+
   end
 
   def invoke_command command
@@ -89,8 +102,9 @@ class AkaTest < Minitest::Test
     if TRUE == invoke_alias(@name_for_destroy, @filename_for_destroy)
       @aka.destroy(@name_for_destroy)
       assert_equal TRUE, invoke_alias(@args_for_destroy, @filename_for_destroy)
+    else
+      fail
     end
-    fail
   end
 
   def test_find_function
@@ -98,21 +112,28 @@ class AkaTest < Minitest::Test
     if TRUE == invoke_alias(@name_for_find, @filename_for_find)
       @aka.destroy(@name_for_find)
       assert_equal TRUE, @aka.find(@name_for_find)
+    else
+      fail
     end
-    fail
   end
 
-  # def test_proj_function
-  #   assert_equal 10, 10
-  # end
-
-  # def test_edit_functionality
+  # def test_edit_command_functionality
   #   value = @aka.generate(@args_for_edit)
   #   if TRUE == invoke_alias(@name_for_edit, @filename_for_edit)
-  #     @aka.edit(@name_for_edit)
-  #     assert_equal TRUE, @aka.find(@name_for_edit)
+  #     @aka.edit(@name_for_edit) #edit the command
+  #     assert_equal TRUE,invoke_alias(@name_for_edit, @filename_for_edit)
   #   else
-  #     assert_equal TRUE, FALSE
+  #     fail
+  #   end
+  # end
+  #
+  # def test_edit_name_functionality
+  #   value = @aka.generate(@args_for_edit)
+  #   if TRUE == invoke_alias(@name_for_edit, @filename_for_edit)
+  #     @aka.edit(@name_for_edit) #edit the name
+  #     assert_equal TRUE,invoke_alias(@name_for_edit, @filename_for_edit)
+  #   else
+  #     fail
   #   end
   # end
 
