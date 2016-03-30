@@ -4,45 +4,44 @@ require 'minitest/spec'
 require 'aka'
 
 class String
-   def colorize(color_code)
-     "\e[#{color_code}m#{self}\e[0m"
-   end
+  def colorize(color_code)
+    "\e[#{color_code}m#{self}\e[0m"
+  end
 
-   def red
-     colorize(31)
-   end
+  def red
+    colorize(31)
+  end
 
-   def green
-     colorize(32)
-   end
+  def green
+    colorize(32)
+  end
 
-   def yellow
-     colorize(33)
-   end
+  def yellow
+    colorize(33)
+  end
 
-   def blue
-     colorize(34)
-   end
+  def blue
+    colorize(34)
+  end
 
-   def pink
-     colorize(35)
-   end
+  def pink
+    colorize(35)
+  end
 
-   def light_blue
-     colorize(36)
-   end
+  def light_blue
+    colorize(36)
+  end
 end
 
 class AkaTest < Minitest::Test
-
   @PASS = "\u2713 \u2713 \u2713 \u2713 \u2713".green
   @FAIL = "\u274C \u274C \u274C \u274C \u274C".red
 
   def setup
     @aka = Aka::Base.new
-    @random_number = rand(2**32..2**64-1)
+    @random_number = rand(2**32..2**64 - 1)
 
-    @aka.options =  {no: TRUE, nounalias: TRUE}
+    @aka.options = { no: TRUE, nounalias: TRUE }
 
     @name = "generate-#{@random_number}"
     @filename = "test/tmp/generate-#{@random_number}.aka.test"
@@ -68,23 +67,22 @@ class AkaTest < Minitest::Test
     @filename_for_edit_name = "test/tmp/edit-name-#{@random_number}.aka.test"
     @command_for_edit_name = "touch #{@filename_for_edit_name}"
     @args_for_edit_name = "#{@name_for_edit_name}=#{@command_for_edit_name}"
-
   end
 
   def teardown
-    #remove generated files. Comment out these lines if you want to see generated files
+    # remove generated files. Comment out these lines if you want to see generated files
     # system %(zsh -c "source ~/.zshrc; rm -rf #{Dir.pwd}/test/tmp/*")
     # system %(zsh -c "source ~/.zshrc; aka destroy #{@name} --no")
     #
   end
 
-  def invoke_command command
+  def invoke_command(_command)
     system %(zsh -c "source ~/.zshrc; command")
   end
 
-  def invoke_alias name, filename
+  def invoke_alias(name, filename)
     system %(zsh -c 'source ~/.zshrc; ${=aliases[#{name}]}')
-    return File.exist?(filename)
+    File.exist?(filename)
   end
 
   def fail

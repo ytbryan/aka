@@ -1,3 +1,11 @@
+
+█████╗ ██╗  ██╗ █████╗
+██╔══██╗██║ ██╔╝██╔══██╗
+███████║█████╔╝ ███████║
+██╔══██║██╔═██╗ ██╔══██║
+██║  ██║██║  ██╗██║  ██║
+╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
+
 ## v0.1.10
 * Introducing system alias, project alias and groups
 * Added [aka proj --load] to export certain alias group into a project directory

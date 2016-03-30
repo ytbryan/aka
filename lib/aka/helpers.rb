@@ -19,17 +19,17 @@ module Aka
     if the_name != "load"
       new_proj_aka = "#{the_name}"+".aka"
       FileUtils.touch(new_proj_aka)
-      write_with_array_into(new_proj_aka, array)
+      write_with_array_into_withprint(new_proj_aka, array)
     else
       if File.exist?('proj.aka')
         if force
-          write_with_array_into('proj.aka', array)
+          write_with_array_into_withprint('proj.aka', array)
         else
           exist_statement("proj.aka already exists. Use -f to recreate a proj.aka")
         end
       else
         FileUtils.touch('proj.aka')
-        write_with_array_into('proj.aka', array)
+        write_with_array_into_withprint('proj.aka', array)
       end
     end
   end
@@ -70,6 +70,19 @@ module Aka
   def self.writeYML path, theyml
     File.open(path, 'w') {|f| f.write theyml.to_yaml } #Store
   end
+
+  def self.write_with_array_into_withprint path, array
+    File.open(path, 'w') { |file|
+      file.write("#generated with https://rubygems.org/gems/aka2")
+      file.write("\n\n")
+
+      array.each do |line|
+        file.write(line)
+        file.write("\n")
+      end
+    }
+  end
+
 
   def self.write_with_array_into path, array
     File.open(path, 'w') { |file|
