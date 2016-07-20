@@ -24,7 +24,15 @@ module Aka
         'e' => :edit,
         'c' => :clean,
         'h' => :help,
-        'v' => :version
+        'v' => :version,
+        'dl' => :download
+
+        desc :download, 'download a dotfile'
+        def download
+          puts "download"
+        end
+
+
 
     # desc :open, 'open my dotfile for development'
     # def open
