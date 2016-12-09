@@ -6,8 +6,6 @@ manipulate the shortcuts in real time. Since there is no better way to control t
 
 Aka saves me time and allow me to achieve productivity through the creation of quick shortcut.
 
-Note: There is a tipping point. After that point, the more shortcut you have, the less productivity you will get. 
-
 ### The Shortcut Manager for your Everyday Project
 
 [![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
