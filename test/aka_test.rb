@@ -3,36 +3,6 @@ require 'minitest/autorun'
 require 'minitest/spec'
 require 'aka'
 
-class String
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
-  end
-
-  def red
-    colorize(31)
-  end
-
-  def green
-    colorize(32)
-  end
-
-  def yellow
-    colorize(33)
-  end
-
-  def blue
-    colorize(34)
-  end
-
-  def pink
-    colorize(35)
-  end
-
-  def light_blue
-    colorize(36)
-  end
-end
-
 class AkaTest < Minitest::Test
   @PASS = "\u2713 \u2713 \u2713 \u2713 \u2713".green
   @FAIL = "\u274C \u274C \u274C \u274C \u274C".red
@@ -161,5 +131,38 @@ class AkaTest < Minitest::Test
     File.open("#{Dir.home}/.aka/.config") do |f|
       assert_equal 9, f.count
     end
+  end
+end
+
+
+
+
+class String
+  def colorize(color_code)
+    "\e[#{color_code}m#{self}\e[0m"
+  end
+
+  def red
+    colorize(31)
+  end
+
+  def green
+    colorize(32)
+  end
+
+  def yellow
+    colorize(33)
+  end
+
+  def blue
+    colorize(34)
+  end
+
+  def pink
+    colorize(35)
+  end
+
+  def light_blue
+    colorize(36)
   end
 end

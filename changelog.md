@@ -7,7 +7,9 @@
 ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝
 
 ## v0.1.10
+added
 * Introducing system alias, project alias and groups
+* Added [aka proj --push ] to generate specific aka file
 * Added [aka proj --load] to export certain alias group into a project directory
 * Added [aka proj --save ] to generate specific aka file
 * Added [aka proj] to show all project alias

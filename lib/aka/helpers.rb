@@ -117,6 +117,25 @@ module Aka
     return [username, domain, port]
   end
 
+  def self.add_a_function input, name_of_group
+    if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
+      array = input.split("=")
+      group_name = "# => #{name_of_group}"
+
+      full_command = "function #{array.first}(){ #{array[1]} } #{group_name}".gsub("\n","") #remove new line in command
+
+      # full_command = "alias #{array.first}='#{array[1]}' #{group_name}".gsub("\n","") #remove new line in command
+      print_out_command = "aka g #{array.first}='#{array[1]}'"
+      str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
+      File.open(str, 'a') { |file| file.write("\n" +full_command) }
+      create_statement "#{print_out_command} " + "in #{name_of_group} group."
+      return TRUE
+    else
+      puts "The alias is already present. Use 'aka -h' to see all the useful commands."
+      return FALSE
+    end
+  end
+
   def self.add_with_group input, name_of_group
     if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
       array = input.split("=")

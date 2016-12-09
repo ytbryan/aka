@@ -10,6 +10,7 @@ require 'yaml'
 require 'thor'
 require 'shellwords'
 require 'fileutils'
+require 'open-uri'
 
 module Aka
   class Base < Thor
@@ -25,11 +26,37 @@ module Aka
         'c' => :clean,
         'h' => :help,
         'v' => :version,
-        'dl' => :download
+        'dl' => :download,
+        'func' => :function
 
         desc :download, 'download a dotfile'
-        def download
-          puts "download"
+        def download url
+          # open('image.png', 'wb') do |file|
+          #   file << open('http://example.com/image.png').read
+          # end
+
+          system("curl -O #{url}")
+        end
+
+        desc :function, 'generate a function'
+        method_option :last, type: :boolean, aliases: '-l', desc: ''
+        method_option :group, type: :string, aliases: '-g', desc: '', default: 'default'
+        method_option :no, type: :boolean, aliases: '-n', desc: '--no means do not reload'
+        method_option :empty, type: :boolean, aliases: '-e', desc: 'do not print anything'
+        def function args
+          puts "function"
+
+          result = Aka.add_a_function(Aka.parseARGS(args), options[:group])
+
+          # result = FALSE
+          # if options[:last] && args
+          #   result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
+          # else
+          #   result = Aka.add_with_group(Aka.parseARGS(args), options[:group])
+          # end
+          Aka.reload_dot_file if result == TRUE && !options[:no]
+          TRUE
+
         end
 
 
@@ -132,9 +159,10 @@ module Aka
     #
     # first step: set config file
     #
-    desc :setup, 'Gem - Setup aka'
+    desc :setup, 'setup aka'
     method_options reset: :boolean
     def setup
+
       if options[:reset] && File.exist?("#{CONFIG_PATH}")
         Aka.remove_autosource
         FileUtils.rm_r("#{CONFIG_PATH}")

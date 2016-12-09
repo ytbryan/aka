@@ -1,6 +1,14 @@
+#################################
+# Bryan Lim (@ytbryan)
+# MIT License
+# github.com/ytbryan
+# twitter.com/ytbryan
+# ytbryan@gmail.com || ytbryan@u.nus.edu
+#################################
+
 module Aka
   def self.exist_statement(statement)
-    puts "Exists: ".green + statement
+    puts "Exist: ".green + statement
   end
 
   def self.print_all_helpful_statement
