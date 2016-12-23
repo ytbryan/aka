@@ -97,4 +97,4 @@ Aka is released as an open source project under the license of [The MIT License 
 
 ## Contact
 
-[@ytbryan](http://www.twitter.com/ytbryan)
+[@ytbryan](http://www.twitter.com/ytbryan) & 📮 Bryan Lim ytbryan@gmail.com
