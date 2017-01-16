@@ -6,9 +6,11 @@ manipulate the shortcuts in real time. Since there is no better way to control t
 
 Aka saves me time and allow me to achieve productivity through the creation of quick shortcut.
 
-### The Shortcut Manager for your Everyday Project
+### The Workflow Manager for your Everyday Project
 
 [![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
+
+In other words, a delightful way to manage and grow your terminal shortcuts.
 
 aka generate/edit/destroy/find permanent aliases with a single command.
 
