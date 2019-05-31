@@ -11,7 +11,7 @@ class AkaTest < Minitest::Test
     @aka = Aka::Base.new
     @random_number = rand(2**32..2**64 - 1)
 
-    @aka.options = { no: TRUE, nounalias: TRUE }
+    @aka.options = { no: true, nounalias: true }
 
     @name = "generate-#{@random_number}"
     @filename = "test/tmp/generate-#{@random_number}.aka.test"
@@ -56,20 +56,20 @@ class AkaTest < Minitest::Test
   end
 
   def fail
-    assert_equal TRUE, FALSE
+    assert_equal true, false
   end
 
   def test_generate_function
     value = @aka.generate(@args)
-    assert_equal TRUE, invoke_alias(@name, @filename)
+    assert_equal true, invoke_alias(@name, @filename)
     @aka.destroy(@name)
   end
 
   def test_destroy_function
     value = @aka.generate(@args_for_destroy)
-    if TRUE == invoke_alias(@name_for_destroy, @filename_for_destroy)
+    if true == invoke_alias(@name_for_destroy, @filename_for_destroy)
       @aka.destroy(@name_for_destroy)
-      assert_equal TRUE, invoke_alias(@args_for_destroy, @filename_for_destroy)
+      assert_equal true, invoke_alias(@args_for_destroy, @filename_for_destroy)
     else
       fail
     end
@@ -77,9 +77,9 @@ class AkaTest < Minitest::Test
 
   def test_find_function
     value = @aka.generate(@args_for_find)
-    if TRUE == invoke_alias(@name_for_find, @filename_for_find)
+    if true == invoke_alias(@name_for_find, @filename_for_find)
       @aka.destroy(@name_for_find)
-      assert_equal TRUE, @aka.find(@name_for_find)
+      assert_equal true, @aka.find(@name_for_find)
     else
       fail
     end
@@ -87,9 +87,9 @@ class AkaTest < Minitest::Test
 
   # def test_edit_command_functionality
   #   value = @aka.generate(@args_for_edit)
-  #   if TRUE == invoke_alias(@name_for_edit, @filename_for_edit)
+  #   if true == invoke_alias(@name_for_edit, @filename_for_edit)
   #     @aka.edit(@name_for_edit) #edit the command
-  #     assert_equal TRUE,invoke_alias(@name_for_edit, @filename_for_edit)
+  #     assert_equal true,invoke_alias(@name_for_edit, @filename_for_edit)
   #   else
   #     fail
   #   end
@@ -97,9 +97,9 @@ class AkaTest < Minitest::Test
   #
   # def test_edit_name_functionality
   #   value = @aka.generate(@args_for_edit)
-  #   if TRUE == invoke_alias(@name_for_edit, @filename_for_edit)
+  #   if true == invoke_alias(@name_for_edit, @filename_for_edit)
   #     @aka.edit(@name_for_edit) #edit the name
-  #     assert_equal TRUE,invoke_alias(@name_for_edit, @filename_for_edit)
+  #     assert_equal true,invoke_alias(@name_for_edit, @filename_for_edit)
   #   else
   #     fail
   #   end
@@ -110,15 +110,15 @@ class AkaTest < Minitest::Test
   end
 
   def test_is_aka_dir_present
-    assert_equal TRUE, Dir.exist?("#{Dir.home}/.aka")
+    assert_equal true, Dir.exist?("#{Dir.home}/.aka")
   end
 
   def test_is_dotconfig_present
-    assert_equal TRUE, File.exist?("#{Dir.home}/.aka/.config")
+    assert_equal true, File.exist?("#{Dir.home}/.aka/.config")
   end
 
   def test_is_autosource_present
-    assert_equal TRUE, File.exist?("#{Dir.home}/.aka/autosource")
+    assert_equal true, File.exist?("#{Dir.home}/.aka/autosource")
   end
 
   def test_does_autosource_have_five_configurations

@@ -48,14 +48,14 @@ module Aka
 
           result = Aka.add_a_function(Aka.parseARGS(args), options[:group])
 
-          # result = FALSE
+          # result = false
           # if options[:last] && args
           #   result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
           # else
           #   result = Aka.add_with_group(Aka.parseARGS(args), options[:group])
           # end
-          Aka.reload_dot_file if result == TRUE && !options[:no]
-          TRUE
+          Aka.reload_dot_file if result == true && !options[:no]
+          true
 
         end
 
@@ -130,14 +130,14 @@ module Aka
     method_option :no, type: :boolean, aliases: '-n', desc: '--no means do not reload'
     method_option :empty, type: :boolean, aliases: '-e', desc: 'do not print anything'
     def generate(args)
-      result = FALSE
+      result = false
       if options[:last] && args
         result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
       else
         result = Aka.add_with_group(Aka.parseARGS(args), options[:group])
       end
-      Aka.reload_dot_file if result == TRUE && !options[:no]
-      TRUE
+      Aka.reload_dot_file if result == true && !options[:no]
+      true
     end
 
     #
@@ -150,10 +150,10 @@ module Aka
     def destroy(*args)
       args.each_with_index do |value, _index|
         result = Aka.remove(value)
-        Aka.unalias_the(value) if !options[:nounalias] && result == TRUE
-        Aka.reload_dot_file if result == TRUE && !options[:no]
+        Aka.unalias_the(value) if !options[:nounalias] && result == true
+        Aka.reload_dot_file if result == true && !options[:no]
       end
-      TRUE
+      true
     end
 
     #
@@ -195,7 +195,7 @@ module Aka
           Aka.search_alias_return_alias_tokens(value)
         end
       end
-      TRUE
+      true
     end
 
     #
@@ -213,7 +213,7 @@ module Aka
           values = args.split('=')
           if values.size > 1
             truth, _alias = Aka.search_alias_return_alias_tokens(args)
-            if truth == TRUE
+            if truth == true
               if options[:name]
                 # Aka.remove(_alias) #remove that alias
                 Aka.edit_alias_name(values[1], _alias) # edit that alias
@@ -229,7 +229,7 @@ module Aka
           else
             puts "this is passed in #{args}"
             truth, _alias, command, group = Aka.search_alias_return_alias_tokens_with_group(args)
-            if truth == TRUE
+            if truth == true
               if options[:name]
                 input = ask "Enter a new alias for command '#{command}'?\n"
                 if yes? 'Please confirm the new alias? (y/N)'
@@ -285,14 +285,14 @@ module Aka
     def usage(args = nil)
       if args
         if options[:least] && args
-          Aka.showUsage(args.to_i, TRUE)
+          Aka.showUsage(args.to_i, true)
         else
           Aka.showUsage(args.to_i)
         end
       else
         if options[:least]
           value = Aka.readYML("#{CONFIG_PATH}")['usage']
-          Aka.showlast(value.to_i, TRUE) # this is unsafe
+          Aka.showlast(value.to_i, true) # this is unsafe
         else
           value = Aka.readYML("#{CONFIG_PATH}")['usage']
           Aka.howlast(value.to_i) # this is unsafe

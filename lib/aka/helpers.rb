@@ -45,7 +45,7 @@ module Aka
 
   def self.setPath(path, value)
     data = readYML("#{CONFIG_PATH}")
-    if data.has_key?(value) == TRUE
+    if data.has_key?(value) == true
       old_path = data[value]
       data[value] = path
       writeYML("#{CONFIG_PATH}", data)
@@ -118,7 +118,7 @@ module Aka
   end
 
   def self.add_a_function input, name_of_group
-    if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
+    if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
       array = input.split("=")
       group_name = "# => #{name_of_group}"
 
@@ -129,15 +129,15 @@ module Aka
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'a') { |file| file.write("\n" +full_command) }
       create_statement "#{print_out_command} " + "in #{name_of_group} group."
-      return TRUE
+      return true
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
-      return FALSE
+      return false
     end
   end
 
   def self.add_with_group input, name_of_group
-    if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
+    if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
       array = input.split("=")
       group_name = "# => #{name_of_group}"
       full_command = "alias #{array.first}='#{array[1]}' #{group_name}".gsub("\n","") #remove new line in command
@@ -145,31 +145,31 @@ module Aka
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'a') { |file| file.write("\n" +full_command) }
       create_statement "#{print_out_command} " + "in #{name_of_group} group."
-      return TRUE
+      return true
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
-      return FALSE
+      return false
     end
   end
 
   def self.add input
-    if input && search_alias_return_alias_tokens(input).first == FALSE && not_empty_alias(input) == FALSE
+    if input && search_alias_return_alias_tokens(input).first == false && not_empty_alias(input) == false
       array = input.split("=")
       full_command = "alias #{array.first}='#{array[1]}'".gsub("\n","") #remove new line in command
       print_out_command = "aka g #{array.first}='#{array[1]}'"
       str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
       File.open(str, 'a') { |file| file.write("\n" +full_command) }
       create_statement "#{print_out_command}"
-      return TRUE
+      return true
     else
       puts "The alias is already present. Use 'aka -h' to see all the useful commands."
-      return FALSE
+      return false
     end
   end
 
   def self.not_empty_alias input
     array = input.split("=")
-    return TRUE if array.count < 2
+    return true if array.count < 2
     return array[1].strip == ""
   end
 
@@ -261,19 +261,19 @@ module Aka
         containsCommand = line.split('=') #containsCommand[1]
         if value.length > 1 && value.first == "alias"
           answer = value[1].split("=") #contains the alias
-          if found?(answer.first, argument.split("=").first, line) == TRUE
+          if found?(answer.first, argument.split("=").first, line) == true
             this_alias = answer.first
             answer.slice!(0) #rmove the first
             containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-            return [TRUE, this_alias, containsCommand[1]]
+            return [true, this_alias, containsCommand[1]]
           end
         end
       }
     else
       puts "#{@pwd} cannot be found.".red
-      return [FALSE, nil, nil]
+      return [false, nil, nil]
     end
-    return [FALSE, nil, nil]
+    return [false, nil, nil]
 
   end
 
@@ -289,20 +289,20 @@ module Aka
           containsCommand = templine.split('=') #containsCommand[1]
           group_name = get_group_name(line)
           answer = value[1].split("=") #contains the alias
-          if found?(answer.first, argument.split("=").first, templine) == TRUE
+          if found?(answer.first, argument.split("=").first, templine) == true
             this_alias = answer.first
             answer.slice!(0) #rmove the first
             containsCommand[1].strip!
             containsCommand[1].slice!(0) &&  containsCommand[1].slice!(containsCommand[1].length-1) if containsCommand[1] != nil && containsCommand[1][0] == "'" && containsCommand[1][containsCommand[1].length-1] == "'"
-            return [TRUE, this_alias, containsCommand[1], group_name]
+            return [true, this_alias, containsCommand[1], group_name]
           end
         end
       }
     else
       puts "#{@pwd} cannot be found.".red
-      return [FALSE, nil, nil, nil]
+      return [false, nil, nil, nil]
     end
-    return [FALSE, nil, nil, nil]
+    return [false, nil, nil, nil]
   end
 
   def self.remove input
@@ -318,7 +318,7 @@ module Aka
             content_array.delete_at(index) && write_with_newline(content_array)
             print_out_command = "aka g #{input}=#{line.split("=")[1]}"
             puts "Removed: ".red  + "#{print_out_command}"
-            return TRUE
+            return true
           end
         end
       }
@@ -326,7 +326,7 @@ module Aka
       puts "#{input} cannot be found.".red
     else
       puts "#{@pwd} cannot be found.".red
-      return FALSE
+      return false
     end
   end
 
@@ -338,12 +338,12 @@ module Aka
         if line == "source \"/home/ryan/.aka/autosource\""
           content_array.delete_at(index) && write_with_newline(content_array)
           puts "Removed: ".red + "source \"/home/ryan/.aka/autosource\""
-          return TRUE
+          return true
         end
       }
     else
       error_statement("autosource cannot be found in dotfile.")
-      return FALSE
+      return false
     end
   end
 
@@ -369,9 +369,9 @@ module Aka
   def self.found? answer, argument, line
     if answer == argument
       exist_statement(" aka g #{argument}=#{line.split('=')[1]}")
-      return TRUE
+      return true
     else
-      return FALSE
+      return false
     end
   end
 
@@ -476,7 +476,7 @@ module Aka
 
   def self.read location
     answer = File.exist?(location)
-    answer == TRUE && content = File.open(location).read ? content : ""
+    answer == true && content = File.open(location).read ? content : ""
   end
 
   def self.is_config_file_present? str
@@ -493,7 +493,7 @@ module Aka
     return str
   end
 
-  def self.showlast(list_number=FALSE,howmany=10, showGroup)
+  def self.showlast(list_number=false,howmany=10, showGroup)
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
       content_array = product_content_array(content)
@@ -531,7 +531,7 @@ module Aka
     end
   end
 
-  def self.showUsage howmany=10, least=FALSE
+  def self.showUsage howmany=10, least=false
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["history"])
     value = reload_dot_file
     #get all aliases
@@ -546,10 +546,10 @@ module Aka
     end
   end
 
-  def self.count_aliases array, howmany, least=FALSE
+  def self.count_aliases array, howmany, least=false
     name_array,count_array = [], []
     array.each_with_index { |value, index|
-      if name_array.include?(value) == FALSE
+      if name_array.include?(value) == false
         name_array.push(value)
       end
     }
@@ -567,7 +567,7 @@ module Aka
     sorted_count_array, sorted_name_array = sort(count_array, name_array)
 
     #display the least used aliases
-    if least == TRUE
+    if least == true
       if sorted_count_array.count == sorted_name_array.count
         puts ""
         sorted_name_array.last(howmany).each_with_index { |value, index|
@@ -624,13 +624,13 @@ module Aka
     str = is_config_file_present?(readYML("#{CONFIG_PATH}")["dotfile"])
     if content = File.open(str).read
       content_array = product_content_array(content)
-      check = FALSE
-      while check == FALSE
-        check = TRUE
+      check = false
+      while check == false
+        check = true
         content_array.each_with_index { |line, index|
           if line == "" || line == "\n"
             content_array.delete_at(index)
-            check = FALSE
+            check = false
           end
         }
       end

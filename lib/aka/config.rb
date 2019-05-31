@@ -160,7 +160,7 @@ module Aka
   end
 
   def self.isOhMyZsh
-    readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? TRUE : FALSE
+    readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? true : false
   end
 
 end
