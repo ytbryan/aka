@@ -267,7 +267,7 @@ module Aka
         Aka.showlast(options[:number], args.to_i, options[:group]) # user input
       else
         value = Aka.readYML("#{CONFIG_PATH}")['list']
-        if value.class == Fixnum
+        if value.class == Integer
           Aka.showlast(options[:number], value.to_i, options[:group])
         else
           puts "List value is not defined in #{CONFIG_PATH}"
