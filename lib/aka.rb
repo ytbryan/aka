@@ -5,11 +5,10 @@ require 'aka/printing'
 require 'aka/core'
 require 'aka/string'
 require 'aka/config'
+require 'aka/dependencies'
 
 require 'yaml'
-require 'thor'
 require 'shellwords'
-require 'fileutils'
 require 'open-uri'
 
 module Aka
@@ -170,14 +169,14 @@ module Aka
       end
 
       if File.exist?("#{CONFIG_PATH}")
-        puts ".aka config file is exist in #{CONFIG_PATH}"
-        puts 'Please run [aka setup --reset] to remove aka file and setup again'
+        puts ".aka exists at #{CONFIG_PATH}"
+        puts 'Please run [aka setup --reset] to remove .aka and setup again'
       else
         Aka.setup_config      # create and setup .config file
         Aka.setup_aka         # put value in .config file
         puts 'setting up autosource'
         Aka.setup_autosource  # create, link source file
-        puts "Congratulation, aka is setup in #{CONFIG_PATH}"
+        puts "Congratulation, aka is setup at #{CONFIG_PATH}"
       end
     end
 

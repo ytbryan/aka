@@ -1,5 +1,6 @@
-module Aka
+require 'dependencies'
 
+module Aka
   def self.setup_aka
     userBash = []
     # 1. check for each type of file without setting anything.
@@ -25,11 +26,10 @@ module Aka
     elsif userBash.count > 1
       #4 if the number of types is more than 1, proceed to ask which one does the users want to uses.
       userBash.each_with_index do |choice,i|
-        puts "#{i+1}. Setup in #{Dir.home}/#{choice}"
+        puts "#{i+1}. Setup at #{Dir.home}/#{choice}"
       end
-      choice = ask "Please choose which location you wish to setup? (Choose a number and enter)\n"
 
-      #5 once you receive input, then you set it according to input
+      choice = ask "Where do you wish to setup aka? (Pick a number and enter)\n"
       case choice
         when "1"
           set_to_dotfile(userBash[0]) if userBash[0]
@@ -71,15 +71,16 @@ module Aka
   end
 
   def self.setup_autosource
-    if File.exist?("#{CONFIG_PATH}")
-      out_file = File.new("#{CONFIG_PATH}/autosource", "w")
+    if File.exist?("#{AKA_PATH}")
+      FileUtils.touch("#{AKA_PATH}/autosource")
+      out_file = File.new("#{AKA_PATH}/autosource", "w")
       out_file.puts("export HISTSIZE=10000")
       out_file.puts("sigusr2() { unalias $1;}")
       out_file.puts("sigusr1() { source #{readYML("#{CONFIG_PATH}")["dotfile"]}; history -a; echo 'reloaded dot file'; }")
       out_file.puts("trap sigusr1 SIGUSR1")
       out_file.puts("trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2")
       out_file.close
-      autosource = "\nsource \"#{CONFIG_PATH}/autosource\""
+      autosource = "\nsource \"#{AKA_PATH}/autosource\""
       append(autosource, readYML("#{CONFIG_PATH}")['profile'])
       puts "Done. Please restart this shell.".red
     else
@@ -90,7 +91,8 @@ module Aka
     if File.exist?("#{CONFIG_PATH}")
       puts "Directory #{CONFIG_PATH} exist"
     else
-      FileUtils::mkdir_p("#{CONFIG_PATH}")
+      FileUtils.mkdir_p("#{AKA_PATH}")
+      FileUtils.touch("#{CONFIG_PATH}")
       out_file = File.new("#{CONFIG_PATH}", "w")
       out_file.puts("---")
       out_file.puts("dotfile: \"/home/user/.bashrc\"")
