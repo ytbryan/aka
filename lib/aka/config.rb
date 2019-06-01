@@ -1,4 +1,4 @@
-require 'dependencies'
+require_relative './dependencies.rb'
 
 module Aka
   def self.setup_aka
