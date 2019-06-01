@@ -1,4 +1,5 @@
-require_relative './dependencies.rb'
+require 'thor'
+require 'fileutils'
 
 module Aka
   def self.setup_aka
