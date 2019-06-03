@@ -1,4 +1,6 @@
-# Aka
+# Aka 
+
+[![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
 
 ### Motivation
 I use terminal with alias for work everyday. And I realise that to fully control my work flow, I would need to
@@ -8,7 +10,6 @@ Aka saves me time and allow me to achieve productivity through the creation of q
 
 ### The Workflow Manager for your Everyday Project
 
-[![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
 
 In other words, a delightful way to manage and grow your terminal shortcuts.
 
@@ -16,21 +17,21 @@ aka generate/edit/destroy/find permanent aliases with a single command.
 
 aka requires ruby and is built for bash and zsh users.
 
-| features                  | alias                        | aka                  |
-| :-----------------------: |:----------------------------:| :-------------------:|
-| Generate alias            |  ![Yes](assets/yes.png)      | ![Yes](assets/yes.png) |
-| Destroy alias             |  ![Yes](assets/yes.png)      | ![Yes](assets/yes.png) |
-| Find and show alias       |  ![Yes](assets/yes.png)      | ![Yes](assets/yes.png) |
-| Show last few added alias |  -                           | ![Yes](assets/yes.png) |
-| Edit alias                |  -                           | ![Yes](assets/yes.png) |
-| Count alias               |  -                           | ![Yes](assets/yes.png) |
-| Auto reload dot file      |  -                           | ![Yes](assets/yes.png) |
-| Show usage                |  -                           | ![Yes](assets/yes.png) |
-| Persistency               |  -                           | ![Yes](assets/yes.png) |
-| Add your last command     |  -                           | ![Yes](assets/yes.png) |
-| Export Alias              |  -                           | ![Yes](assets/yes.png) |
-| Group your Aliases        |  -                           | ![Yes](assets/yes.png) |
-| Add Alias to Project      |  -                           | ![Yes](assets/yes.png) |
+| Features                  | alias                        | aka                    |
+| :-----------------------: |:----------------------------:| :---------------------:|
+| Generate alias            |  ✅                          | ✅                     |
+| Destroy alias             |  ✅                          | ✅                     |
+| Find and show alias       |  ✅                          | ✅                     |
+| Show last few added alias |  -                           | ✅                     |
+| Edit alias                |  -                           | ✅                     |
+| Count alias               |  -                           | ✅                     |
+| Auto reload dot file      |  -                           | ✅                     |
+| Show usage                |  -                           | ✅                     |
+| Persistency               |  -                           | ✅                     |
+| Add your last command     |  -                           | ✅                     |
+| Export Alias              |  -                           | ✅                     |
+| Group your Aliases        |  -                           | ✅                     |
+| Add Alias to Project      |  -                           | ✅                     |
 
 ## Installation
 
