@@ -1,5 +1,4 @@
-require 'thor'
-require 'fileutils'
+require_relative './dependencies.rb'
 
 module Aka
   def self.setup_aka
@@ -30,7 +29,9 @@ module Aka
         puts "#{i+1}. Setup at #{Dir.home}/#{choice}"
       end
 
-      choice = ask "Where do you wish to setup aka? (Pick a number and enter)\n"
+      puts ("Where do you wish to setup aka? (Pick a number and enter)\n")
+      choice = STDIN.gets.chomp
+    
       case choice
         when "1"
           set_to_dotfile(userBash[0]) if userBash[0]
