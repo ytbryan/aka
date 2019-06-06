@@ -2,18 +2,12 @@
 
 ## v0.1.10
 added
-* Introducing system alias, project alias and groups
-* Added [aka proj --push ] to generate specific aka file
-* Added [aka proj --load] to export certain alias group into a project directory
-* Added [aka proj --save ] to generate specific aka file
-* Added [aka proj] to show all project alias
-* Added [aka groups] to list all groups in the system
+
 * Added .profile as setup options. Thanks to fgperianez
-* Edited test_aka.rb
 * Refactor the aka code
 * Remove some dependencies and set required ruby back to 2.0.0.
 * Change default list to 20 aliases
-* Start using aka in your projects :)
+* Fixed a bunch of issues. Thanks to noyannus https://github.com/ytbryan/aka/issues/14
 
 ## v0.1.9
 * Added -g option to add grouping to alias

@@ -42,6 +42,8 @@ If you wish to setup aka again:
 
     aka setup --reset
 
+Note: You may need to use `sudo aka setup --reset`
+
 ## Usage
 
 To generate new alias
@@ -85,6 +87,13 @@ To list project alias
 To list all commands of aka
 
     aka help
+
+## Known issues
+
+* aka is designed for controlling personal work flow. It is not ready for production server or multi-user environment. 
+
+* a missing `.bash_profile` file will require it to be created manually (ie `touch ~/.bash_profile`)
+
 
 ## Requirement
 
