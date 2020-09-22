@@ -7,15 +7,17 @@ describe Aka do
     expect(Aka::VERSION).not_to be_empty
   end
 
+  # TODO need to switch off autosourcing to allow testing to be successful?
   it "should generate an alias" do 
     expect(capture(:stdout){
-      Aka::Base.new.invoke(:generate, ['something1231213="echo something"'])
-    }.strip).to eq("ADDED: something -> #{Doerlist::Base::PATH}")
+      Aka::Base.new.invoke(:generate, ['something1231213=echo something'])
+    }.strip).to eq("Created: aka g something12312312='echo something' in default group.")
   end
 
+  # TODO need to switch off autosourcing to allow testing to be successful?
   it "should remove an alias" do 
     expect(capture(:stdout){
       Aka::Base.new.invoke(:destroy, ['something1231213'])
-    }.strip).to eq("Exist:  aka g something1231213='echo something' -g default")
+    }.strip).to eq("Removed: aka g something1231213='echo something' -g default")
   end
 end
