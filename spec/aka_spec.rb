@@ -1,37 +1,21 @@
 # coding: utf-8
 require_relative "spec_helper"
-
-# TODO set the PATH to a seperate testing 
+require_relative "../lib/aka"
 
 describe Aka do 
   it "should have a version number" do 
     expect(Aka::VERSION).not_to be_empty
   end
 
-  it "should add a task" do 
-    # expect(capture(:stdout){
-    #   Doerlist::Base.new.invoke(:add, ['something'])
-    # }.strip).to eq("ADDED: something -> #{Doerlist::Base::PATH}")
+  it "should generate an alias" do 
+    expect(capture(:stdout){
+      Aka::Base.new.invoke(:generate, ['something1231213="echo something"'])
+    }.strip).to eq("ADDED: something -> #{Doerlist::Base::PATH}")
   end
 
-  it "should remove a task" do 
-    # title = "something"
-    # expect(capture(:stdout){
-    #   Doerlist::Base.new.invoke(:destroy, [title])
-    # }.strip).to eq("DELETED: #{Doerlist::Base::PATH}#{title}.md into Trash")
-
+  it "should remove an alias" do 
+    expect(capture(:stdout){
+      Aka::Base.new.invoke(:destroy, ['something1231213'])
+    }.strip).to eq("Exist:  aka g something1231213='echo something' -g default")
   end
-
-  it "should find a task" do 
-  end
-
-  it "should move a task" do 
-  end
-
-  it "should list all tasks" do 
-  end
-
-  it "should finish a task" do 
-  end
-
 end

@@ -1,9 +1,0 @@
-#generated with https://rubygems.org/gems/aka2
-
-alias contr='rails g controller' # => rails
-alias mod='rails g model' # => rails
-alias migrate='rake db:create; rake db:migrate;' # => rails
-alias unlock='rm Gemfile.lock' # => rails
-alias bundleup='bundle install' # => rails
-alias server='rails server' # => rails
-alias res='rails g scaffold' # => rails

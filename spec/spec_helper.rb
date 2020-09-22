@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require 'aka2'
+require 'aka'
 require "stringio"
 
 RSpec.configure do |config|

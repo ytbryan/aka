@@ -129,6 +129,7 @@ module Aka
     method_option :no, type: :boolean, aliases: '-n', desc: '--no means do not reload'
     method_option :empty, type: :boolean, aliases: '-e', desc: 'do not print anything'
     def generate(args)
+      puts "|#{args}|"
       result = false
       if options[:last] && args
         result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))

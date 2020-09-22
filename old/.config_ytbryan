@@ -1,9 +1,0 @@
----
-dotfile: "/Users/ytbryan/.zshrc"
-history: "/Users/ytbryan/.zsh_history"
-home: "/Users/ytbryan/.aka"
-install: "/usr/local/bin"
-profile: "/etc/profile"
-list: 20
-usage: 20
-remote: 12.12.12.21
