@@ -1,10 +1,14 @@
 require "bundler/gem_tasks"
-require "rake/testtask"
+require 'rspec/core/rake_task'
 
-Rake::TestTask.new(:test) do |t|
-  t.libs << "test"
-  t.libs << "lib"
-  t.test_files = FileList['test/**/*_test.rb']
+RSpec::Core::RakeTask.new('spec')
+
+# If you want to make this the default task
+task :default => :spec
+
+desc "Run IRB console with app environment"
+task :console do
+  puts "Loading development console..."
+  system("irb -r ./lib/aka.rb")
 end
 
-task :default => :test
