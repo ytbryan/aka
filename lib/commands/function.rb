@@ -7,8 +7,6 @@ module Aka
     method_option :no, type: :boolean, aliases: '-n', desc: '--no means do not reload'
     method_option :empty, type: :boolean, aliases: '-e', desc: 'do not print anything'
     def function args
-      puts "function"
-
       result = Aka.add_a_function(Aka.parseARGS(args), options[:group])
 
       # result = false
