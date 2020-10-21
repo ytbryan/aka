@@ -1,8 +1,8 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'rspec'
-require 'aka'
 require "stringio"
+require 'aka'
 
 RSpec.configure do |config|
   def capture(stream)
@@ -14,7 +14,6 @@ RSpec.configure do |config|
     ensure
       eval("$#{stream} = #{stream.upcase}")
     end
-
     result
   end
 end

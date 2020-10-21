@@ -7,17 +7,11 @@ module Aka
     method_option :empty, type: :boolean, aliases: '-e', desc: 'do not print anything'
     def generate(args)
       result = false
-      puts "here!!"
       if options[:last] && args
-              puts "here!!333"
-
         result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
       else
-              puts "here4444"
-
         result = Aka.add_with_group(Aka.parseARGS(args), options[:group])
       end
-      puts "here?"
       Aka.reload_dot_file if result == true && !options[:no]
       true
     end
