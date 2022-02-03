@@ -1,5 +1,7 @@
 # Aka 
 
+aka is a development tool that generates permanent alias on the fly. 
+
 [![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
 
 ### Motivation
