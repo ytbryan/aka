@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.version       = Aka::VERSION
   spec.authors       = ["Bryan Lim"]
   spec.email         = ["ytbryan@gmail.com"]
-  spec.summary       = %q{The new Missing Shortcut Manager}
+  spec.summary       = %q{The Missing Terminal Shortcut Manager}
   spec.description   = %q{ A delightful way to manage and grow your aliases in your daily project. }
   spec.homepage      = "https://github.com/ytbryan/aka"
   spec.license       = "MIT"
