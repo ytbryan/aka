@@ -1,10 +1,81 @@
-require_relative './dependencies.rb'
+require 'thor'
+require 'fileutils'
 
 module Aka
+  AKA_PATH="#{Dir.home}/.aka"
+  CONFIG_PATH="#{Dir.home}/.aka/.config"
+  BASHRC_PATH="#{Dir.home}/.bashrc"
+  ZSH_PATH="#{Dir.home}/.zshrc"
+
+  def self.exist_statement(statement)
+    puts "Exist: ".green + statement
+  end
+
+  def self.print_all_helpful_statement
+    puts "A total of #{count()} aliases, #{count_groups} groups, #{count_export} exports and #{count_function} functions from #{read_YML("#{CONFIG_PATH}")["dotfile"]}"
+    puts "\nUse 'aka -h' to see all the useful commands.\n\n"
+  end
+
+  def self.error_statement(statement)
+    puts "Error: ".red + statement
+  end
+
+  def self.print_helpful_statement total_aliases
+    puts "\nA total of  #{total_aliases} aliases in this project #{Dir.pwd}"
+    puts "\nUse 'aka -h' to see all the useful commands."
+  end
+
+  def self.print_title(with_these)
+    puts ""
+    puts "*** #{with_these} ***"
+    puts ""
+  end
+
+  def self.edit_statement(statement)
+    puts "Edited:  ".yellow + statement
+  end
+
+  def self.create_statement(statement)
+    puts "Created: ".green +  statement
+  end
+
+
+  #generates a string composed of spaces. The number of spaces is determined by subtracting the length of the input word from 20, 
+  #unless this difference is less than zero, in which case no spaces are returned
+  def self.show_space(word)
+    spaces_needed = [20 - word.size, 0].max
+    ' ' * spaces_needed
+  end
+
+  # generates a string that represents a visual progress bar along with the percentage it represents. It is intended to display a progress bar of a total length of 50 characters.
+  def self.show_bar(percent)
+    val = (percent / 100.0 * 50).round
+    val = 2 if val.between?(1, 2)
+    val = [val, 1].max  # Ensure there's always at least one "+"
+    
+    filled_bar = '+' * val
+    empty_bar = '-'.red * (50 - val)
+    
+    "#{filled_bar}#{empty_bar} #{percent.round(2)}%"
+  end
+
+  def self.reload_dot_file
+    is_ZSH? == true ? system("exec zsh") : system("kill -SIGUSR1 #{Process.ppid}")
+  end
+
+  def self.unalias_the value
+    if is_ZSH? == true
+      system("exec zsh")
+    else
+      system "echo '#{value}' > ~/sigusr1-args;"
+      system "kill -SIGUSR2 #{Process.ppid}"
+    end
+  end
+
   def self.setup_aka
     userBash = []
     # 1. check for each type of file without setting anything.
-    if File.exist?("#{ZSHRC_PATH}") #if zshrc exist
+    if File.exist?("#{ZSH_PATH}") #if zshrc exist
       userBash.push(".zshrc")
     end
     if File.exist?("#{BASHRC_PATH}") #if bashrc exist
@@ -48,16 +119,15 @@ module Aka
     end #if userBash > 1
   end
 
-
   def self.set_to_dotfile(filename)
     if filename == ".zshrc"
-      setZSHRC2
+      set_ZSH
     elsif filename == ".bashrc"
-      setBASHRC2
-    elsif filename == ".bash_profile"
-      setBASH2
-    elsif filename == ".profile"
-      setPROFILE
+      set_BASH
+    # elsif filename == ".bash_profile"
+    #   setBASH2
+    # elsif filename == ".profile"
+    #   setPROFILE
     end
   end
 
@@ -67,12 +137,12 @@ module Aka
       out_file = File.new("#{AKA_PATH}/autosource", "w")
       out_file.puts("export HISTSIZE=10000")
       out_file.puts("sigusr2() { unalias $1;}")
-      out_file.puts("sigusr1() { source #{readYML("#{CONFIG_PATH}")["dotfile"]}; history -a; echo 'reloaded dot file'; }")
+      out_file.puts("sigusr1() { source #{read_YML("#{CONFIG_PATH}")["dotfile"]}; history -a; echo 'reloaded dot file'; }")
       out_file.puts("trap sigusr1 SIGUSR1")
       out_file.puts("trap 'sigusr2 $(cat ~/sigusr1-args)' SIGUSR2")
       out_file.close
       autosource = "\nsource \"#{AKA_PATH}/autosource\""
-      append(autosource, readYML("#{CONFIG_PATH}")['profile'])
+      append(autosource, read_YML("#{CONFIG_PATH}")['profile'])
       puts "Done. Please restart this shell.".red
     else
       puts "Directory #{CONFIG_PATH} doesn't exist"
@@ -98,62 +168,32 @@ module Aka
     end
   end
 
-  def self.showConfig
-    thing = YAML.load_file("#{CONFIG_PATH}")
-    puts ""
-    thing.each do |company,details|
-      puts "#{company} -> " + "#{details}".red
+
+  def self.show_config
+    config = YAML.load_file(CONFIG_PATH)
+  
+    puts "\n"
+    config.each do |company, details|
+      puts "#{company} -> #{details}".red
     end
   end
-
-  def self.setZSHRC
-    setPath("#{ZSHRC_PATH}","dotfile")
-    setPath("#{Dir.home}/.zsh_history","history")
-    setPath("/etc/zprofile","profile")
+  
+  def self.set_ZSH #ryan - set the right dotfile and profile
+    set_path("#{ZSH_PATH}","dotfile")
+    set_path("#{Dir.home}/.zsh_history","history")
+    set_path("#{ZSH_PATH}","profile")
+    set_path("#{AKA_PATH}","home")
   end
 
-  def self.setBASHRC
-    setPath("#{BASHRC_PATH}","dotfile")
-    setPath("#{Dir.home}/.bash_history","history")
-    setPath("/etc/profile","profile")
+  def self.set_BASH #ryan - set the right dotfile and profile
+    set_path("#{BASHRC_PATH}","dotfile")
+    set_path("#{Dir.home}/.bash_history","history")
+    set_path("#{BASHRC_PATH}","profile")
+    set_path("#{AKA_PATH}","home")
   end
 
-  def self.setBASH
-    setPath("#{BASH_PROFILE_PATH}","dotfile")
-    setPath("#{Dir.home}/.bash_history","history")
-    setPath("/etc/profile","profile")
-  end
-
-  def self.setZSHRC2 #ryan - set the right dotfile and profile
-    setPath("#{ZSHRC_PATH}","dotfile")
-    setPath("#{Dir.home}/.zsh_history","history")
-    setPath("#{ZSHRC_PATH}","profile")
-    setPath("#{AKA_PATH}","home")
-  end
-
-  def self.setBASHRC2 #ryan - set the right dotfile and profile
-    setPath("#{BASHRC_PATH}","dotfile")
-    setPath("#{Dir.home}/.bash_history","history")
-    setPath("#{BASHRC_PATH}","profile")
-    setPath("#{AKA_PATH}","home")
-  end
-
-  def self.setBASH2 #ryan - set the right dotfile and profile
-    setPath("#{BASH_PROFILE_PATH}","dotfile")
-    setPath("#{Dir.home}/.bash_history","history")
-    setPath("/etc/profile","profile")
-    setPath("#{AKA_PATH}","home")
-  end
-
-  def self.setPROFILE
-    setPath("#{PROFILE_PATH}","dotfile")
-    setPath("#{Dir.home}/.bash_history","history")
-    setPath("/etc/profile","profile")
-    setPath("#{AKA_PATH}","home")
-  end
-
-  def self.isOhMyZsh
-    readYML("#{CONFIG_PATH}")["dotfile"] == "#{ZSHRC_PATH}" ? true : false
+  def self.is_ZSH?
+    read_YML("#{CONFIG_PATH}")["dotfile"] == "#{ZSH_PATH}" ? true : false
   end
 
 end

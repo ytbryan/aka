@@ -9,14 +9,14 @@ module Aka
     def list(args = nil)
       Aka.print_title('System Alias')
       if !args.nil?
-        Aka.showlast(options[:number], args.to_i, options[:group]) # user input
+        Aka.show_last(options[:number], args.to_i, options[:group]) # user input
       else
-        value = Aka.readYML("#{CONFIG_PATH}")['list']
+        value = Aka.read_YML("#{CONFIG_PATH}")['list']
         if value.class == Integer
-          Aka.showlast(options[:number], value.to_i, options[:group])
+          Aka.show_last(options[:number], value.to_i, options[:group])
         else
           puts "List value is not defined in #{CONFIG_PATH}"
-          Aka.showlast(options[:number], 50, options[:group])
+          Aka.show_last(options[:number], 50, options[:group])
         end
       end
       Aka.print_all_helpful_statement

@@ -7,7 +7,7 @@ module Aka
     method_option :group, type: :string, aliases: '-g', desc: ''
     def edit(args)
       if options[:group]
-        Aka.change_alias_group_name_with(Aka.parseARGS(args), options[:group])
+        Aka.change_alias_group_name_with(Aka.parse_ARGS(args), options[:group])
       else
         if args
           values = args.split('=')

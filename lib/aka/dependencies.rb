@@ -1,2 +1,0 @@
-require 'thor'
-require 'fileutils'

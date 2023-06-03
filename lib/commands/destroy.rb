@@ -4,6 +4,7 @@ module Aka
     method_options force: :boolean
     method_option :no, type: :boolean, aliases: '-n', desc: '--no means do not reload'
     method_option :nounalias, type: :boolean, aliases: '-u', desc: '--nounalias means do not remove the alias from current shell'
+
     def destroy(*args)
       args.each_with_index do |value, _index|
         result = Aka.remove(value)
@@ -12,6 +13,6 @@ module Aka
       end
       true
     end
-
   end
 end
+

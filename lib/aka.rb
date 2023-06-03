@@ -1,4 +1,4 @@
-require_relative 'aka_helper'
+require_relative 'import_libraries'
 
 module Aka
   class Base < Thor
@@ -28,7 +28,7 @@ module Aka
 
     # desc :open, 'open my dotfile for development'
     # def open
-    #   system("atom #{Aka.readYML("#{CONFIG_PATH}")['dotfile']}")
+    #   system("atom #{Aka.read_YML("#{CONFIG_PATH}")['dotfile']}")
     # end
     #
     # desc :testing, 'testing'
@@ -66,7 +66,8 @@ module Aka
     #
     desc :config, 'show config'
     def config
-      Aka.showConfig
+      # Aka.showConfig
+      Aka.show_config
     end
 
     #
@@ -82,7 +83,7 @@ module Aka
     #
     desc :where, 'locate your dotfile'
     def where
-      puts Aka.readYML("#{CONFIG_PATH}")['dotfile']
+      puts Aka.read_YML("#{CONFIG_PATH}")['dotfile']
     end
 
     #
@@ -96,3 +97,41 @@ module Aka
 
   end # that's all
 end # last end
+
+class String
+  def pretty
+  self.gsub("\s\t\r\f", ' ').squeeze(' ')
+  end
+
+  def is_i?
+  !!(self =~ /\A[-+]?[0-9]+\z/)
+  end
+
+  def colorize(color_code)
+   "\e[#{color_code}m#{self}\e[0m"
+  end
+
+  def red
+   colorize(31)
+  end
+
+  def green
+   colorize(32)
+  end
+
+  def yellow
+   colorize(33)
+  end
+
+  def blue
+   colorize(34)
+  end
+
+  def pink
+   colorize(35)
+  end
+
+  def light_blue
+   colorize(36)
+  end
+end

@@ -19,19 +19,20 @@ module Aka
       if options[:count] && options[:count] < 1
         Aka.setup
       else
-        Aka.setZSHRC if options[:zshrc]
-        Aka.setBASHRC if options[:bashrc]
+        Aka.set_ZSH if options[:zshrc]
+        Aka.set_BASH if options[:bashrc]
         Aka.setBASH if options[:bash]
 
-        Aka.showConfig if options[:config]
-        Aka.setPath(options[:dotfile], 'dotfile') if options[:dotfile]
-        Aka.setPath(options[:history], 'history') if options[:history]
-        Aka.setPath(options[:home], 'home') if options[:home]
-        Aka.setPath(options[:install], 'install') if options[:install]
-        Aka.setPath(options[:profile], 'profile') if options[:profile]
-        Aka.setPath(options[:list], 'list') if options[:list]
-        Aka.setPath(options[:usage], 'usage') if options[:usage]
-        Aka.setPath(options[:remote], 'remote') if options[:remote]
+        # Aka.showConfig if options[:config]
+        Aka.show_config if options[:config]
+        Aka.set_path(options[:dotfile], 'dotfile') if options[:dotfile]
+        Aka.set_path(options[:history], 'history') if options[:history]
+        Aka.set_path(options[:home], 'home') if options[:home]
+        Aka.set_path(options[:install], 'install') if options[:install]
+        Aka.set_path(options[:profile], 'profile') if options[:profile]
+        Aka.set_path(options[:list], 'list') if options[:list]
+        Aka.set_path(options[:usage], 'usage') if options[:usage]
+        Aka.set_path(options[:remote], 'remote') if options[:remote]
       end
     end
     

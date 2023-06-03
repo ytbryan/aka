@@ -5,16 +5,16 @@ module Aka
     def usage(args = nil)
       if args
         if options[:least] && args
-          Aka.showUsage(args.to_i, true)
+          Aka.show_usage(args.to_i, true)
         else
-          Aka.showUsage(args.to_i)
+          Aka.show_usage(args.to_i)
         end
       else
         if options[:least]
-          value = Aka.readYML("#{CONFIG_PATH}")['usage']
-          Aka.showlast(value.to_i, true) # this is unsafe
+          value = Aka.read_YML("#{CONFIG_PATH}")['usage']
+          Aka.show_last(value.to_i, true) # this is unsafe
         else
-          value = Aka.readYML("#{CONFIG_PATH}")['usage']
+          value = Aka.read_YML("#{CONFIG_PATH}")['usage']
           Aka.howlast(value.to_i) # this is unsafe
         end
       end

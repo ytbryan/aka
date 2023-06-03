@@ -8,9 +8,9 @@ module Aka
     def generate(args)
       result = false
       if options[:last] && args
-        result = Aka.add_with_group(Aka.add_last_command(Aka.parseARGS(args)))
+        result = Aka.add_with_group(Aka.add_last_command(Aka.parse_ARGS(args)))
       else
-        result = Aka.add_with_group(Aka.parseARGS(args), options[:group])
+        result = Aka.add_with_group(Aka.parse_ARGS(args), options[:group])
       end
       Aka.reload_dot_file if result == true && !options[:no]
       true
