@@ -60,7 +60,7 @@ module Aka
   end
 
   def self.read_YML path
-    if File.exists? path
+    if File.exist? path
       return YAML.load_file(path)
     else
       error_statement("#{CONFIG_PATH} does not exist. Type `aka setup` to setup the config file")
@@ -480,13 +480,14 @@ module Aka
   end
 
   def self.is_config_file_present? str
-    path =  "#{BASH_PROFILE_PATH}"
+    # path =  "#{BASH_PROFILE_PATH}"
+    path = "blah"
     if str == ""
       error_statement("Type `aka init --dotfile #{path}` to set the path to your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
       exit
     end
 
-    if !File.exists?(str)
+    if !File.exist?(str)
       error_statement("Type `aka init --dotfile #{path}` to set the path of your dotfile. \nReplace .bash_profile with .bashrc or .zshrc if you are not using bash.")
       exit
     end
