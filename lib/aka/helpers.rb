@@ -73,7 +73,7 @@ module Aka
 
   def self.write_with_array_into_withprint path, array
     File.open(path, 'w') { |file|
-      file.write("#generated with https://rubygems.org/gems/aka2")
+      file.write("#generated with https://rubygems.org/gems/aka3")
       file.write("\n\n")
 
       array.each do |line|

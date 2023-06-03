@@ -1,8 +1,8 @@
 # Aka 
 
-aka is a development tool that generates permanent alias on the fly. 
+aka is a development tool that generates permanent alias on the fly. Support MacOS & Ubuntu only.
 
-[![Gem Version](https://badge.fury.io/rb/aka2.svg)](https://badge.fury.io/rb/aka2)
+[![Gem Version](https://badge.fury.io/rb/aka3.svg)](https://badge.fury.io/rb/aka3)
 
 ### Motivation
 I use terminal with alias for work everyday. And I realise that to fully control my work flow, I would need to
@@ -37,7 +37,7 @@ aka requires ruby and is built for bash and zsh users.
 
 ## Installation
 
-    gem install aka2
+    gem install aka3
     aka setup
 
 If you wish to setup aka again:

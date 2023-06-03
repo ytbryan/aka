@@ -46,17 +46,6 @@ module Aka
           abort "No file choosen"
       end
     end #if userBash > 1
-
-      # if File.exist?("#{ZSHRC_PATH}") #if zshec exist
-      #   setZSHRC2
-      # elsif File.exist?("#{BASHRC_PATH}") #if bashrc exist
-      #   setBASHRC2
-      # elsif File.exist?("#{BASH_PROFILE_PATH}") #if bash_profile exist
-      #   setBASH2
-      # else
-      #   puts "Aka2 only supports zshrc, bashrc and bash_profile"
-      #   puts "Please contact http://github.com/ytbryan for more info."
-      # end
   end
 
 
