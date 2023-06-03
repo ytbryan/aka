@@ -1,3 +1,3 @@
 module Aka
-  VERSION = "0.1.11"
+  VERSION = "3.0.0"
 end

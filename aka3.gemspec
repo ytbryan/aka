@@ -11,10 +11,10 @@ Gem::Specification.new do |spec|
   spec.email         = ["ytbryan@gmail.com"]
   spec.summary       = %q{The Missing Terminal Shortcut Manager}
   spec.description   = %q{ A delightful way to manage and grow your aliases in your daily project. }
-  spec.homepage      = "https://github.com/ytbryan/aka"
+  spec.homepage      = "https://github.com/ytbryan/aka3"
   spec.license       = "MIT"
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
-  spec.executables   = ["aka"]
+  spec.executables   = ["aka3"]
   spec.require_paths = ["lib"]
   spec.post_install_message = Log::MESSAGE
   spec.required_ruby_version = ">= 2.0.0"
